@@ -51,6 +51,40 @@ def _load_mounts() -> dict:
     return {}
 
 
+def cmd_ghost(args: list[str]) -> int:
+    """Ghost Drive: make an old partition a PERMANENT zero-copy lower layer.
+
+    Rewrites the partition's GPT type GUID to the Discoverable Partitions
+    Spec value (SD_GPT_*), so systemd-gpt-auto-generator auto-mounts it on
+    every boot — no fstab, no copy, no cleanup. Migration becomes a
+    0-second event; rollback = boot the old ESP.
+
+    Requires: sgdisk (gptfdisk) to rewrite the GUID.
+    """
+    if not args:
+        print("usage: mount.py ghost <device> <partition> <role:home|srv|root|userdata>", file=sys.stderr)
+        return 2
+    device, partition, role = args[0], args[1], args[2]
+    # Discoverable Partitions Spec type GUIDs (systemd)
+    sd_guid = {
+        "root": "4f68bce3-e8cd-4db1-96e7-fbcaf984b709",
+        "home": "933ac7e1-2eb4-4f13-b844-0e14e2aef915",
+        "srv": "3b8f8425-20e0-4f3b-907f-1a25a76f98e8",
+        "userdata": "4d21b016-b534-45c2-a9fb-5c16e091fd2d",
+    }.get(role)
+    if sd_guid is None:
+        print(f"unknown role: {role} (use home|srv|root|userdata)", file=sys.stderr)
+        return 2
+    print(f"Rewriting {device}{partition} GPT type GUID -> {sd_guid} ({role}, Discoverable Partitions)")
+    rc, out = run(["sgdisk", "-t", f"{partition}:{sd_guid}", device])
+    if rc != 0:
+        print(f"sgdisk failed: {out}", file=sys.stderr)
+        return 1
+    print("GPT type rewritten. On next boot, systemd-gpt-auto-generator will mount it automatically.")
+    print("Data is now a permanent zero-copy layer of Omarchy. Rollback = boot the old ESP.")
+    return 0
+
+
 def cmd_mount(args: list[str]) -> int:
     if len(args) < 2:
         print("usage: mount.py mount <old-device> <target-path>", file=sys.stderr)
@@ -128,6 +162,8 @@ def main() -> int:
     cmd, rest = args[0], args[1:]
     if cmd == "mount":
         return cmd_mount(rest)
+    if cmd == "ghost":
+        return cmd_ghost(rest)
     if cmd == "list":
         return cmd_list(rest)
     if cmd == "unmount":
