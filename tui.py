@@ -225,12 +225,12 @@ class Command:
 
 
 COMMANDS: list[Command] = [
-    Command("scan",   "detect installed apps on the source OS",  "scanner/detect.py [--os linux|macos|windows] [--json]", _BRIGHT_GREEN, "S"),
-    Command("export", "build a migration package (git-committable artifacts)", "migrate.py export [--os ...] [--out pkg.zip]", _BRIGHT_CYAN, "E"),
-    Command("plan",   "review the migration plan (oracle) as a color-coded screen", "tui.py plan [plan.json]", _BRIGHT_BLUE, "P"),
-    Command("import", "port a package onto the fresh Omarchy box", "migrate.py import PACKAGE.zip [--dry-run]", _BRIGHT_MAGENTA, "I"),
-    Command("mount",  "union-mount the old disk — data appears, zero copy", "sudo python3 mount.py mount /dev/sdb2 /data/games", _BRIGHT_YELLOW, "M"),
-    Command("sync",   "differential sync — reflink-first, only what changed", "sync.py SRC_DIR TARGET_DIR [--dry-run]", _BRIGHT_GREEN, "S"),
+    Command("scan",   "detect installed apps on the source OS",  "scanner/detect.py [--os linux|macos|windows] [--json]", _BRIGHT_GREEN, "󰭹"),
+    Command("export", "build a migration package (git-committable artifacts)", "migrate.py export [--os ...] [--out pkg.zip]", _BRIGHT_CYAN, "󰁆"),
+    Command("plan",   "review the migration plan (oracle) as a color-coded screen", "tui.py plan [plan.json]", _BRIGHT_BLUE, "󰃵"),
+    Command("import", "port a package onto the fresh Omarchy box", "migrate.py import PACKAGE.zip [--dry-run]", _BRIGHT_MAGENTA, "󰏚"),
+    Command("mount",  "union-mount the old disk — data appears, zero copy", "sudo python3 mount.py mount /dev/sdb2 /data/games", _BRIGHT_YELLOW, "󱦰"),
+    Command("sync",   "differential sync — reflink-first, only what changed", "sync.py SRC_DIR TARGET_DIR [--dry-run]", _BRIGHT_GREEN, "󰓦"),
 ]
 
 
