@@ -9,7 +9,7 @@ import sys, os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from oracle import _suggest_safe, _windows_only_verdict
+from oracle import _suggest_safe, _tier5_verdict
 
 
 class TestWindowsOnlyFlightSim(unittest.TestCase):
@@ -60,8 +60,8 @@ class TestWindowsOnlyNoFalsePositive(unittest.TestCase):
                 self.assertNotEqual(r["tier"], 5)
 
     def test_windows_only_helper(self):
-        self.assertIsNotNone(_windows_only_verdict("Carenado C172N FSX"))
-        self.assertIsNone(_windows_only_verdict("Visual Studio Code"))
+        self.assertIsNotNone(_tier5_verdict("Carenado C172N FSX"))
+        self.assertIsNone(_tier5_verdict("Visual Studio Code"))
 
 
 if __name__ == "__main__":

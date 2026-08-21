@@ -238,47 +238,82 @@ def _suggest_safe(name: str) -> dict | None:
     # (not checked here by default — AUR is never auto-suggested)
 
     # ── 5. Windows-only (honest verdict — never silently dropped) ────
-    win = _windows_only_verdict(name)
+    win = _tier5_verdict(name)
     if win:
         return win
     return None
 
 
-# ── 5. Windows-only categories (honest "no Linux path" verdict) ──────
-# These are Windows-native software with no working Linux equivalent.
-# omnigate does NOT silently drop them — it gives an honest tier-5
-# verdict so the user knows what stays on Windows / dual-boot.
-_WINDOWS_ONLY_PATTERNS: list[tuple[str, str]] = [
-    # flight-sim addons (FSX / Prepar3D era — InstallShield, 32-bit, registry-bound)
-    ("carenado", "Flight-sim addon (Carenado) — Windows-only"),
-    ("a2a", "Flight-sim addon (A2A Simulations) — Windows-only"),
-    ("wings of power", "Flight-sim addon (A2A Wings of POWER) — Windows-only"),
-    ("accu-sim", "Flight-sim addon (A2A Accu-Sim) — Windows-only"),
-    ("ultimate terrain", "Flight-sim addon (Ultimate Terrain) — Windows-only"),
-    ("king air", "Flight-sim addon (King Air) — Windows-only"),
-    ("fsx", "Flight-sim addon (FSX-era) — Windows-only"),
-    ("p3d", "Flight-sim addon (Prepar3D-era) — Windows-only"),
-    ("prepar3d", "Flight-sim addon (Prepar3D) — Windows-only"),
-    ("flight sim", "Flight-sim addon — Windows-only"),
-    ("utx", "Flight-sim addon (Ultimate Terrain X) — Windows-only"),
-    # FSX is itself Windows-only (the 2006 Microsoft product)
-    ("microsoft flight simulator x", "FSX — Windows-only (no Linux path)"),
+# ── 5. Windows-only / no-Linux-path categories (tier 5) ─────────────
+# These are software with no working Omarchy equivalent. omnigate does NOT
+# silently drop them — it gives an honest tier-5 verdict so the user knows
+# what stays on Windows / dual-boot / Steam re-download.
+#
+# Each entry is (category_label, pattern, reason).
+_TIER5_CATEGORIES: list[tuple[str, str, str]] = [
+    # --- flight-sim addons (FSX / Prepar3D era) ---
+    ("flight_sim", "carenado", "Flight-sim addon (Carenado) — Windows-only"),
+    ("flight_sim", "a2a", "Flight-sim addon (A2A Simulations) — Windows-only"),
+    ("flight_sim", "wings of power", "Flight-sim addon (A2A Wings of POWER) — Windows-only"),
+    ("flight_sim", "accu-sim", "Flight-sim addon (A2A Accu-Sim) — Windows-only"),
+    ("flight_sim", "ultimate terrain", "Flight-sim addon (Ultimate Terrain) — Windows-only"),
+    ("flight_sim", "king air", "Flight-sim addon (King Air) — Windows-only"),
+    ("flight_sim", "fsx", "Flight-sim addon (FSX-era) — Windows-only"),
+    ("flight_sim", "p3d", "Flight-sim addon (Prepar3D-era) — Windows-only"),
+    ("flight_sim", "prepar3d", "Flight-sim addon (Prepar3D) — Windows-only"),
+    ("flight_sim", "utx", "Flight-sim addon (Ultimate Terrain X) — Windows-only"),
+    ("flight_sim", "microsoft flight simulator x", "FSX — Windows-only (no Linux path)"),
+    # --- Steam games (re-download on Omarchy via Proton/Steam) ---
+    ("steam_game", "cyberpunk", "Steam game — re-download on Omarchy"),
+    ("steam_game", "street fighter", "Steam game — re-download on Omarchy"),
+    ("steam_game", "path of exile", "Steam game — re-download on Omarchy"),
+    ("steam_game", "vrchat", "Steam VRChat — re-download on Omarchy (SteamVR)"),
+    ("steam_game", "aliens: fireteam elite", "Steam game — re-download on Omarchy"),
+    ("steam_game", "the honkers railway", "Steam game (Chinese) — re-download on Omarchy"),
+    ("steam_game", "lossless scaling", "Steam app (Lossless Scaling) — re-download on Omarchy"),
+    # --- Windows-style game launchers (no Arch analog) ---
+    ("gaming_launcher", "an anime game launcher", "Game launcher (anime-style) — Windows-only path"),
+    ("gaming_launcher", "hive jump", "Game launcher (Hive Jump) — Windows-only path"),
+    ("gaming_launcher", "sleepy launcher", "Game launcher — Windows-only path"),
+    ("gaming_launcher", "surrealist", "Game launcher — Windows-only path"),
+    ("gaming_launcher", "wavey launcher", "Game launcher — Windows-only path"),
+    # --- Wine / Windows compatibility layer (keep separate, not equivalent) ---
+    ("wine_layer", "wine installer", "Wine installer — keep, not a Linux app"),
+    ("wine_layer", "winetricks", "Winetricks — Wine helper, keep as-is"),
+    ("wine_layer", "wine windows program loader", "Wine loader — keep"),
+    ("wine_layer", "protontricks", "Protontricks (= Winetricks for Proton) — keep"),
+    ("wine_layer", "protonup-qt", "ProtonUp-Qt — Proton version manager, keep"),
+    ("wine_layer", "moonlight", "Moonlight game streaming client — has AUR pkg"),
+    ("wine_layer", "wivrn", "WiVRn (VR streaming server) — keep, AUR"),
+    # --- Hardware-vendor utilities (often no Arch equivalent) ---
+    ("hardware_vendor", "razergenie", "Razer peripheral utility — Windows vendor"),
+    ("hardware_vendor", "razercortex", "Razer Cortex — Windows vendor"),
+    ("hardware_vendor", "openrgb", "OpenRGB — has AUR pkg, but vendor-specific"),
+    ("hardware_vendor", "polychromatic", "Polychromatic (Raspberry Pi LED) — vendor-specific"),
+    ("hardware_vendor", "ckb-next", "Corsair keyboard firmware — vendor-specific"),
+    ("hardware_vendor", "nvtop", "NVIDIA GPU monitor — has pkg, defer if installed"),
+    ("hardware_vendor", "nvidia x server settings", "NVIDIA X Server Settings — vendor-specific"),
+    ("hardware_vendor", "uuctl", "Asus utility — vendor-specific"),
+    # --- NixOS-only (no Arch analog; tier-5 = no path on Omarchy) ---
+    ("nixos_only", "nixos manual", "NixOS-only — no Arch equivalent"),
 ]
 
 
-def _windows_only_verdict(name: str) -> dict | None:
-    """Return a tier-5 'Windows-only' verdict if the app is a known
-    Windows-native category (flight-sim addons etc). Never auto-maps —
-    this is an honest category label, not a package suggestion."""
+def _tier5_verdict(name: str) -> dict | None:
+    """Return a tier-5 verdict for known 'no Omarchy equivalent' categories.
+    Never auto-maps — this is an honest category label, not a package suggestion.
+    Each detection is tagged with its category for downstream grouping."""
     key = name.strip().lower()
-    for pattern, reason in _WINDOWS_ONLY_PATTERNS:
+    for category, pattern, reason in _TIER5_CATEGORIES:
         if pattern in key:
             return {
                 "pkg": name,
                 "tier": 5,
                 "reason": reason,
-                "windows_only": True,
+                "category": category,
+                "windows_only": category in ("flight_sim", "gaming_launcher", "hardware_vendor"),
             }
+    return None
     return None
 
 
