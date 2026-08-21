@@ -2,16 +2,17 @@
    Source tokens: omarchy.org/assets/css/{root,elements,button,header,nav,main,footer}.css */
 
 :root {
-  --rgb-background-night: 26, 27, 38;
-  --rgb-background-storm: 36, 40, 59;
-  --rgb-black: 0, 0, 0;
-  --rgb-green: 158, 206, 106;
-  --rgb-terminal-black: 65, 72, 104;
-  --rgb-terminal-blue: 122, 162, 247;
-  --rgb-terminal-cyan: 125, 207, 255;
-  --rgb-terminal-white: 192, 202, 245;
-  --rgb-turquoise: 180, 249, 248;
-  --rgb-white: 255, 255, 255;
+  /* osaka-jade theme (Omarchy osaka-jade colors.toml) */
+  --rgb-background-night: 17, 28, 24;
+  --rgb-background-storm: 35, 55, 43;
+  --rgb-black: 9, 15, 13;
+  --rgb-green: 84, 158, 106;
+  --rgb-terminal-black: 41, 55, 45;
+  --rgb-terminal-blue: 80, 148, 117;
+  --rgb-terminal-cyan: 129, 184, 168;
+  --rgb-terminal-white: 198, 196, 151;
+  --rgb-turquoise: 84, 158, 106;
+  --rgb-white: 214, 213, 188;
 
   --color-background-night: rgb(var(--rgb-background-night));
   --color-background-storm: rgb(var(--rgb-background-storm));

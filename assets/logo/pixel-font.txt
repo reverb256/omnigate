@@ -1,0 +1,75 @@
+# Omniportal pixel wordmark — 5x5 block font, "OMNIPORTAL"
+# Each letter is 5 wide x 5 tall, 1-column gap between letters.
+# Legend: X = filled, . = empty
+
+# O
+XXX..
+X.X..
+X.X..
+X.X..
+XXX..
+
+# M
+X.X..
+XXX..
+XXX..
+X.X..
+X.X..
+
+# N
+XX...
+X.X..
+X.X..
+X.X..
+.XX..
+
+# I
+XXX..
+.X...
+.X...
+.X...
+XXX..
+
+# P
+XXX..
+X.X..
+XXX..
+X....
+X....
+
+# O
+XXX..
+X.X..
+X.X..
+X.X..
+XXX..
+
+# R
+XXX..
+X.X..
+XXX..
+X.X..
+X.X..
+
+# T
+XXX..
+.X...
+.X...
+.X...
+.X...
+
+# A
+XXX..
+X.X..
+XXX..
+X.X..
+X.X..
+
+# L
+X....
+X....
+X....
+X....
+XXX..
+
+# Render helper comment: build rows by concatenating each letter's row + 1 gap col
