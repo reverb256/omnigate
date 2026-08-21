@@ -55,6 +55,21 @@ Migrating an OS is not a file copy. It is a **mount**, a **delta**, and a
 | 2. Differential sync | Reflink-first, copy only changed, skip re-downloadable | ✅ implemented (`sync.py`) |
 | 3. Declarative manifest | Whole machine described, rebuildable | 🔜 planned |
 
+## The Windows pillar (2026-08-21 — containerize, don't port)
+
+For Windows sources, omnigate's answer is three-tier:
+
+1. **SKIP** — Steam games stay on the existing NTFS library; Proton mounts
+   it, no reinstall, no copy (Proton/NTFS pattern).
+2. **DEFER** — apps with an Omarchy equivalent map to it (the existing
+   mapper).
+3. **CONTAINERIZE** — apps with NO equivalent (MS/Adobe suites, kernel
+   anti-cheat games) run in a Windows container (WinPodX-style: dockur +
+   Podman + FreeRDP RemoteApp) surfaced as native Linux windows.
+   Migration = "install the container, don't port the app."
+
+Hard wall: kernel-level anti-cheat (Valorant/Vanguard) cannot run on Linux.
+
 ## The world-breaking ten (research, verified against real tech)
 
 1. **Ghost Drive** — old disk becomes a *permanent* zero-copy lower layer:
