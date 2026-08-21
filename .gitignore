@@ -17,6 +17,9 @@ out/
 *.zip
 .omarchy-migrate-stage/
 .omarchy-migrate-backup-*/
+plan.json
+plan.md
+cleanup.json
 
 # Editor / OS
 .DS_Store
