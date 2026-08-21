@@ -236,6 +236,49 @@ def _suggest_safe(name: str) -> dict | None:
 
     # ── 4. AUR — LAST RESORT, always flagged ────────────────────────
     # (not checked here by default — AUR is never auto-suggested)
+
+    # ── 5. Windows-only (honest verdict — never silently dropped) ────
+    win = _windows_only_verdict(name)
+    if win:
+        return win
+    return None
+
+
+# ── 5. Windows-only categories (honest "no Linux path" verdict) ──────
+# These are Windows-native software with no working Linux equivalent.
+# omnigate does NOT silently drop them — it gives an honest tier-5
+# verdict so the user knows what stays on Windows / dual-boot.
+_WINDOWS_ONLY_PATTERNS: list[tuple[str, str]] = [
+    # flight-sim addons (FSX / Prepar3D era — InstallShield, 32-bit, registry-bound)
+    ("carenado", "Flight-sim addon (Carenado) — Windows-only"),
+    ("a2a", "Flight-sim addon (A2A Simulations) — Windows-only"),
+    ("wings of power", "Flight-sim addon (A2A Wings of POWER) — Windows-only"),
+    ("accu-sim", "Flight-sim addon (A2A Accu-Sim) — Windows-only"),
+    ("ultimate terrain", "Flight-sim addon (Ultimate Terrain) — Windows-only"),
+    ("king air", "Flight-sim addon (King Air) — Windows-only"),
+    ("fsx", "Flight-sim addon (FSX-era) — Windows-only"),
+    ("p3d", "Flight-sim addon (Prepar3D-era) — Windows-only"),
+    ("prepar3d", "Flight-sim addon (Prepar3D) — Windows-only"),
+    ("flight sim", "Flight-sim addon — Windows-only"),
+    ("utx", "Flight-sim addon (Ultimate Terrain X) — Windows-only"),
+    # FSX is itself Windows-only (the 2006 Microsoft product)
+    ("microsoft flight simulator x", "FSX — Windows-only (no Linux path)"),
+]
+
+
+def _windows_only_verdict(name: str) -> dict | None:
+    """Return a tier-5 'Windows-only' verdict if the app is a known
+    Windows-native category (flight-sim addons etc). Never auto-maps —
+    this is an honest category label, not a package suggestion."""
+    key = name.strip().lower()
+    for pattern, reason in _WINDOWS_ONLY_PATTERNS:
+        if pattern in key:
+            return {
+                "pkg": name,
+                "tier": 5,
+                "reason": reason,
+                "windows_only": True,
+            }
     return None
 
 
