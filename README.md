@@ -54,6 +54,66 @@ sudo python3 mount.py mount /dev/sdb2 /data/games
 python3 mount.py list
 ```
 
+## Cross-platform
+
+`omnigate` runs on the **source** machine on all three OSes — Windows and
+macOS included, not just as detection targets. The export side produces
+git-committable artifacts (`machine.json`, `plan.md`) on any OS, and **git
+is the backbone**: every machine gets a git repo of its migration state.
+
+Three launchers ship with the repo — all stdlib, no third-party deps:
+
+| File | OS | Notes |
+|------|----|-------|
+| `omnigate.sh` | macOS / Linux | POSIX sh; finds `python3`, delegates to `bootstrap.py` |
+| `omnigate.ps1` | Windows | PowerShell ships with Windows; finds `py -3` / `python`, delegates to `bootstrap.py` |
+| `bootstrap.py` | all three | finds Python 3 + git, prints install instructions if missing, runs the command |
+
+**Windows**
+
+```powershell
+# PowerShell wrapper (built into Windows — no extra install)
+powershell -ExecutionPolicy Bypass -File omnigate.ps1 --help
+powershell -ExecutionPolicy Bypass -File omnigate.ps1 export --os windows --out my-setup.zip
+powershell -ExecutionPolicy Bypass -File omnigate.ps1 doctor
+
+# Or straight through the py launcher (Python 3.9+ required)
+py -3 bootstrap.py export --os windows --out my-setup.zip
+```
+
+Requirements on Windows: **git** (install [Git for Windows](https://git-scm.com/download/win)
+— default options put it on PATH) and **Python** (https://www.python.org/downloads/windows/,
+tick *Add python.exe to PATH*, or the Microsoft Store `python3` app).
+`bootstrap.py` checks both and prints these links if either is missing.
+
+**macOS**
+
+```bash
+./omnigate.sh export --os macos --out my-setup.zip
+```
+
+Requirements: `xcode-select --install` provides both `python3` and git;
+or install from python.org / `brew install python` and `brew install git`.
+
+**Linux**
+
+```bash
+./omnigate.sh export --os linux --out my-setup.zip
+# or directly:
+python3 bootstrap.py export --os linux --out my-setup.zip
+```
+
+Check the environment on any OS:
+
+```bash
+python3 bootstrap.py doctor    # prints python + git locations/versions
+```
+
+The wrappers run from the repo root so relative imports resolve regardless
+of where they are invoked; command exit codes pass through (3 = missing
+toolchain, 2 = bad command/usage, 0 = success). `mount.py` is Linux-target
+only (overlayfs + root).
+
 ## Architecture
 
 ```

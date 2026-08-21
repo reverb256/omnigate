@@ -21,6 +21,7 @@ import os
 import subprocess
 import sys
 import threading
+import time
 from pathlib import Path
 
 # File/dir names never worth migrating (re-downloadable / rebuildable)
@@ -98,6 +99,121 @@ def sync_dir(src: Path, dst: Path, skip: set[str], dry_run: bool, changed: list)
                 import shutil
                 shutil.copy2(entry, target)
         changed.append(str(rel))
+
+
+def plan_changes(src: Path, dst: Path, skip: set[str] | None = None) -> dict:
+    """Dry-run analysis without touching the filesystem: what would sync?
+
+    Returns the same structure the TUI's progress view uses, so
+    `tui.py plan` can show a real WHAT MOVES section before a byte is
+    copied. Deterministic: sorted walk, skip patterns identical to sync.
+    """
+    skip = DEFAULT_SKIP if skip is None else skip
+    changed: list[str] = []
+    files_total = 0
+    copied_bytes = 0
+    for dirpath, dirnames, filenames in os.walk(src):
+        dirnames[:] = sorted(
+            d for d in dirnames if d not in skip
+        )
+        for fname in sorted(filenames):
+            p = Path(dirpath) / fname
+            if _should_skip(p, skip):
+                continue
+            files_total += 1
+            rel = p.relative_to(src)
+            target = dst / rel
+            if _file_changed(p, target):
+                changed.append(str(rel))
+                try:
+                    copied_bytes += p.stat().st_size
+                except OSError:
+                    pass
+    return {
+        "total_bytes": copied_bytes,
+        "files_total": files_total,
+        "changed_files": len(changed),
+        "changed": changed[:500],
+        "mode": "reflink-first (btrfs/XFS CoW) or parallel copy",
+    }
+
+
+def sync_dir_with_progress(src: Path, dst: Path,
+                           skip: set[str] | None = None,
+                           progress: object | None = None,
+                           overall: dict | None = None) -> tuple[int, int]:
+    """Differential sync with an optional progress callback (for tui.py).
+
+    Progress contract (matches tui.py's progress view):
+      * overall dict (mutated in place): total_bytes, copied_bytes,
+        files_done, files_total, elapsed, mode, current
+      * progress(overall) is called once per copied file, on the copying
+        thread. The callback must be cheap and must not raise.
+
+    Returns (total_bytes, files_total). Reflink-first, exactly like
+    sync_dir(), with the same skip patterns — the progress bar reflects
+    real bytes moved, not a simulation.
+    """
+    skip = DEFAULT_SKIP if skip is None else skip
+    started = time.monotonic()
+    total = 0
+    files_total = 0
+    for dirpath, dirnames, filenames in os.walk(src):
+        dirnames[:] = sorted(d for d in dirnames if d not in skip)
+        for fname in sorted(filenames):
+            p = Path(dirpath) / fname
+            if _should_skip(p, skip):
+                continue
+            files_total += 1
+            try:
+                total += p.stat().st_size
+            except OSError:
+                pass
+    if overall is not None:
+        overall["total_bytes"] = total
+        overall["files_total"] = files_total
+        overall["mode"] = "reflink-first"
+        overall["started"] = started
+        overall["elapsed"] = 0.0
+        overall["current"] = "scanning"
+        if progress is not None:
+            progress(overall)
+
+    copied = 0
+    dst.mkdir(parents=True, exist_ok=True)
+    for dirpath, dirnames, filenames in os.walk(src):
+        dirnames[:] = sorted(d for d in dirnames if d not in skip)
+        for fname in sorted(filenames):
+            p = Path(dirpath) / fname
+            if _should_skip(p, skip):
+                continue
+            rel = p.relative_to(src)
+            target = dst / rel
+            if not _file_changed(p, target):
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if not _reflink_copy(p, target):
+                try:
+                    os.link(p, target)
+                except OSError:
+                    import shutil
+                    shutil.copy2(p, target)
+            try:
+                copied += p.stat().st_size
+            except OSError:
+                pass
+            if overall is not None:
+                overall["copied_bytes"] = copied
+                overall["files_done"] += 1
+                overall["elapsed"] = time.monotonic() - started
+                overall["current"] = str(rel)
+            if progress is not None:
+                try:
+                    progress(overall)
+                except Exception:
+                    # A broken progress renderer must never kill a migration.
+                    progress = None
+    return total, files_total
 
 
 def main() -> int:
