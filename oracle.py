@@ -30,6 +30,19 @@ sys.path.insert(0, str(REPO))
 from scanner import detect  # noqa: E402
 from mapper import compat  # noqa: E402
 
+# Known-safe package suggestions (Omarchy base manifest + curated equivalents).
+_BASE = {}
+try:
+    import json as _json
+    _base_path = REPO / "mappings" / "omarchy-base.json"
+    if _base_path.exists():
+        _BASE = _json.loads(_base_path.read_text())
+except Exception:
+    _BASE = {}
+
+_PREINSTALLED = set(_BASE.get("preinstalled", []))
+_EQUIV = _BASE.get("equivalent_suggestions", {})
+
 # Cache dirs that are re-downloadable / rebuildable — never migrate these.
 REDOWNLOADABLE = {
     "node_modules", "target", ".venv", "venv", "build", "dist", "cache",
@@ -161,6 +174,39 @@ def _verdict(name: str) -> str:
     return "unknown"
 
 
+def _suggest_safe(name: str) -> dict | None:
+    """Return a known-safe package suggestion for an app name.
+
+    Priority (Omarchy's own distribution ladder):
+      1. Preinstalled (OPR base manifest) — zero install, ships with the OS
+      2. Official Arch repos (vetted, pacman -S)
+      3. OPR (Omarchy-curated)
+    AUR is never suggested by default (NOT vetted by Arch team).
+
+    Falls back to the app's own name if it's already a preinstalled package.
+    """
+    key = name.strip().lower()
+    # Exact curated equivalent
+    if key in _EQUIV:
+        return _EQUIV[key]
+    # The app itself is preinstalled → suggest it (it's already there)
+    if key in _PREINSTALLED:
+        return {"pkg": key, "tier": 1, "reason": "Preinstalled with Omarchy"}
+    # Try a suffix match (e.g. "Code - OSS" → "code", "Spotify" → "spotify")
+    for cand in _PREINSTALLED:
+        if key in cand or cand in key:
+            return {"pkg": cand, "tier": 1, "reason": "Preinstalled with Omarchy"}
+    return None
+
+
+def _suggestions_for(apps_review: list[str]) -> dict:
+    """Map every review app to its known-safe suggestion (or null)."""
+    out = {}
+    for name in apps_review:
+        out[name] = _suggest_safe(name)
+    return out
+
+
 def cmd_plan(args: list[str]) -> int:
     p = argparse.ArgumentParser(prog="oracle.py plan")
     p.add_argument("--dry-run", action="store_true")
@@ -197,6 +243,9 @@ def cmd_plan(args: list[str]) -> int:
     map_ = [n for n in matched if _verdict(n) != "ok"]
     review = list(unmatched) + list(unknown)
 
+    # Known-safe suggestions for every review app (default to Omarchy distro)
+    suggestions = _suggestions_for(review)
+
     plan = {
         "schema": "omnigate/plan/v1",
         "generated": datetime.now().isoformat(),
@@ -214,6 +263,7 @@ def cmd_plan(args: list[str]) -> int:
             "apps_unknown": len(review),
         },
         "classified_apps": {"defer": defer, "map": map_, "unknown": review},
+        "suggestions": suggestions,
         "major_dirs": dirs,
         "redownloadable": caches,
         "configs": configs,
@@ -258,8 +308,21 @@ def _render_plan_md(plan: dict) -> str:
     for k in ("defer", "map", "unknown"):
         lines.append(f"### {k.capitalize()} ({len(plan['classified_apps'][k])})")
         for name in plan["classified_apps"][k][:15]:
-            lines.append(f"- {name}")
+            if k == "unknown":
+                sug = plan.get("suggestions", {}).get(name)
+                if sug:
+                    lines.append(f"- {name} → **{sug['pkg']}** "
+                                 f"(tier {sug['tier']}: {sug['reason']})")
+                else:
+                    lines.append(f"- {name} → no known-safe suggestion (review)")
+            else:
+                lines.append(f"- {name}")
         lines.append("")
+    lines.append("## Suggestions (known-safe, Omarchy distro default)")
+    lines.append("")
+    lines.append("Tier 1 = Omarchy preinstalled · Tier 2 = official Arch "
+                 "(vetted) · AUR never auto-suggested (not vetted).")
+    lines.append("")
     lines.append("## Union spec (Ghost Drive)")
     for u in plan["union_spec"]:
         lines.append(f"- {u['device']} → {u['mount']} ({u['role']})")
