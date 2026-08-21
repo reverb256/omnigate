@@ -40,23 +40,20 @@
 
 <section>
   <div class="wrap">
-    <h2><span class="num">01</span>The three layers</h2>
-    <p class="lede">Copying a terabyte is the boring way. omnigate treats migration as a mount, then a smart sync, then a manifest.</p>
+    <h2 class="reveal"><span class="num">01</span>The three layers</h2>
+    <p class="lede reveal" data-stagger="1">Copying a terabyte is the boring way. omnigate treats migration as a mount, then a smart sync, then a manifest.</p>
     <div class="layers">
-      <div class="layer">
-        <div class="n">Layer 1</div>
+      <div class="layer reveal" data-stagger="1"><div class="n">Layer 1</div>
         <h3>Union mount</h3>
         <p>Mount the old disk read-only as an overlayfs lower layer under the new OS. Data appears at its new path with <strong>zero copy</strong> — Steam games launch immediately.</p>
         <div class="bit">⚡ Migration = a mount entry, not a copy.</div>
       </div>
-      <div class="layer">
-        <div class="n">Layer 2</div>
+      <div class="layer reveal" data-stagger="2"><div class="n">Layer 2</div>
         <h3>Differential sync</h3>
         <p>Copy only what <em>changed</em>; skip what's re-downloadable. Reflink-first (btrfs/XFS CoW) means near-instant, no duplicate space.</p>
         <div class="bit">⚡ 1 TB "migration" becomes a small copy of what matters.</div>
       </div>
-      <div class="layer">
-        <div class="n">Layer 3</div>
+      <div class="layer reveal" data-stagger="3"><div class="n">Layer 3</div>
         <h3>Declarative manifest</h3>
         <p>Describe the whole machine — apps, configs, data, library — as a rebuildable manifest. Migration stops being a thing; the machine <em>is</em> the manifest.</p>
         <div class="bit">⚡ <code>git diff old-manifest omarchy-manifest</code></div>
@@ -67,43 +64,43 @@
 
 <section>
   <div class="wrap">
-    <h2><span class="num">02</span>The skip ladder</h2>
-    <p class="lede">The world-breaking insight: the fastest transfer is the one you don't do. omnigate moves 20 GB, not 1 TB.</p>
+    <h2 class="reveal"><span class="num">02</span>The skip ladder</h2>
+    <p class="lede reveal" data-stagger="1">The world-breaking insight: the fastest transfer is the one you don't do. omnigate moves 20 GB, not 1 TB.</p>
     <div class="ladder">
-      <div class="rung"><span class="tag">1 · MOUNT</span><span class="desc">Data stays where it is; the new OS sees it through overlayfs.</span></div>
-      <div class="rung"><span class="tag">2 · REFLINK</span><span class="desc">Copy-on-write — near-instant, zero extra space.</span></div>
-      <div class="rung"><span class="tag">3 · SKIP</span><span class="desc">Steam games, caches, anything re-downloadable never moves.</span></div>
-      <div class="rung"><span class="tag">4 · DEDUP</span><span class="desc">Chunked sync — only novel bytes cross the wire.</span></div>
-      <div class="rung"><span class="tag">5 · HASH</span><span class="desc">blake3 on deltas (12× sha256), trust the reflink.</span></div>
+      <div class="rung reveal" data-stagger="1"><span class="tag">1 · MOUNT</span><span class="desc">Data stays where it is; the new OS sees it through overlayfs.</span></div>
+      <div class="rung reveal" data-stagger="2"><span class="tag">2 · REFLINK</span><span class="desc">Copy-on-write — near-instant, zero extra space.</span></div>
+      <div class="rung reveal" data-stagger="3"><span class="tag">3 · SKIP</span><span class="desc">Steam games, caches, anything re-downloadable never moves.</span></div>
+      <div class="rung reveal" data-stagger="4"><span class="tag">4 · DEDUP</span><span class="desc">Chunked sync — only novel bytes cross the wire.</span></div>
+      <div class="rung reveal" data-stagger="5"><span class="tag">5 · HASH</span><span class="desc">blake3 on deltas (12× sha256), trust the reflink.</span></div>
     </div>
-    <p style="margin-top:var(--space-medium)">And the unavoidable transfer gets the full treatment: a Rust core with parallel blake3 hashing and a portable Vulkan-compute GPU backend.</p>
+    <p class="reveal" data-stagger="5" style="margin-top:var(--space-medium)">And the unavoidable transfer gets the full treatment: a Rust core with parallel blake3 hashing and a portable Vulkan-compute GPU backend.</p>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <h2><span class="num">03</span>The governing rule</h2>
-    <p class="lede">omnigate is additive by design. It never fights Omarchy, never duplicates what Omarchy ships, and only carries what your system genuinely adds on top.</p>
+    <h2 class="reveal"><span class="num">03</span>The governing rule</h2>
+    <p class="lede reveal" data-stagger="1">omnigate is additive by design. It never fights Omarchy, never duplicates what Omarchy ships, and only carries what your system genuinely adds on top.</p>
     <div class="principles">
-      <div class="principle"><strong>Defer to Omarchy</strong><span>If Omarchy provides it, don't duplicate it. The mapper defers automatically against the Omarchy reference.</span></div>
-      <div class="principle"><strong>Never guess</strong><span>Unknown apps get flagged for review — never auto-mapped.</span></div>
-      <div class="principle"><strong>Zero-copy first</strong><span>Mount before you copy. Copy only what changed.</span></div>
-      <div class="principle"><strong>Rollback always</strong><span>The old system stays bootable until you say otherwise.</span></div>
+      <div class="principle reveal" data-stagger="1"><strong>Defer to Omarchy</strong><span>If Omarchy provides it, don't duplicate it. The mapper defers automatically against the Omarchy reference.</span></div>
+      <div class="principle reveal" data-stagger="2"><strong>Never guess</strong><span>Unknown apps get flagged for review — never auto-mapped.</span></div>
+      <div class="principle reveal" data-stagger="3"><strong>Zero-copy first</strong><span>Mount before you copy. Copy only what changed.</span></div>
+      <div class="principle reveal" data-stagger="4"><strong>Rollback always</strong><span>The old system stays bootable until you say otherwise.</span></div>
     </div>
   </div>
 </section>
 
 <section>
   <div class="wrap">
-    <h2><span class="num">04</span>Status</h2>
-    <p class="lede">Early but working — and the runtime is deterministic. AI builds it; the tool runs without a model.</p>
+    <h2 class="reveal"><span class="num">04</span>Status</h2>
+    <p class="lede reveal" data-stagger="1">Early but working — and the runtime is deterministic. AI builds it; the tool runs without a model.</p>
     <div class="status-row">
-      <div class="status"><div class="label">Core pipeline</div><div class="val done">✓ Done</div></div>
-      <div class="status"><div class="label">Union mount + ghost</div><div class="val done">✓ Done</div></div>
-      <div class="status"><div class="label">Differential sync</div><div class="val done">✓ Done</div></div>
-      <div class="status"><div class="label">Manifest with state</div><div class="val next">● Next</div></div>
-      <div class="status"><div class="label">The Oracle</div><div class="val next">● Planned</div></div>
-      <div class="status"><div class="label">Chunked sync</div><div class="val next">● Planned</div></div>
+      <div class="status reveal" data-stagger="1"><div class="label">Core pipeline</div><div class="val done">✓ Done</div></div>
+      <div class="status reveal" data-stagger="2"><div class="label">Union mount + ghost</div><div class="val done">✓ Done</div></div>
+      <div class="status reveal" data-stagger="3"><div class="label">Differential sync</div><div class="val done">✓ Done</div></div>
+      <div class="status reveal" data-stagger="4"><div class="label">Manifest with state</div><div class="val next">● Next</div></div>
+      <div class="status reveal" data-stagger="5"><div class="label">The Oracle</div><div class="val next">● Planned</div></div>
+      <div class="status reveal" data-stagger="6"><div class="label">Chunked sync</div><div class="val next">● Planned</div></div>
     </div>
   </div>
 </section>
@@ -119,5 +116,6 @@
   </div>
 </footer>
 
+<script src="/omnigate/assets/js/reveal.js" defer></script>
 </body>
 </html>
