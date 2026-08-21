@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — Performance</title>
+<meta name="description" content="omnigate performance design: the skip ladder, fast primitives, and the GPU backend strategy.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — Performance</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>The #1 rule</h2>
+    <p class="lede">Skip the hard work — then make the unavoidable work fast.</p>
+    <div class="ladder">
+      <div class="rung"><span class="tag">1 · MOUNT</span><span class="desc">Ghost Drive / union mount. Zero transfer, zero calculation.</span></div>
+      <div class="rung"><span class="tag">2 · REFLINK</span><span class="desc">CoW on btrfs/xfs/APFS. Near-instant, no bytes move.</span></div>
+      <div class="rung"><span class="tag">3 · SKIP</span><span class="desc">Steam manifests, caches, node_modules. Don't move what you'll redownload.</span></div>
+      <div class="rung"><span class="tag">4 · DEDUP</span><span class="desc">Chunked sync (casync rolling hash) — only novel bytes.</span></div>
+      <div class="rung"><span class="tag">5 · HASH</span><span class="desc">blake3 on deltas; trust the reflink (CoW = verified).</span></div>
+      <div class="rung"><span class="tag">6 · THEN</span><span class="desc">Parallel workers, blake3 SIMD/GPU, GPUDirect Storage, nvCOMP.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>Fast primitives — implemented</h2>
+    <div class="status-row">
+      <div class="status"><div class="label">Discovery</div><div class="val done">✓</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">Parallel + direct DB reads (pacman local/, dpkg status) — millisecond-class</p></div>
+      <div class="status"><div class="label">Windows discovery</div><div class="val done">✓</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">Registry uninstall keys (never Win32_Product) — ~2.2s full scan</p></div>
+      <div class="status"><div class="label">Hashing</div><div class="val done">✓</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">blake3 (AVX-512 5.8 GB/s vs sha256 0.45 GB/s = 12×) — ~3 min per 1 TB</p></div>
+      <div class="status"><div class="label">Copy</div><div class="val done">✓</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">reflink-first (CoW), parallel workers — 0 bytes streamed on CoW</p></div>
+      <div class="status"><div class="label">Config porting</div><div class="val done">✓</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">parallel copy, cache-pruned — fast</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>Fast primitives — roadmap</h2>
+    <div class="status-row">
+      <div class="status"><div class="label">Chunked sync</div><div class="val next">●</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">casync content-defined chunking — sub-file deltas, cross-file dedup</p></div>
+      <div class="status"><div class="label">Network deltas</div><div class="val next">●</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">zsync/rdiff over HTTP — only novel bytes over the wire</p></div>
+      <div class="status"><div class="label">GPU hashing</div><div class="val next">●</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">Vulkan compute kernel / CUDA — 59× over single-thread CPU</p></div>
+      <div class="status"><div class="label">GPU compression</div><div class="val next">●</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">nvCOMP (zstd/lz4/GDeflate) — 600 GB/s decompress on Blackwell</p></div>
+      <div class="status"><div class="label">Zero-copy transfer</div><div class="val next">●</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">GPUDirect Storage (NVMe↔GPU DMA) — no CPU bounce buffer</p></div>
+      <div class="status"><div class="label">In-line dedup</div><div class="val next">●</div><p style="color:rgb(var(--rgb-terminal-white)/.7);font-size:var(--font-size-small);margin-top:var(--space-small)">StreamDedup architecture — 12.7 GB/s single-node dedup</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">04</span>GPU backend strategy</h2>
+    <p class="lede">Portable, not CUDA-locked.</p>
+    <div class="ladder">
+      <div class="rung"><span class="tag">VULKAN</span><span class="desc">Portable default (AMD / Intel / NVIDIA) — implemented in <code>core/src/backends.rs</code>.</span></div>
+      <div class="rung"><span class="tag">CUDA</span><span class="desc">NVIDIA (GDS, nvcomp) — feature-gated.</span></div>
+      <div class="rung"><span class="tag">ROCM</span><span class="desc">AMD — feature-gated.</span></div>
+      <div class="rung"><span class="tag">SYCL</span><span class="desc">Intel oneAPI — feature-gated.</span></div>
+    </div>
+    <p style="margin-top:var(--space-medium)">Hashing and compression accelerate on <strong>any</strong> GPU, whichever backend is present.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">05</span>Transfer targets</h2>
+    <p>A 1 TB migration over 10 GbE should be <strong>transfer-limited, not tool-limited</strong> (~15 min at line rate, minus skips). The skip ladder makes the effective transfer far smaller: mount skips the copy entirely; Steam skips re-downloadable; dedup skips novel bytes.</p>
+    <h3>Cross-cutting</h3>
+    <ul style="margin-top:var(--space-small)">
+      <li>Parallelism everywhere — any multi-file op uses a worker pool.</li>
+      <li>Cache everything — discovery cache, hash cache, manifest cache.</li>
+      <li>Non-blocking UI — the TUI progress callback never serializes on transfer workers.</li>
+      <li>Rust core (<code>core/</code>) for the hot path; Python CLI for planning.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

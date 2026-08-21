@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — Security</title>
+<meta name="description" content="omnigate security: rollback always, read-only mounts, credential handling, no secrets in the manifest.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — Security</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>Rollback always</h2>
+    <p class="lede">The default posture is that nothing is destroyed until you say otherwise.</p>
+    <div class="principles">
+      <div class="principle"><strong>Read-only mounts</strong><span>The old disk is mounted read-only as an overlayfs lower layer. Nothing writes through to it.</span></div>
+      <div class="principle"><strong>Dry-run by default</strong><span><code>import --dry-run</code> and <code>sync --dry-run</code> show the plan before anything moves.</span></div>
+      <div class="principle"><strong>Old system stays bootable</strong><span>Until you explicitly remove it, the old OS remains a boot option — dual-boot without dual-booting.</span></div>
+      <div class="principle"><strong>Ghost, not wipe</strong><span><code>ghost</code> rewrites GPT GUIDs for auto-mount; it never erases the source partition.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>Credential handling</h2>
+    <p>Credentials are exported through a <strong>tiered</strong> path (<code>creds.py</code>) — with explicit consent, not silent collection. The manifest and git artifacts never carry live secrets.</p>
+    <ul style="margin-top:var(--space-medium)">
+      <li>Tiered credential export — only what you explicitly authorize.</li>
+      <li>No secrets in <code>machine.json</code> or <code>plan.md</code>.</li>
+      <li>Same-user, local-only tools. Nothing phones home.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>Deterministic runtime</h2>
+    <p>The shipped tool makes <strong>zero LLM calls</strong>. AI is used to build it, never to run it. That means no prompt injection surface at runtime, no network calls to a model, no data leaving the machine. The tool works offline.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">04</span>What omnigate won't do</h2>
+    <ul style="margin-top:var(--space-small)">
+      <li>Won't auto-map an unknown app — it flags it for review.</li>
+      <li>Won't overwrite an existing config without a confirm.</li>
+      <li>Won't claim kernel-level anti-cheat can run on Linux — that wall is real and it's stated plainly.</li>
+      <li>Won't vendor code from a no-license repo (the one hard license rule).</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

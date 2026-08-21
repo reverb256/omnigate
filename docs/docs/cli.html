@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — CLI Reference</title>
+<meta name="description" content="The omnigate CLI reference: export, import, mount, ghost, sync, oracle, tui, doctor.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — CLI Reference</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>Entry points</h2>
+    <p class="lede">Every command goes through <code>bootstrap.py</code>, which finds Python 3 + git and passes through exit codes.</p>
+    <pre><span class="c">./omnigate.sh</span> &lt;command&gt; ...   <span class="cm"># macOS / Linux wrapper</span>
+<span class="c">powershell -ExecutionPolicy Bypass -File</span> omnigate.ps1 &lt;command&gt; ...   <span class="cm"># Windows</span>
+<span class="c">python3</span> bootstrap.py &lt;command&gt; ...   <span class="cm"># any OS</span></pre>
+    <p>Exit codes: <code>0</code> success, <code>2</code> bad command/usage, <code>3</code> missing toolchain.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>Migrate</h2>
+    <h3>export</h3>
+    <pre><span class="c">python3</span> migrate.py export --os linux --out my-setup.zip
+<span class="c">python3</span> migrate.py export --os macos --out my-setup.zip
+<span class="c">python3</span> migrate.py export --os windows --out my-setup.zip</pre>
+    <p>Runs on the <strong>source</strong> machine. Detects installed apps, collects configs, and builds a git-committable package (<code>machine.json</code>, <code>plan.md</code>).</p>
+    <h3>import</h3>
+    <pre><span class="c">python3</span> migrate.py import my-setup.zip --dry-run
+<span class="c">python3</span> migrate.py import my-setup.zip</pre>
+    <p>Runs on the fresh Omarchy box. Maps to Omarchy targets (defer rule), runs the compat gate, ports configs, and generates a Home Manager profile fragment for Reverb-OS.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>Mount &amp; ghost</h2>
+    <pre><span class="c">sudo python3</span> mount.py mount /dev/sdb2 /data/games   <span class="cm"># zero-copy union mount</span>
+<span class="c">python3</span> mount.py list                                    <span class="cm"># show mounts</span>
+<span class="c">sudo python3</span> mount.py unmount &lt;path&gt;                     <span class="cm"># tear down</span>
+<span class="c">sudo python3</span> mount.py ghost /dev/sdb2                   <span class="cm"># permanent zero-copy lower layer</span></pre>
+    <p><code>ghost</code> rewrites each partition's GPT type GUID to the Discoverable Partitions Spec so <code>systemd-gpt-auto-generator</code> auto-mounts it forever. Rollback = boot the old ESP.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">04</span>Sync</h2>
+    <pre><span class="c">python3</span> sync.py &lt;src&gt; &lt;dst&gt; --dry-run   <span class="cm"># reflink-first differential sync</span></pre>
+    <p>Copies only what changed; skips re-downloadable content. Reflink-first on btrfs/XFS means near-instant with zero duplicate space.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">05</span>Oracle</h2>
+    <pre><span class="c">python3</span> oracle.py plan --dry-run --out plan.json
+<span class="c">python3</span> oracle.py cleanup-plan --out cleanup.json</pre>
+    <p>The pre-flight agent. Enumerates apps/profiles/caches, cleans re-downloadable content, checksums everything, and generates the complete plan as a reviewable artifact.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">06</span>TUI &amp; doctor</h2>
+    <pre><span class="c">python3</span> tui.py                    <span class="cm"># terminal UI: command picker, plan review, progress bar</span>
+<span class="c">python3</span> tui.py --plan plan.json   <span class="cm"># review a specific plan</span>
+<span class="c">python3</span> tui.py --src &lt;dir&gt; --dst &lt;dir&gt;  <span class="cm"># live sync view</span>
+<span class="c">python3</span> bootstrap.py doctor       <span class="cm"># prints python + git locations/versions</span></pre>
+    <p>The TUI is box-drawn and ANSI-colored; it degrades to plain text when not a TTY. The plan review color-codes each action: <span style="color:var(--color-green)">green = copy</span>, <span style="color:var(--color-terminal-cyan)">blue = defer</span>, <span style="color:var(--color-turquoise)">yellow = unknown</span>.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

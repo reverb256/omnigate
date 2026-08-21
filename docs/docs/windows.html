@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — Windows Migration</title>
+<meta name="description" content="omnigate's Windows strategy: skip, defer, containerize. The three-tier answer to moving from Windows.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — Windows</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>Containerize, don't port</h2>
+    <p class="lede">For Windows sources, omnigate's answer is three tiers — and the third is the one that changes everything.</p>
+    <div class="layers">
+      <div class="layer">
+        <div class="n">Tier 1</div>
+        <h3>SKIP</h3>
+        <p>Steam games stay on the existing NTFS library. Proton mounts it — no reinstall, no copy.</p>
+        <div class="bit">⚡ Proton/NTFS pattern</div>
+      </div>
+      <div class="layer">
+        <div class="n">Tier 2</div>
+        <h3>DEFER</h3>
+        <p>Apps with an Omarchy equivalent map to it — the existing mapper handles this.</p>
+        <div class="bit">⚡ defer rule</div>
+      </div>
+      <div class="layer">
+        <div class="n">Tier 3</div>
+        <h3>CONTAINERIZE</h3>
+        <p>Apps with NO equivalent (MS/Adobe suites, kernel anti-cheat games) run in a Windows container — dockur + Podman + FreeRDP RemoteApp — surfaced as native Linux windows.</p>
+        <div class="bit">⚡ Migration = install the container, don't port the app.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>The hard wall</h2>
+    <blockquote style="border-left:3px solid var(--color-turquoise); padding-left:var(--space-medium); margin-block:var(--space-medium); color:var(--color-terminal-white); font-size:var(--font-size-medium)">
+      Kernel-level anti-cheat (Valorant/Vanguard) cannot run on Linux.
+    </blockquote>
+    <p>omnigate will tell you this plainly instead of pretending otherwise. Everything else has a path.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>Windows detection</h2>
+    <p>Windows discovery reads the registry uninstall keys — <strong>never</strong> <code>Win32_Product</code> (which is catastrophically slow and has side effects). A full scan takes ~2.2 seconds.</p>
+    <pre><span class="c">powershell -ExecutionPolicy Bypass -File</span> omnigate.ps1 export --os windows --out my-setup.zip</pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
