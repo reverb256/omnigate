@@ -1,0 +1,181 @@
+{
+  "_schema_version": "0.1",
+  "_comment": "source-app -> Omarchy-target mapping. defer:true means Omarchy already provides it — skip, note only. type: omarchy_pkg (omarchy pkg add / pacman), hm_pkg (home.packages in HM profile), hm_module (programs.*.enable in HM), file (config-only).",
+  "mappings": [
+    {
+      "source_app": "Code",
+      "detect": { "linux": ["code"], "macos": ["Visual Studio Code.app"], "windows": ["Code.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "visual-studio-code-bin" },
+      "config_paths": ["~/.config/Code", "~/Library/Application Support/Code"],
+      "defer": false
+    },
+    {
+      "source_app": "Spotify",
+      "detect": { "linux": ["spotify"], "macos": ["Spotify.app"], "windows": ["Spotify.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "spotify" },
+      "config_paths": ["~/.config/spotify"],
+      "defer": false
+    },
+    {
+      "source_app": "Discord",
+      "detect": { "linux": ["discord"], "macos": ["Discord.app"], "windows": ["Discord.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "discord" },
+      "config_paths": ["~/.config/discord"],
+      "defer": false
+    },
+    {
+      "source_app": "Slack",
+      "detect": { "linux": ["slack"], "macos": ["Slack.app"], "windows": ["slack.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "slack-desktop" },
+      "config_paths": ["~/.config/Slack"],
+      "defer": false
+    },
+    {
+      "source_app": "Obsidian",
+      "detect": { "linux": ["obsidian"], "macos": ["Obsidian.app"], "windows": ["Obsidian.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "obsidian" },
+      "config_paths": ["~/.config/obsidian"],
+      "defer": false
+    },
+    {
+      "source_app": "VLC",
+      "detect": { "linux": ["vlc"], "macos": ["VLC.app"], "windows": ["vlc.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "vlc" },
+      "config_paths": ["~/.config/vlc"],
+      "defer": false
+    },
+    {
+      "source_app": "GIMP",
+      "detect": { "linux": ["gimp"], "macos": ["GIMP.app"], "windows": ["gimp.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "gimp" },
+      "config_paths": ["~/.config/GIMP"],
+      "defer": false
+    },
+    {
+      "source_app": "Inkscape",
+      "detect": { "linux": ["inkscape"], "macos": ["Inkscape.app"], "windows": ["inkscape.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "inkscape" },
+      "config_paths": ["~/.config/inkscape"],
+      "defer": false
+    },
+    {
+      "source_app": "Blender",
+      "detect": { "linux": ["blender"], "macos": ["Blender.app"], "windows": ["blender.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "blender" },
+      "config_paths": ["~/.config/blender"],
+      "defer": false
+    },
+    {
+      "source_app": "Firefox",
+      "detect": { "linux": ["firefox"], "macos": ["Firefox.app"], "windows": ["firefox.exe"] },
+      "omarchy_target": { "type": "defer_omarchy", "name": "firefox" },
+      "config_paths": ["~/.mozilla/firefox", "~/Library/Application Support/Firefox"],
+      "defer": true
+    },
+    {
+      "source_app": "Chromium",
+      "detect": { "linux": ["chromium"], "macos": ["Chromium.app"], "windows": ["chrome.exe"] },
+      "omarchy_target": { "type": "defer_omarchy", "name": "chromium" },
+      "config_paths": ["~/.config/chromium"],
+      "defer": true
+    },
+    {
+      "source_app": "Alacritty",
+      "detect": { "linux": ["alacritty"], "macos": ["Alacritty.app"] },
+      "omarchy_target": { "type": "defer_omarchy", "name": "alacritty" },
+      "config_paths": ["~/.config/alacritty"],
+      "defer": true
+    },
+    {
+      "source_app": "Neovim",
+      "detect": { "linux": ["nvim"], "macos": ["nvim"] },
+      "omarchy_target": { "type": "defer_omarchy", "name": "neovim" },
+      "config_paths": ["~/.config/nvim"],
+      "defer": true
+    },
+    {
+      "source_app": "Zsh",
+      "detect": { "linux": ["zsh"], "macos": ["zsh"] },
+      "omarchy_target": { "type": "defer_omarchy", "name": "zsh" },
+      "config_paths": ["~/.zshrc", "~/.zprofile"],
+      "defer": true
+    },
+    {
+      "source_app": "Git",
+      "detect": { "linux": ["git"], "macos": ["git"] },
+      "omarchy_target": { "type": "hm_module", "name": "git" },
+      "config_paths": ["~/.gitconfig", "~/.gitignore_global"],
+      "defer": false
+    },
+    {
+      "source_app": "tmux",
+      "detect": { "linux": ["tmux"], "macos": ["tmux"] },
+      "omarchy_target": { "type": "hm_module", "name": "tmux" },
+      "config_paths": ["~/.tmux.conf", "~/.config/tmux"],
+      "defer": false
+    },
+    {
+      "source_app": "rclone",
+      "detect": { "linux": ["rclone"], "macos": ["rclone"] },
+      "omarchy_target": { "type": "hm_module", "name": "rclone" },
+      "config_paths": ["~/.config/rclone"],
+      "defer": false
+    },
+    {
+      "source_app": "Zen Browser",
+      "detect": { "linux": ["zen"], "macos": ["Zen Browser.app"] },
+      "omarchy_target": { "type": "hm_module", "name": "zen-browser" },
+      "config_paths": ["~/.zen", "~/.config/zen"],
+      "defer": false
+    },
+    {
+      "source_app": "Vesktop",
+      "detect": { "linux": ["vesktop"], "macos": ["Vesktop.app"] },
+      "omarchy_target": { "type": "hm_module", "name": "vesktop" },
+      "config_paths": ["~/.config/vesktop"],
+      "defer": false
+    },
+    {
+      "source_app": "CopyQ",
+      "detect": { "linux": ["copyq"], "macos": ["CopyQ.app"] },
+      "omarchy_target": { "type": "hm_module", "name": "copyq" },
+      "config_paths": ["~/.config/copyq"],
+      "defer": false
+    },
+    {
+      "source_app": "Lazygit",
+      "detect": { "linux": ["lazygit"], "macos": ["lazygit"] },
+      "omarchy_target": { "type": "hm_module", "name": "lazygit" },
+      "config_paths": ["~/.config/lazygit"],
+      "defer": false
+    },
+    {
+      "source_app": "OBS Studio",
+      "detect": { "linux": ["obs"], "macos": ["OBS.app"], "windows": ["obs64.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "obs-studio" },
+      "config_paths": ["~/.config/obs-studio"],
+      "defer": false
+    },
+    {
+      "source_app": "GIMP",
+      "detect": { "linux": ["gimp"], "macos": ["GIMP.app"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "gimp" },
+      "config_paths": ["~/.config/GIMP"],
+      "defer": false
+    },
+    {
+      "source_app": "DaVinci Resolve",
+      "detect": { "linux": ["resolve"], "macos": ["DaVinci Resolve.app"], "windows": ["Resolve.exe"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "davinci-resolve" },
+      "config_paths": ["~/.local/share/DaVinciResolve"],
+      "defer": false
+    },
+    {
+      "source_app": "Krita",
+      "detect": { "linux": ["krita"], "macos": ["krita.app"] },
+      "omarchy_target": { "type": "omarchy_pkg", "name": "krita" },
+      "config_paths": ["~/.config/krita"],
+      "defer": false
+    }
+  ]
+}
