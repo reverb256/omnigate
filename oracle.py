@@ -293,11 +293,12 @@ def cmd_cleanup_plan(args: list[str]) -> int:
     return 0
 
 
-def main() -> int:
-    if len(sys.argv) < 2:
+def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if not argv:
         print(__doc__)
         return 2
-    cmd, rest = sys.argv[1], sys.argv[2:]
+    cmd, rest = argv[0], argv[1:]
     if cmd == "plan":
         return cmd_plan(rest)
     if cmd == "cleanup-plan":

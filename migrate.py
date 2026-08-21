@@ -190,6 +190,11 @@ def main() -> int:
         return cmd_export(rest)
     if cmd == "import":
         return cmd_import(rest)
+    if cmd == "oracle":
+        import oracle
+        if not rest or rest[0] not in ("plan", "cleanup-plan"):
+            rest = ["plan"] + rest
+        return oracle.main(rest)
     print(f"unknown command: {cmd}", file=sys.stderr)
     print(__doc__)
     return 2
