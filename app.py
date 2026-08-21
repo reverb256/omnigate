@@ -155,7 +155,28 @@ def launch_tier(page: ft.Page, tier: str):
 
     if tier == "container":
         threading.Thread(target=_run, daemon=True).start()
-    # microvm / fullvm / native: wired in the next iteration (QEMU/cocoon backends)
+    elif tier == "fullvm":
+        # Full VM tier: launch the cocoon macOS VM (SSH-ready golden image)
+        _run_macos_vm()
+    # microvm / native: wired in the next iteration (cloud-hypervisor / qemu microvm backends)
+
+
+def _run_macos_vm():
+    """Launch the cocoon macOS VM (the Tier 3 full-VM demo backend)."""
+    import os
+    import subprocess
+
+    env = dict(os.environ)
+    env["COCOON_MACOS_HOME"] = str(Path.home() / "VMs/cocoon-macos")
+    cocoon = Path("/tmp/cocoon-macos/cocoon-macos")
+    if cocoon.exists():
+        subprocess.Popen(
+            [str(cocoon), "vm", "run",
+             "ghcr.io/cocoonstack/cocoon-macos/tahoe:26",
+             "--name", "omnigate-demo-mac",
+             "--cpus", "4", "--memory", "4096", "--ssh-port", "22223"],
+            env=env, start_new_session=True,
+        )
 
 
 def main(page: ft.Page):
