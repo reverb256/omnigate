@@ -11,24 +11,31 @@ before it entered this document. The agent's full output is preserved in
 the session record.
 
 **Underlying technologies (all open source / standard, verified by the
-research agent):**
+research agent; licenses verified 2026-08-21):**
 
-| Concept | Built on | Exists since |
-|---------|----------|--------------|
-| Ghost Drive | systemd `gpt-auto-generator`, Discoverable Partitions Spec | systemd 240+ (2018) |
-| The Coffin | systemd-sysext/confext, DDI format, dm-verity | systemd 248+ (2021) |
-| Living Ghost VM | qemu-img backing chains, virtiofs DAX | QEMU 5.0+ (2020) |
-| Time-Travel Boot | swsusp hibernation, systemd-boot boot counting | Linux kernel (long-standing) |
-| One-File Computer | Nix/Home Manager declarative model | 2003 / 2016 |
-| Chunked-Time Machine | casync (rolling-hash chunking) | 2017–2019 (dormant) |
-| Process Resurrection | CRIU (checkpoint/restore) | 2015 (Linux) |
-| The Oracle | fanotify kernel API | Linux 2.6.36 (2010) |
-| State Alchemy | Win2Linux mapping engine pattern | 2025 |
-| Cross-OS Delta Feed | zsync/rsync algorithm, IPFS/kubo | 2003 / 2015 |
+| Concept | Built on | License | Exists since |
+|---------|----------|---------|--------------|
+| Ghost Drive | systemd `gpt-auto-generator`, Discoverable Partitions Spec | GPL-2.0 (systemd) | systemd 240+ (2018) |
+| The Coffin | systemd-sysext/confext, DDI format, dm-verity | GPL-2.0 (systemd) | systemd 248+ (2021) |
+| Living Ghost VM | qemu-img backing chains, virtiofs DAX | GPL-2.0+ (QEMU) | QEMU 5.0+ (2020) |
+| Time-Travel Boot | swsusp hibernation, systemd-boot boot counting | GPL-2.0 (kernel) | Linux kernel (long-standing) |
+| One-File Computer | Nix/Home Manager declarative model | LGPL-2.1+ (Nix) | 2003 / 2016 |
+| Chunked-Time Machine | casync (rolling-hash chunking) | LGPL-2.1+ | 2017–2019 (dormant) |
+| Process Resurrection | CRIU (checkpoint/restore) | GPL-2.0, LGPL-2.1 (lib/) | 2015 (Linux) |
+| The Oracle | fanotify kernel API | GPL-2.0 (kernel) | Linux 2.6.36 (2010) |
+| State Alchemy | Win2Linux mapping engine pattern | GPL-3.0 (Win2Linux) | 2025 |
+| Cross-OS Delta Feed | zsync/rsync algorithm, IPFS/kubo | GPL-2.0+ / MIT+Apache-2.0 | 2003 / 2015 |
 
 **Pattern inspiration:** the two-sided export/import shape follows the
-Win2Linux migration helper (`AtillaTokmak/Win2Linux`) and the
-dotfiles-migration pattern (`fedesapuppo/dotfiles-migration`).
+Win2Linux migration helper (`AtillaTokmak/Win2Linux`, GPL-3.0) and the
+dotfiles-migration pattern (`fedesapuppo/dotfiles-migration`, **no license —
+referenced as a pattern only; no code copied**).
+
+**License compliance stance:** `omnigate` is MIT. We do NOT copy code from
+any referenced project — we call standard systemd/QEMU/kernel tools (GPL is
+compatible with using tools as separate programs) and reference patterns.
+The one hard rule: never vendor code from a no-license repo
+(`dotfiles-migration`); treat no-license as all-rights-reserved.
 
 **Product vision:** the "migration = a mount, not a copy" framing and the
 three-pillar architecture were directed by j_kro; the ten ideas are the
