@@ -316,9 +316,28 @@ def detect_windows() -> set[str]:
         r"HKLM\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall",
         r"HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall",
     ]
+    # `reg query` expands HKLM→HKEY_LOCAL_MACHINE and HKCU→HKEY_CURRENT_USER;
+    # strip BOTH forms or the prefix never matches and full paths leak through.
+    expanded = {
+        r"HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall":
+            r"HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall",
+        r"HKLM\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall":
+            r"HKEY_LOCAL_MACHINE\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall",
+        r"HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall":
+            r"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall",
+    }
     for key in keys:
         out = run(["reg", "query", key])
-        found.update(o.replace(key, "").strip().rstrip("\\") for o in out if o.strip())
+        for o in out:
+            if not o.strip():
+                continue
+            stripped = o
+            for prefix in (expanded[key], key):
+                if stripped.startswith(prefix):
+                    stripped = stripped[len(prefix):].strip().lstrip("\\")
+                    break
+            if stripped:
+                found.add(stripped)
     return found
 
 
