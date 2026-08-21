@@ -111,6 +111,7 @@ def phase3_show(report: dict, dry_run: bool) -> int:
         total = len(items)
         stage = Path.home() / ".omarchy-migrate-stage"
         backup_root = Path.home() / f".omarchy-migrate-backup-{datetime.now():%Y%m%d-%H%M%S}"
+        backup_manifest: dict[str, str] = {}
         for i, (app_key, src) in enumerate(items, 1):
             pct = i / total
             app_name = app_key.split("__")[0]
@@ -128,6 +129,7 @@ def phase3_show(report: dict, dry_run: bool) -> int:
                     backup = backup_root / rel
                     backup.parent.mkdir(parents=True, exist_ok=True)
                     shutil.move(str(dst), str(backup))
+                    backup_manifest[rel] = str(dst)
                 if not dry_run:
                     dst.parent.mkdir(parents=True, exist_ok=True)
                     if staged.is_dir():
@@ -142,6 +144,9 @@ def phase3_show(report: dict, dry_run: bool) -> int:
             except Exception as e:
                 print(f"  {style('▸', CYAN)} {app_name:<20} {bar(pct, 1.0)}{RESET}"
                       f"  {i}/{total}  {RED}✗ {e}{RESET}")
+        if backup_manifest:
+            (backup_root / "manifest.json").write_text(
+                json.dumps(backup_manifest, indent=2))
     print(f"{GREEN}  ✓ Configs restored{RESET}\n")
 
     # HM fragment

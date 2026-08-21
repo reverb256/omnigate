@@ -177,6 +177,7 @@ def cmd_import(args: list[str]) -> int:
     # ── Phase 3: SHOW (the installation show) ───────────────────────────
     print("\n\x1b[1mPhase 3/4: Installation show\x1b[0m\n")
     backup_root = Path.home() / f".omarchy-migrate-backup-{datetime.now():%Y%m%d-%H%M%S}"
+    backup_manifest: dict[str, str] = {}
     for app_key, src in configs.items():
         staged = stage / "configs" / app_key
         if not staged.exists():
@@ -191,6 +192,7 @@ def cmd_import(args: list[str]) -> int:
             backup = backup_root / rel
             backup.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(dst), str(backup))
+            backup_manifest[rel] = str(dst)
         if dry_run:
             print(f"  · restore {app_name}: {src} -> {dst} (dry-run)")
         else:
@@ -202,6 +204,10 @@ def cmd_import(args: list[str]) -> int:
                 # file → file: copy2 directly (never nest as a dir)
                 shutil.copy2(staged, dst)
             print(f"  · restored {app_name} -> {dst}")
+    if backup_manifest:
+        (backup_root / "manifest.json").write_text(
+            json.dumps(backup_manifest, indent=2))
+        print(f"  · backup manifest -> {backup_root / 'manifest.json'}")
 
     fragment = gen(report)
     hm_out = Path.home() / "migration-profile.nix"
@@ -248,6 +254,63 @@ def _target_path(src: str, source_os: str) -> Path:
     return Path(src)
 
 
+def cmd_rollback(args: list[str]) -> int:
+    """Restore from a migration backup dir (.omarchy-migrate-backup-*)."""
+    home = Path.home()
+    backups = sorted(home.glob(".omarchy-migrate-backup-*"))
+    if not backups:
+        print("No migration backups found.", file=sys.stderr)
+        return 1
+    if "--list" in args:
+        for b in backups:
+            n = sum(1 for _ in b.iterdir()) if b.is_dir() else 0
+            print(f"{b.name} ({n} item{'s' if n != 1 else ''})")
+        return 0
+    target = None
+    for a in args:
+        if a.startswith("--restore"):
+            parts = a.split("=", 1)
+            target = parts[1] if len(parts) > 1 else args[args.index(a) + 1]
+    latest = backups[-1]
+    print(f"Rollback from: {latest}")
+    # The backup stores a manifest.json mapping name → original target path.
+    manifest = {}
+    mf = latest / "manifest.json"
+    if mf.exists():
+        try:
+            manifest = json.loads(mf.read_text())
+        except Exception:
+            manifest = {}
+    items = sorted(p for p in latest.iterdir() if p.name != "manifest.json")
+    if not items:
+        print("  (backup dir is empty)")
+        return 0
+    for item in items:
+        if target and item.name != target:
+            continue
+        # Reconstruct the original target path from the manifest (robust).
+        orig = manifest.get(item.name, "")
+        if not orig:
+            # Fallback: name-encoded (slashes → underscores) under home.
+            orig = str(home / item.name.replace("_", "/").lstrip("/"))
+        dst = Path(orig)
+        # Move the current (new) version aside first — never delete
+        if dst.exists():
+            rb = home / f".omarchy-migrate-rollback-{datetime.now():%Y%m%d-%H%M%S}"
+            rb.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(dst), str(rb / dst.name))
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if item.is_dir():
+            shutil.copytree(item, dst, dirs_exist_ok=True)
+        else:
+            shutil.copy2(item, dst)
+        print(f"  ✓ restored {item.name} -> {dst}")
+        if target:
+            break
+    print("\nRollback complete. Verify your configs.")
+    return 0
+
+
 def main() -> int:
     args = sys.argv[1:]
     if not args:
@@ -258,6 +321,8 @@ def main() -> int:
         return cmd_export(rest)
     if cmd == "import":
         return cmd_import(rest)
+    if cmd == "rollback":
+        return cmd_rollback(rest)
     if cmd == "oracle":
         import oracle
         if not rest or rest[0] not in ("plan", "cleanup-plan"):
