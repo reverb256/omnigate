@@ -1,0 +1,1 @@
+/home/j_kro/Projects/omarchy-migrate/core/target/debug/libomnigate_core.rlib: /home/j_kro/Projects/omarchy-migrate/core/src/backends.rs /home/j_kro/Projects/omarchy-migrate/core/src/hash.rs /home/j_kro/Projects/omarchy-migrate/core/src/lib.rs /home/j_kro/Projects/omarchy-migrate/core/src/transfer.rs

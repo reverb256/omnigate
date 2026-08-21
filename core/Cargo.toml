@@ -1,0 +1,29 @@
+[package]
+name = "omnigate-core"
+version = "0.1.0"
+edition = "2021"
+description = "omnigate GPU-accelerated core: hashing, transfer, compression backends"
+license = "MIT"
+
+[dependencies]
+# Vulkan compute backend (portable: AMD/Intel/NVIDIA)
+ash = "0.38"          # Vulkan bindings (no C dependency beyond vulkan loader)
+
+# Optional GPU backends (feature-gated)
+# cuda = { package = "cudarc", version = "0.12", optional = true }   # CUDA
+# rocm = { package = "hip-sys", version = "0.2", optional = true }   # ROCm
+
+# Hashing: blake3 (SIMD by default, the CPU fast path)
+blake3 = "1.5"
+
+# Reflink (CoW) copies — the skip-ladder #2
+reflink = "0.1"
+
+# CLI
+clap = { version = "4.5", features = ["derive"] }
+
+[features]
+default = ["vulkan"]
+vulkan = []           # Vulkan compute (portable default)
+# cuda/rocm/sycl backends: add the optional dep + feature when their
+# toolchains are present. Vulkan compute covers all vendors today.
