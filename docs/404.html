@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 — redirecting…</title>
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+<style>
+  body { align-items: center; justify-content: center; text-align: center; min-height: 100vh; }
+  .wrap { padding-block: var(--space-xxxx-large); }
+  h1 { font-size: var(--font-size-large); color: var(--color-terminal-white); }
+  p { color: rgb(var(--rgb-terminal-white) / 0.7); }
+  .button { display: inline-flex; margin-top: var(--space-large); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>404 — that page moved</h1>
+  <p>Redirecting you to the right place…</p>
+  <a class="button" href="/omnigate/">Home</a>
+</div>
+<script>
+  // Redirect legacy trailing-slash doc URLs (pre-.html fix) to their .html form.
+  (function () {
+    var m = location.pathname.match(/^\/omnigate\/docs\/([a-z-]+)\/$/);
+    if (m) {
+      var page = m[1];
+      var known = ['quickstart','architecture','cli','performance','windows',
+                   'security','principles','cross-platform','roadmap','faq'];
+      if (known.indexOf(page) !== -1) {
+        location.replace('/omnigate/docs/' + page + '.html');
+        return;
+      }
+    }
+    // Fallback: known top-level moved pages
+    if (location.pathname === '/omnigate/ROLLBACK' || location.pathname === '/omnigate/ROLLBACK/') {
+      location.replace('/omnigate/docs/');
+    }
+  })();
+</script>
+</body>
+</html>
