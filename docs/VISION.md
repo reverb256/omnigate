@@ -38,8 +38,8 @@ The one hard rule: never vendor code from a no-license repo
 (`dotfiles-migration`); treat no-license as all-rights-reserved.
 
 **Product vision:** the "migration = a mount, not a copy" framing and the
-three-pillar architecture were directed by j_kro; the ten ideas are the
-research agent's synthesis of verified technology.
+three-pillar architecture were directed by the project owner; the ten ideas
+are the research agent's synthesis of verified technology.
 
 ## The thesis
 

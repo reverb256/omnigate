@@ -1,0 +1,13 @@
+# omnigate
+
+Migrate to Omarchy, natively. Moves a full OS setup (apps, configs, user
+data, game libraries) from Linux/macOS/Windows to Omarchy without treating
+migration as a file copy. Union-mount (zero-copy), differential sync,
+declarative manifest, two-sided export/import.
+
+- Repo: https://github.com/reverb256/omnigate
+- Docs: https://github.com/reverb256/omnigate/tree/main/docs
+- License: MIT
+- Language: Python (stdlib)
+- Architecture: scanner → mapper (defer rule) → generator; mount.py
+  (overlayfs/Ghost Drive); sync.py (reflink differential)
