@@ -2,6 +2,38 @@
 
 > AI builds it. The runtime is deterministic and hyper-optimized.
 
+## Credits & attribution
+
+**Research:** The world-breaking ten below were researched and synthesized
+by a delegated research agent (Hermes subagent, `deleg_b94ce619`,
+2026-08-21), which verified each concept against real, existing technology
+before it entered this document. The agent's full output is preserved in
+the session record.
+
+**Underlying technologies (all open source / standard, verified by the
+research agent):**
+
+| Concept | Built on | Exists since |
+|---------|----------|--------------|
+| Ghost Drive | systemd `gpt-auto-generator`, Discoverable Partitions Spec | systemd 240+ (2018) |
+| The Coffin | systemd-sysext/confext, DDI format, dm-verity | systemd 248+ (2021) |
+| Living Ghost VM | qemu-img backing chains, virtiofs DAX | QEMU 5.0+ (2020) |
+| Time-Travel Boot | swsusp hibernation, systemd-boot boot counting | Linux kernel (long-standing) |
+| One-File Computer | Nix/Home Manager declarative model | 2003 / 2016 |
+| Chunked-Time Machine | casync (rolling-hash chunking) | 2017–2019 (dormant) |
+| Process Resurrection | CRIU (checkpoint/restore) | 2015 (Linux) |
+| The Oracle | fanotify kernel API | Linux 2.6.36 (2010) |
+| State Alchemy | Win2Linux mapping engine pattern | 2025 |
+| Cross-OS Delta Feed | zsync/rsync algorithm, IPFS/kubo | 2003 / 2015 |
+
+**Pattern inspiration:** the two-sided export/import shape follows the
+Win2Linux migration helper (`AtillaTokmak/Win2Linux`) and the
+dotfiles-migration pattern (`fedesapuppo/dotfiles-migration`).
+
+**Product vision:** the "migration = a mount, not a copy" framing and the
+three-pillar architecture were directed by j_kro; the ten ideas are the
+research agent's synthesis of verified technology.
+
 ## The thesis
 
 Migrating an OS is not a file copy. It is a **mount**, a **delta**, and a
