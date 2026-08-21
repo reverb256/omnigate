@@ -177,5 +177,40 @@ class TestRollback(unittest.TestCase):
             shutil.rmtree(tmp, ignore_errors=True)
 
 
+class TestCoreBridge(unittest.TestCase):
+    """The Rust core bridge (hash + reflink copy)."""
+
+    def test_hash_roundtrip(self):
+        from core_bridge import hash_files
+        import tempfile
+        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as f:
+            f.write(b"hello bridge\n")
+            path = f.name
+        try:
+            result = hash_files([path])
+            self.assertIn(path, result)
+            self.assertEqual(len(result[path]), 64)  # blake3 hex (64 chars)
+            # Deterministic
+            again = hash_files([path])
+            self.assertEqual(result[path], again[path])
+        finally:
+            os.unlink(path)
+
+    def test_copy_roundtrip(self):
+        from core_bridge import copy_file
+        import tempfile
+        tmp = tempfile.mkdtemp()
+        try:
+            src = Path(tmp) / "a.txt"
+            src.write_text("bridge data")
+            dst = Path(tmp) / "b.txt"
+            ok = copy_file(str(src), str(dst))
+            self.assertTrue(ok)
+            self.assertTrue(dst.exists())
+            self.assertEqual(dst.read_text(), "bridge data")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 if __name__ == "__main__":
     unittest.main()
