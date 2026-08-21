@@ -136,6 +136,19 @@ This is what keeps `omnigate` additive: it never fights Omarchy, never
 duplicates what Omarchy ships, and only carries what the user's system
 genuinely adds on top.
 
+## Beautiful & fast
+
+**Beautiful.** `python3 tui.py` is a terminal UI with a command picker, a
+color-coded migration-plan review (green = copy, blue = defer, yellow =
+unknown), and a real-time progress bar with ETA. Box-drawn, ANSI-colored,
+works on any terminal; degrades to plain text when not a TTY.
+
+**Fast.** See [PERF.md](PERF.md) for the full design. The skip-ladder is the
+#1 optimization: **mount > reflink > skip > dedup > hash-delta** — the tool
+moves 20 GB, not 1 TB. The Rust core (`core/`) adds blake3 parallel hashing
+(12× sha256) and reflink-first copies (0 bytes streamed), with a portable
+Vulkan-compute GPU backend (CUDA/ROCm/SYCL feature-gated).
+
 ## Development
 
 `omnigate` is **AI-built**: agents design and write the code, curate the
