@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — Principles</title>
+<meta name="description" content="omnigate's governing principles: defer to Omarchy, never guess, zero-copy first, rollback always.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — Principles</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>The governing rule</h2>
+    <blockquote style="border-left:3px solid var(--color-terminal-cyan); padding-left:var(--space-medium); margin-block:var(--space-medium); color:var(--color-terminal-white); font-size:var(--font-size-medium)">
+      If Omarchy has a supported way to provide or configure something, defer to
+      Omarchy. Never guess an unknown app — flag it for review.
+    </blockquote>
+    <p>This is what keeps omnigate <strong>additive</strong>: it never fights Omarchy, never duplicates what Omarchy ships, and only carries what your system genuinely adds on top.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>Principles</h2>
+    <div class="principles">
+      <div class="principle"><strong>Defer to Omarchy</strong><span>If Omarchy provides it, don't duplicate it. The mapper defers automatically against the Omarchy reference.</span></div>
+      <div class="principle"><strong>Never guess</strong><span>Unknown apps get flagged for review — never auto-mapped.</span></div>
+      <div class="principle"><strong>Zero-copy first</strong><span>Mount before you copy. Copy only what changed.</span></div>
+      <div class="principle"><strong>Rollback always</strong><span>The old system stays bootable until you say otherwise.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>AI builds it; the runtime is deterministic</h2>
+    <p>omnigate is AI-built: agents design and write the code, curate the mapping database, and tune the algorithms. But the shipped runtime makes <strong>no LLM calls</strong>. The tool must work without any model — on any machine, on any of the three OSes.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

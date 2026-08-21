@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — FAQ</title>
+<meta name="description" content="omnigate FAQ: is it safe, does it move my Steam games, what about anti-cheat, is the runtime deterministic.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — FAQ</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">/</span>FAQ</h2>
+
+    <h3>Is it safe?</h3>
+    <p>The old system stays bootable until you say otherwise. The default is rollback-always: mount is read-only, sync is dry-run until you review the plan, and nothing destructive happens without an explicit confirm.</p>
+
+    <h3>Does it move my Steam games?</h3>
+    <p>Depends what "move" means. The union mount makes your existing Steam library visible to Omarchy with <strong>zero copy</strong> — games launch immediately, no reinstall. The skip ladder then decides what actually needs to transfer: anything re-downloadable stays put.</p>
+
+    <h3>What about Windows apps with no Linux equivalent?</h3>
+    <p>Three tiers. <strong>SKIP</strong> — Steam games stay on NTFS, Proton mounts them. <strong>DEFER</strong> — apps with an Omarchy equivalent map to it. <strong>CONTAINERIZE</strong> — MS/Adobe suites and kernel anti-cheat games run in a Windows container (dockur + Podman + FreeRDP RemoteApp), surfaced as native Linux windows. Migration = install the container, don't port the app.</p>
+
+    <h3>Is there a hard wall?</h3>
+    <p>One: kernel-level anti-cheat (Valorant/Vanguard) cannot run on Linux. omnigate will tell you this plainly instead of pretending otherwise.</p>
+
+    <h3>Does it need an LLM at runtime?</h3>
+    <p>No. The runtime is deterministic — zero LLM calls. AI is used to <em>build</em> it (agents write the code, curate the mapping database, tune the algorithms), never to run it.</p>
+
+    <h3>What does "defer to Omarchy" mean?</h3>
+    <p>If Omarchy has a supported way to provide or configure something, omnigate defers to it — it doesn't duplicate it. Unknown apps get flagged for review, never auto-mapped. The tool is additive by design; it never fights Omarchy.</p>
+
+    <h3>Is it really cross-platform?</h3>
+    <p>Yes. The export side runs on Linux, macOS, and Windows with three stdlib launchers (<code>omnigate.sh</code>, <code>omnigate.ps1</code>, <code>bootstrap.py</code>). Only the mount layer is Linux-target (overlayfs + root).</p>
+
+    <h3>How fast is it really?</h3>
+    <p>The skip ladder is the honest answer: <strong>mount &gt; reflink &gt; skip &gt; dedup &gt; hash-delta</strong>. omnigate moves 20 GB, not 1 TB. The unavoidable transfer gets parallel blake3 hashing (12× sha256) and a portable Vulkan-compute GPU backend.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

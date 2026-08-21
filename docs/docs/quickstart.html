@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — Quick Start</title>
+<meta name="description" content="Export from the old machine, import on fresh Omarchy, mount the old disk. The 20-second omnigate quick start.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — Quick Start</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>Quick start</h2>
+    <p class="lede">Run on the old machine. Run on the new one. Watch the mount do the heavy lifting.</p>
+
+    <h3>Export — on the OLD machine</h3>
+    <pre><span class="cm"># Linux / macOS</span>
+<span class="c">./omnigate.sh</span> export --os linux --out my-setup.zip
+
+<span class="cm"># Windows</span>
+<span class="c">powershell -ExecutionPolicy Bypass -File</span> omnigate.ps1 export --os windows --out my-setup.zip</pre>
+    <p>Detects installed apps, collects configs, builds a git-committable package (<code>machine.json</code>, <code>plan.md</code>).</p>
+
+    <h3>Import — on the fresh Omarchy box</h3>
+    <pre><span class="c">python3</span> migrate.py import my-setup.zip --dry-run
+<span class="cm"># review the plan, then:</span>
+<span class="c">python3</span> migrate.py import my-setup.zip</pre>
+    <p>The defer rule maps apps to Omarchy targets, the compat gate flags unknowns, and the generator emits a Home Manager profile fragment for Reverb-OS.</p>
+
+    <h3>Mount — the world-breaking part</h3>
+    <pre><span class="c">sudo python3</span> mount.py mount /dev/sdb2 /data/games
+<span class="c">python3</span> mount.py list</pre>
+    <p>Your old disk appears at its new path with zero copy. Steam games launch immediately. Migration = a mount entry, not a copy.</p>
+
+    <h3>Check the environment</h3>
+    <pre><span class="c">python3</span> bootstrap.py doctor</pre>
+    <p>Prints python + git locations and versions on any OS.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

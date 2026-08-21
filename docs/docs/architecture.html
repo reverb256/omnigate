@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — Architecture</title>
+<meta name="description" content="The omnigate architecture: union mount, differential sync, declarative manifest, and the skip ladder.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — Architecture</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>The three layers</h2>
+    <p class="lede">Migrating an OS is not a file copy. It is a mount, a delta, and a manifest.</p>
+
+    <div class="layers">
+      <div class="layer">
+        <div class="n">Layer 1</div>
+        <h3>Union mount</h3>
+        <p>The old disk is mounted read-only as an overlayfs lower layer under the new OS. Data appears at its new path with zero copy.</p>
+        <div class="bit">systemd <code>gpt-auto-generator</code> + Discoverable Partitions Spec</div>
+      </div>
+      <div class="layer">
+        <div class="n">Layer 2</div>
+        <h3>Differential sync</h3>
+        <p>Copy only what changed; skip what's re-downloadable. Reflink-first (btrfs/XFS CoW) means near-instant, no duplicate space.</p>
+        <div class="bit">blake3 parallel hash + Vulkan GPU backend in the Rust core</div>
+      </div>
+      <div class="layer">
+        <div class="n">Layer 3</div>
+        <h3>Declarative manifest</h3>
+        <p>The whole machine described as a rebuildable manifest. Migration = <code>git diff old-manifest omarchy-manifest</code>.</p>
+        <div class="bit">defer rule fires automatically against the Omarchy reference</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>The two-sided shape</h2>
+    <pre><span class="cm">SOURCE (old machine)                  TARGET (fresh Omarchy)</span>
+detect apps ──┐                       import: map (defer rule)
+collect configs│  ── package.zip ──▶    compat gate
+              │                        port configs
+              └── old disk ──mount──▶  generate HM profile
+                                       union mount (zero copy)
+                                       differential sync</pre>
+    <p>Export runs on the <strong>source</strong> machine — all three OSes. Import runs on the fresh Omarchy box and is additive: it defers to Omarchy on everything Omarchy already provides.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>The skip ladder</h2>
+    <p class="lede">The fastest transfer is the one you don't do.</p>
+    <div class="ladder">
+      <div class="rung"><span class="tag">1 · MOUNT</span><span class="desc">Data stays where it is; the new OS sees it through overlayfs.</span></div>
+      <div class="rung"><span class="tag">2 · REFLINK</span><span class="desc">Copy-on-write — near-instant, zero extra space.</span></div>
+      <div class="rung"><span class="tag">3 · SKIP</span><span class="desc">Steam games, caches, anything re-downloadable never moves.</span></div>
+      <div class="rung"><span class="tag">4 · DEDUP</span><span class="desc">Chunked sync — only novel bytes cross the wire.</span></div>
+      <div class="rung"><span class="tag">5 · HASH</span><span class="desc">blake3 on deltas (12× sha256), trust the reflink.</span></div>
+    </div>
+    <p style="margin-top:var(--space-medium)">omnigate moves 20 GB, not 1 TB. The unavoidable transfer gets a Rust core: parallel blake3 hashing, reflink-first copies, and a portable Vulkan-compute GPU backend (CUDA/ROCm/SYCL feature-gated).</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">04</span>The governing rule</h2>
+    <div class="principles">
+      <div class="principle"><strong>Defer to Omarchy</strong><span>If Omarchy provides it, don't duplicate it.</span></div>
+      <div class="principle"><strong>Never guess</strong><span>Unknown apps get flagged for review, never auto-mapped.</span></div>
+      <div class="principle"><strong>Zero-copy first</strong><span>Mount before you copy. Copy only what changed.</span></div>
+      <div class="principle"><strong>Rollback always</strong><span>The old system stays bootable until you say otherwise.</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

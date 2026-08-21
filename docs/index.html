@@ -5,158 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>omnigate — Migrate to Omarchy. Natively.</title>
 <meta name="description" content="omnigate moves a full OS setup — apps, configs, user data, even a 1 TB game library — from Linux, macOS, or Windows to Omarchy, without treating migration as a file copy.">
-<style>
-  :root {
-    --bg: #0d1117;
-    --bg-soft: #161b22;
-    --fg: #e6edf3;
-    --muted: #8b949e;
-    --accent: #f78166;   /* Omarchy-ish coral */
-    --accent-2: #58a6ff;
-    --green: #3fb950;
-    --yellow: #d29922;
-    --border: #30363d;
-    --mono: "SFMono-Regular", "JetBrains Mono", Consolas, monospace;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
-
-  /* ── hero ── */
-  .hero { padding: 96px 0 64px; text-align: center; border-bottom: 1px solid var(--border); }
-  .hero .logo { font-family: var(--mono); font-weight: 700; font-size: 15px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
-  .hero h1 { font-size: clamp(40px, 7vw, 64px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
-  .hero h1 .accent { color: var(--accent); }
-  .hero .tagline { font-size: clamp(18px, 2.6vw, 24px); color: var(--muted); margin-top: 20px; max-width: 620px; margin-left: auto; margin-right: auto; }
-  .hero .cta { margin-top: 36px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .btn {
-    display: inline-block; padding: 14px 28px; border-radius: 8px;
-    font-weight: 600; font-size: 16px; text-decoration: none; transition: transform .12s ease, box-shadow .12s ease;
-  }
-  .btn-primary { background: var(--accent); color: #0d1117; }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(247,129,102,.35); }
-  .btn-ghost { border: 1px solid var(--border); color: var(--fg); }
-  .btn-ghost:hover { border-color: var(--muted); }
-  .hero .badges { margin-top: 28px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; opacity: .85; }
-  .hero .badges img { height: 22px; }
-
-  /* ── sections ── */
-  section { padding: 72px 0; border-bottom: 1px solid var(--border); }
-  h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
-  h2 .num { color: var(--accent); font-family: var(--mono); font-size: .6em; vertical-align: super; margin-right: 6px; }
-  .lede { color: var(--muted); font-size: 19px; max-width: 640px; margin-bottom: 32px; }
-  .lead { font-size: 19px; color: var(--fg); max-width: 660px; margin-bottom: 20px; }
-
-  /* ── the three layers ── */
-  .layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 12px; }
-  .layer { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
-  .layer .n { font-family: var(--mono); color: var(--accent); font-size: 13px; letter-spacing: .15em; }
-  .layer h3 { font-size: 20px; margin: 8px 0 10px; }
-  .layer p { color: var(--muted); font-size: 15px; }
-  .layer .bit { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 14px; color: var(--accent-2); }
-
-  /* ── the skip ladder ── */
-  .ladder { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
-  .ladder .rung { display: flex; align-items: center; gap: 14px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; }
-  .ladder .rung .tag { font-family: var(--mono); font-weight: 700; color: var(--accent); min-width: 90px; }
-  .ladder .rung .desc { color: var(--muted); font-size: 15px; }
-
-  /* ── principles ── */
-  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 12px; }
-  .principle { padding: 20px; border-left: 3px solid var(--accent); background: var(--bg-soft); border-radius: 0 8px 8px 0; }
-  .principle strong { display: block; margin-bottom: 6px; }
-  .principle span { color: var(--muted); font-size: 14px; }
-
-  /* ── commands ── */
-  pre { background: #010409; border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; overflow-x: auto; font-family: var(--mono); font-size: 14px; line-height: 1.6; margin: 12px 0; }
-  pre .c { color: var(--green); }
-  pre .cm { color: var(--muted); }
-  code { font-family: var(--mono); background: rgba(110,118,129,.15); padding: 2px 6px; border-radius: 5px; font-size: .9em; }
-
-  /* ── status ── */
-  .status-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 16px; }
-  .status { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
-  .status .label { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--muted); }
-  .status .val { font-size: 18px; font-weight: 700; margin-top: 4px; }
-  .status .val.done { color: var(--green); }
-  .status .val.next { color: var(--yellow); }
-
-  /* ── footer ── */
-  footer { padding: 48px 0; color: var(--muted); font-size: 14px; text-align: center; }
-  footer a { color: var(--muted); }
-  footer .mono { font-family: var(--mono); }
-
-  /* ── nav ── */
-  nav { position: sticky; top: 0; background: rgba(13,17,23,.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 10; }
-  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
-  nav .brand { font-family: var(--mono); font-weight: 700; letter-spacing: .12em; color: var(--fg); text-decoration: none; }
-  nav .brand span { color: var(--accent); }
-  nav .links a { color: var(--muted); text-decoration: none; margin-left: 22px; font-size: 14px; }
-  nav .links a:hover { color: var(--fg); }
-
-  @media (max-width: 600px) {
-    .hero { padding: 64px 0 40px; }
-    section { padding: 48px 0; }
-    nav .links a { margin-left: 12px; }
-  }
-</style>
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
 </head>
 <body>
 
-<nav>
-  <div class="wrap">
-    <a class="brand" href="#">omni<span>gate</span></a>
-    <div class="links">
-      <a href="#layers">The Layers</a>
-      <a href="#ladder">The Skip Ladder</a>
-      <a href="#quickstart">Quick Start</a>
-      <a href="#status">Status</a>
-    </div>
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a></h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
   </div>
 </nav>
 
-<div class="hero">
-  <div class="wrap">
-    <div class="logo">Migrate to Omarchy. Natively.</div>
-    <h1>Migration is a <span class="accent">mount</span>,<br>not a copy.</h1>
-    <p class="tagline">omnigate moves a full OS setup — apps, configs, user data, even a 1 TB game library — from Linux, macOS, or Windows to Omarchy. Without treating migration as a file copy.</p>
-    <div class="cta">
-      <a class="btn btn-primary" href="https://github.com/reverb256/omnigate">Get omnigate</a>
-      <a class="btn btn-ghost" href="#layers">See how it works</a>
-      <a class="btn btn-ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
-    </div>
-    <div class="badges">
-      <img src="https://img.shields.io/badge/status-alpha-orange" alt="Alpha">
-      <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT">
-    </div>
+<div class="hero wrap">
+  <div class="logo">Migrate to Omarchy. Natively.</div>
+  <h1>Migration is a <span class="accent">mount</span>,<br>not a copy.</h1>
+  <p class="tagline">omnigate moves a full OS setup — apps, configs, user data, even a 1 TB game library — from Linux, macOS, or Windows to Omarchy. Without treating migration as a file copy.</p>
+  <div class="badges">
+    <a class="button" href="https://github.com/reverb256/omnigate">Get omnigate</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Read the docs</a>
+  </div>
+  <div class="badges">
+    <img src="https://img.shields.io/badge/status-alpha-orange" alt="Alpha">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT">
   </div>
 </div>
 
-<section id="layers">
+<section>
   <div class="wrap">
     <h2><span class="num">01</span>The three layers</h2>
     <p class="lede">Copying a terabyte is the boring way. omnigate treats migration as a mount, then a smart sync, then a manifest.</p>
     <div class="layers">
       <div class="layer">
-        <div class="n">LAYER 1</div>
+        <div class="n">Layer 1</div>
         <h3>Union mount</h3>
         <p>Mount the old disk read-only as an overlayfs lower layer under the new OS. Data appears at its new path with <strong>zero copy</strong> — Steam games launch immediately.</p>
         <div class="bit">⚡ Migration = a mount entry, not a copy.</div>
       </div>
       <div class="layer">
-        <div class="n">LAYER 2</div>
+        <div class="n">Layer 2</div>
         <h3>Differential sync</h3>
         <p>Copy only what <em>changed</em>; skip what's re-downloadable. Reflink-first (btrfs/XFS CoW) means near-instant, no duplicate space.</p>
         <div class="bit">⚡ 1 TB "migration" becomes a small copy of what matters.</div>
       </div>
       <div class="layer">
-        <div class="n">LAYER 3</div>
+        <div class="n">Layer 3</div>
         <h3>Declarative manifest</h3>
         <p>Describe the whole machine — apps, configs, data, library — as a rebuildable manifest. Migration stops being a thing; the machine <em>is</em> the manifest.</p>
         <div class="bit">⚡ <code>git diff old-manifest omarchy-manifest</code></div>
@@ -165,7 +64,7 @@
   </div>
 </section>
 
-<section id="ladder">
+<section>
   <div class="wrap">
     <h2><span class="num">02</span>The skip ladder</h2>
     <p class="lede">The world-breaking insight: the fastest transfer is the one you don't do. omnigate moves 20 GB, not 1 TB.</p>
@@ -176,30 +75,13 @@
       <div class="rung"><span class="tag">4 · DEDUP</span><span class="desc">Chunked sync — only novel bytes cross the wire.</span></div>
       <div class="rung"><span class="tag">5 · HASH</span><span class="desc">blake3 on deltas (12× sha256), trust the reflink.</span></div>
     </div>
-    <p class="lead" style="margin-top:24px">And the unavoidable transfer gets the full treatment: a Rust core with parallel blake3 hashing and a portable Vulkan-compute GPU backend.</p>
+    <p style="margin-top:var(--space-medium)">And the unavoidable transfer gets the full treatment: a Rust core with parallel blake3 hashing and a portable Vulkan-compute GPU backend.</p>
   </div>
 </section>
 
-<section id="quickstart">
+<section>
   <div class="wrap">
-    <h2><span class="num">03</span>Quick start</h2>
-    <p class="lede">Run on the old machine. Run on the new one. Watch the mount do the heavy lifting.</p>
-    <pre><span class="cm"># On the OLD machine — detect apps + configs, build a package</span>
-<span class="c">python3</span> migrate.py export --os linux --out my-setup.zip
-
-<span class="cm"># On the fresh Omarchy box — import (defer rule + compat gate + HM profile)</span>
-<span class="c">python3</span> migrate.py import my-setup.zip --dry-run
-
-<span class="cm"># World-breaking: mount the old disk, zero copy</span>
-<span class="c">sudo python3</span> mount.py mount /dev/sdb2 /data/games
-<span class="c">python3</span> mount.py list</pre>
-    <p class="lead">Cross-platform by design: <code>omnigate.sh</code> (macOS/Linux), <code>omnigate.ps1</code> (Windows — built into the OS), and <code>bootstrap.py</code> (all three). Git is the backbone — every machine gets a repo of its migration state.</p>
-  </div>
-</section>
-
-<section id="principles">
-  <div class="wrap">
-    <h2><span class="num">04</span>The governing rule</h2>
+    <h2><span class="num">03</span>The governing rule</h2>
     <p class="lede">omnigate is additive by design. It never fights Omarchy, never duplicates what Omarchy ships, and only carries what your system genuinely adds on top.</p>
     <div class="principles">
       <div class="principle"><strong>Defer to Omarchy</strong><span>If Omarchy provides it, don't duplicate it. The mapper defers automatically against the Omarchy reference.</span></div>
@@ -210,25 +92,29 @@
   </div>
 </section>
 
-<section id="status">
+<section>
   <div class="wrap">
-    <h2><span class="num">05</span>Status</h2>
+    <h2><span class="num">04</span>Status</h2>
     <p class="lede">Early but working — and the runtime is deterministic. AI builds it; the tool runs without a model.</p>
     <div class="status-row">
-      <div class="status"><div class="label">CORE PIPELINE</div><div class="val done">✓ Done</div></div>
-      <div class="status"><div class="label">UNION MOUNT + GHOST DRIVE</div><div class="val done">✓ Done</div></div>
-      <div class="status"><div class="label">DIFFERENTIAL SYNC</div><div class="val done">✓ Done</div></div>
-      <div class="status"><div class="label">MANIFEST WITH STATE</div><div class="val next">● Next</div></div>
-      <div class="status"><div class="label">THE ORACLE</div><div class="val next">● Planned</div></div>
-      <div class="status"><div class="label">CHUNKED SYNC</div><div class="val next">● Planned</div></div>
+      <div class="status"><div class="label">Core pipeline</div><div class="val done">✓ Done</div></div>
+      <div class="status"><div class="label">Union mount + ghost</div><div class="val done">✓ Done</div></div>
+      <div class="status"><div class="label">Differential sync</div><div class="val done">✓ Done</div></div>
+      <div class="status"><div class="label">Manifest with state</div><div class="val next">● Next</div></div>
+      <div class="status"><div class="label">The Oracle</div><div class="val next">● Planned</div></div>
+      <div class="status"><div class="label">Chunked sync</div><div class="val next">● Planned</div></div>
     </div>
   </div>
 </section>
 
-<footer>
-  <div class="wrap">
-    <p class="mono">omni<span style="color:var(--accent)">gate</span> — MIT License · <a href="https://github.com/reverb256/omnigate">GitHub</a> · Built by AI, runs without AI.</p>
-    <p style="margin-top:6px">Inspired by <a href="https://omarchy.org">Omarchy</a> — beautiful, modern &amp; opinionated.</p>
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
   </div>
 </footer>
 

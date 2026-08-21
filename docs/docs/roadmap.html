@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — Roadmap</title>
+<meta name="description" content="omnigate roadmap: what's done, what's next, and the world-breaking ten.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — Roadmap</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>Status</h2>
+    <p class="lede">Early but working — and the runtime is deterministic. AI builds it; the tool runs without a model.</p>
+    <div class="status-row">
+      <div class="status"><div class="label">Core pipeline</div><div class="val done">✓ Done</div></div>
+      <div class="status"><div class="label">Union mount + ghost</div><div class="val done">✓ Done</div></div>
+      <div class="status"><div class="label">Differential sync</div><div class="val done">✓ Done</div></div>
+      <div class="status"><div class="label">Manifest with state</div><div class="val next">● Next</div></div>
+      <div class="status"><div class="label">The Oracle</div><div class="val next">● Planned</div></div>
+      <div class="status"><div class="label">Chunked sync</div><div class="val next">● Planned</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>Roadmap</h2>
+    <ol style="margin-top:var(--space-medium)">
+      <li><strong>Done</strong> — Core pipeline: scanner / mapper / gate / generator / export-import.</li>
+      <li><strong>Done</strong> — Union mount (Layer 1) + <code>ghost</code> (Ghost Drive).</li>
+      <li><strong>Done</strong> — Differential sync (Layer 2, reflink-first).</li>
+      <li><strong>Next</strong> — Manifest with state (Layer 3).</li>
+      <li><strong>Planned</strong> — The Oracle (the export side at full power).</li>
+      <li><strong>Planned</strong> — State Alchemy (semantic app-state converters).</li>
+      <li><strong>Planned</strong> — Chunked sync (upgrades Layer 2).</li>
+      <li><strong>Planned</strong> — The Coffin + Process Resurrection.</li>
+      <li><strong>Planned</strong> — Living Ghost VM + Time-Travel Boot.</li>
+      <li><strong>Planned</strong> — Cross-OS Delta Feed.</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>The world-breaking ten</h2>
+    <p class="lede">Researched and verified against real technology — systemd, QEMU, the Linux kernel. Each is a standard tool used as a separate program; nothing is vendored.</p>
+    <ol style="margin-top:var(--space-medium)">
+      <li><strong>Ghost Drive</strong> — old disk as a permanent zero-copy lower layer via Discoverable Partitions GUID rewrite. Migration = 0-second event.</li>
+      <li><strong>The Coffin</strong> — seal old <code>/usr</code> + <code>/etc</code> as a signed systemd-sysext image (DDI + dm-verity); the old OS runs as an app.</li>
+      <li><strong>Living Ghost VM</strong> — boot the old partition as a qcow2 backing file with virtiofs DAX (~20× faster, zero double-caching).</li>
+      <li><strong>Time-Travel Boot</strong> — hibernate the old OS (swsusp); resume it later in a VM, fork sessions, diff machines.</li>
+      <li><strong>The One-File Computer</strong> — the manifest captures state: Steam library, browser profiles, dconf, content-addressed hashes.</li>
+      <li><strong>Chunked-Time Machine</strong> — casync-style content-defined chunking (buzhash + SHA-512/256 + zstd); chunks dedupe across file boundaries.</li>
+      <li><strong>Process Resurrection</strong> — CRIU-checkpoint running apps; the OS changes underneath running applications.</li>
+      <li><strong>The Oracle</strong> — a pre-flight agent on the old machine: enumerate, clean re-downloadables, checksum, generate the plan. Fanotify keeps a live change journal during cutover.</li>
+      <li><strong>State Alchemy</strong> — semantic converters for app state: Steam saves, browser profiles, dconf, registry hives. Migrate meaning, not just files.</li>
+      <li><strong>Cross-OS Delta Feed</strong> — zsync/rdiff binary deltas over HTTP + IPFS/LAN seeding. Migrating N machines costs ~1 copy of the data.</li>
+    </ol>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

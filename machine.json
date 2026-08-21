@@ -2,7 +2,7 @@
   "schema": "omnigate-machine-manifest",
   "schema_version": "0.1",
   "tool_version": "0.3",
-  "created_at": "2026-08-21T05:40:49",
+  "created_at": "2026-08-21T05:58:31",
   "os": "linux",
   "host": "zephyr",
   "home": "/home/j_kro",
@@ -12755,7 +12755,7 @@
         {
           "rel": "sessionData/Cookies",
           "size": 20480,
-          "sha256": "9cd96458e85125af057c7a5dec13bbd02f4ed33f2b94f8cf07cb85fc1754da15"
+          "sha256": "42187e4d49603d5c11cfd9be07e0cdb0438979ff8237f1bbd9abec185b5e9be4"
         },
         {
           "rel": "sessionData/Cookies-journal",
@@ -12769,8 +12769,8 @@
         },
         {
           "rel": "sessionData/DIPS-wal",
-          "size": 799312,
-          "sha256": "ea352815fc48a429acd63154afeab7e34dc9958e0b44f5dceeb9f2e38e5f7463"
+          "size": 807552,
+          "sha256": "d8154e0dbe923cb1e0891ddaa92f60a7889367dca8d88f683162fc08a422cef0"
         },
         {
           "rel": "sessionData/Local State",
@@ -12780,7 +12780,7 @@
         {
           "rel": "sessionData/Network Persistent State",
           "size": 5266,
-          "sha256": "2d259f09bb7cd8f32e2dc305b0edb188e6e2dfe011a00da619b44a8773bd997f"
+          "sha256": "d1451b483dc591ca582125d33729673e0853f3c013cab5f6735699a507405cf2"
         },
         {
           "rel": "sessionData/Preferences",
@@ -12800,7 +12800,7 @@
         {
           "rel": "sessionData/TransportSecurity",
           "size": 4867,
-          "sha256": "aa2183fe19d7dfe34d955b407348d9da051bff6602a41a6b3a43467276e376e2"
+          "sha256": "773488fe99a614915c9aad051e119fc95adc243d3a647f507503ca43fd0ffeeb"
         },
         {
           "rel": "sessionData/Trust Tokens",
@@ -12820,7 +12820,7 @@
         {
           "rel": "sessionData/DawnGraphiteCache/data_1",
           "size": 270336,
-          "sha256": "503f7d9e68fb7b99f71d65bf53ba0319380449cfc298ae433128fee627c0f23f"
+          "sha256": "e2ad10f2c0fd57f4c2aca328d1bc9bf12a13261923ced999f3488813c56a9cc6"
         },
         {
           "rel": "sessionData/DawnGraphiteCache/data_2",
@@ -12845,7 +12845,7 @@
         {
           "rel": "sessionData/DawnWebGPUCache/data_1",
           "size": 270336,
-          "sha256": "b8a3358a69569bcfb7d9614822e6a9c6a3d2fedf6f24c4c90236cd39e7f09f98"
+          "sha256": "504288cba6db2bc6167b1fdaab2a3cde0c994abe7041b44321f4e3a49cd8a738"
         },
         {
           "rel": "sessionData/DawnWebGPUCache/data_2",
@@ -12875,7 +12875,7 @@
         {
           "rel": "sessionData/GPUCache/data_1",
           "size": 270336,
-          "sha256": "72906539ba99e0d936dbc133643e30913ba86869d7193571cb82da08ea01025d"
+          "sha256": "62c835ed43efa3d982fc3ba52f2551ca5c26568ca75d09cabe6d7dc67872a336"
         },
         {
           "rel": "sessionData/GPUCache/data_2",
@@ -13234,7 +13234,7 @@
   "config_totals": {
     "paths": 10,
     "files": 2585,
-    "bytes": 338293795
+    "bytes": 338302035
   },
   "state": {
     "steam": {

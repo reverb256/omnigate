@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>omnigate — Cross-Platform</title>
+<meta name="description" content="omnigate runs on the source machine on Linux, macOS, and Windows — with three stdlib launchers.">
+<link rel="stylesheet" href="/omnigate/assets/css/site.css">
+</head>
+<body>
+
+<header class="header">
+  <h1><a href="/omnigate/">omni<span>gate</span></a> — Cross-Platform</h1>
+</header>
+<nav class="nav">
+  <div class="nav__buttons">
+    <a class="button button--ghost" href="/omnigate/">Home</a>
+    <a class="button button--ghost" href="/omnigate/docs/">Docs</a>
+    <a class="button button--ghost" href="/omnigate/docs/quickstart/">Quick Start</a>
+    <a class="button button--ghost" href="/omnigate/docs/architecture/">Architecture</a>
+    <a class="button button--ghost" href="/omnigate/docs/roadmap/">Roadmap</a>
+    <a class="button button--ghost" href="https://github.com/sponsors/reverb256">♡ Sponsor</a>
+  </div>
+</nav>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>Three launchers, one tool</h2>
+    <p class="lede">omnigate runs on the <strong>source</strong> machine on all three OSes — Windows and macOS included, not just as detection targets.</p>
+    <div class="layers">
+      <div class="layer">
+        <div class="n">omnigate.sh</div>
+        <h3>macOS / Linux</h3>
+        <p>POSIX sh. Finds <code>python3</code>, delegates to <code>bootstrap.py</code>. Requires <code>xcode-select --install</code> on macOS (provides both python3 and git).</p>
+      </div>
+      <div class="layer">
+        <div class="n">omnigate.ps1</div>
+        <h3>Windows</h3>
+        <p>PowerShell ships with Windows. Finds <code>py -3</code> / <code>python</code>, delegates to <code>bootstrap.py</code>. Needs Git for Windows + Python (3.9+).</p>
+      </div>
+      <div class="layer">
+        <div class="n">bootstrap.py</div>
+        <h3>All three</h3>
+        <p>Finds Python 3 + git, prints install instructions if missing, runs the command. Git is the backbone — every machine gets a repo of its migration state.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>Windows</h2>
+    <pre><span class="c">powershell -ExecutionPolicy Bypass -File</span> omnigate.ps1 --help
+<span class="c">powershell -ExecutionPolicy Bypass -File</span> omnigate.ps1 export --os windows --out my-setup.zip
+<span class="c">powershell -ExecutionPolicy Bypass -File</span> omnigate.ps1 doctor
+
+<span class="cm"># or straight through the py launcher (Python 3.9+ required)</span>
+<span class="c">py -3</span> bootstrap.py export --os windows --out my-setup.zip</pre>
+    <p>Requirements: <strong>git</strong> (Git for Windows — default options put it on PATH) and <strong>Python</strong> (python.org, tick "Add python.exe to PATH", or the Microsoft Store app). <code>bootstrap.py</code> checks both and prints these links if either is missing.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>macOS</h2>
+    <pre><span class="c">./omnigate.sh</span> export --os macos --out my-setup.zip</pre>
+    <p>Requirements: <code>xcode-select --install</code> provides both python3 and git; or install from python.org / <code>brew install python git</code>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2><span class="num">04</span>Linux</h2>
+    <pre><span class="c">./omnigate.sh</span> export --os linux --out my-setup.zip
+<span class="cm"># or directly:</span>
+<span class="c">python3</span> bootstrap.py export --os linux --out my-setup.zip</pre>
+    <p><code>mount.py</code> is Linux-target only (overlayfs + root).</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__section">
+    <p>omni<span style="color:var(--color-terminal-cyan)">gate</span> — MIT License</p>
+    <p><a href="https://github.com/reverb256/omnigate">GitHub</a></p>
+    <p><a href="https://github.com/sponsors/reverb256">Sponsor</a></p>
+  </div>
+  <div class="footer__section">
+    <p>Built by AI. Runs without AI. Inspired by <a href="https://omarchy.org">Omarchy</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
