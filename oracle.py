@@ -53,6 +53,15 @@ except Exception:
     _REPO = {}
 _OPR = set(_REPO.get("packages", []))
 
+# Official Arch Linux repositories (core + extra + multilib) — vetted.
+_ARCH = set()
+try:
+    _arch_path = REPO / "mappings" / "arch-repo.json"
+    if _arch_path.exists():
+        _ARCH = set(_json.loads(_arch_path.read_text()).get("packages", []))
+except Exception:
+    _ARCH = set()
+
 # Cache dirs that are re-downloadable / rebuildable — never migrate these.
 REDOWNLOADABLE = {
     "node_modules", "target", ".venv", "venv", "build", "dist", "cache",
@@ -187,41 +196,69 @@ def _verdict(name: str) -> str:
 def _suggest_safe(name: str) -> dict | None:
     """Return a known-safe package suggestion for an app name.
 
-    Priority (Omarchy's own distribution ladder):
-      1. Preinstalled (OPR base manifest) — zero install, ships with the OS
-      2. Official Arch repos (vetted, pacman -S)
+    Priority (Omarchy's distribution ladder, AUR deprioritized):
+      1. Preinstalled (ships with the OS — zero install)
+      2. Official Arch repos (vetted by the Arch team)
       3. Omarchy Package Repository (OPR) — Omarchy's own curated repo
-    AUR is never suggested by default (NOT vetted by Arch team).
+      4. AUR — LAST RESORT, only if nothing above exists, always flagged
 
-    Falls back to the app's own name if it's already a preinstalled package.
+    AUR is never auto-suggested as the default; the plan flags it as
+    'not vetted by Arch team'.
     """
     key = name.strip().lower()
-    # Exact curated equivalent
+
+    # ── 1. Curated equivalent (explicit human mapping) ───────────────
     if key in _EQUIV:
         return _EQUIV[key]
-    # The app itself is preinstalled → suggest it (it's already there)
+
+    # ── 1b. The app itself is preinstalled → zero install ────────────
     if key in _PREINSTALLED:
         return {"pkg": key, "tier": 1, "reason": "Preinstalled with Omarchy"}
-    # In Omarchy's own repo (OPR) → curated by DHH
+
+    # ── 2. Official Arch repos (vetted) ──────────────────────────────
+    if key in _ARCH:
+        return {"pkg": key, "tier": 2, "reason": "Official Arch (vetted)"}
+
+    # ── 3. OPR — Omarchy's own curated repo (exact beats fuzzy Arch) ──
     if key in _OPR:
         return {"pkg": key, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
-    # Try a suffix match (e.g. "Code - OSS" → "code", "Spotify" → "spotify")
-    for cand in _PREINSTALLED:
-        if key in cand or cand in key:
-            return {"pkg": cand, "tier": 1, "reason": "Preinstalled with Omarchy"}
-    # Also try suffix match against OPR (e.g. "VS Code" → "visual-studio-code-bin")
-    for cand in _OPR:
-        if key in cand or cand in key:
-            return {"pkg": cand, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
-    # Normalize spaces→hyphens and retry (e.g. "claude code" → "claude-code")
     nkey = key.replace(" ", "-")
-    if nkey != key:
-        if nkey in _OPR:
-            return {"pkg": nkey, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
-        for cand in _OPR:
-            if nkey in cand or cand in nkey:
-                return {"pkg": cand, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
+    if nkey and nkey != key and nkey in _OPR:
+        return {"pkg": nkey, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
+
+    # ── fuzzy passes (OPR first — more curated, then Arch) ───────────
+    for cand in _OPR:
+        if _fuzzy_match(key, cand) or (nkey and _fuzzy_match(nkey, cand)):
+            return {"pkg": cand, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
+    for cand in _ARCH:
+        if _fuzzy_match(key, cand) or (nkey and _fuzzy_match(nkey, cand)):
+            return {"pkg": cand, "tier": 2, "reason": "Official Arch (vetted)"}
+
+    # ── 4. AUR — LAST RESORT, always flagged ────────────────────────
+    # (not checked here by default — AUR is never auto-suggested)
     return None
+
+
+def _fuzzy_match(key: str, cand: str) -> bool:
+    """Meaningful fuzzy match: full hyphen-delimited token, min length.
+
+    Avoids prefix false positives ('rust' matching 'rustdesk') and
+    single-letter matches ('r' matching 'rustdesk'). Matches when:
+      - exact: 'code' == 'code'
+      - key is a token: 'code' in 'code-oss', 'claude-code' (boundary)
+      - cand is a token: 'p7zip' in '7zip' only if cand is a real token
+    """
+    if len(key) < 3:
+        return False
+    tokens = cand.split("-")
+    # Exact token in candidate (e.g. 'code' in 'code-oss', 'claude' in 'claude-code')
+    if key in tokens:
+        return True
+    # Candidate is a token in key (e.g. 'p7zip' in '7zip' via normalized)
+    if cand in key.split("-"):
+        return len(cand) >= 3
+    # Substring with boundary (e.g. 'vs code' normalized 'vs-code' in 'vscode'?)
+    return False
 
 
 def _suggestions_for(apps_review: list[str]) -> dict:
