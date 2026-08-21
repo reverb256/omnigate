@@ -345,24 +345,47 @@ def detect_windows() -> set[str]:
 # Matching + CLI
 # ---------------------------------------------------------------------------
 
+def _match_boundary(name_lower: str, detected_lower: str) -> bool:
+    """Word-boundary match. The detect-name must appear as a whole token
+    (separated by non-alnum boundaries) or by file-extension match (.exe/.app/.dmg)
+    in the detected entry — never as a bare substring. Prevents "codec"
+    from matching the Code mapping's "code" detect-name."""
+    if name_lower == detected_lower:
+        return True
+    # exact extension match: "code.exe" detected, "code" in DB
+    for ext in (".exe", ".app", ".dmg", ".desktop", ".pkg"):
+        if detected_lower == name_lower + ext:
+            return True
+    # word-boundary: "ms code" detects, "code" should match; "libavcodec" must not
+    import re
+    pattern = r"(?:^|[^a-z0-9])" + re.escape(name_lower) + r"(?:$|[^a-z0-9])"
+    return bool(re.search(pattern, detected_lower))
+
+
 def match(detected: set[str]) -> list[dict]:
-    """Match detected app names against the mapping DB (case-insensitive substring)."""
+    """Match detected app names against the mapping DB (word-boundary, not substring)."""
     results = []
     dl = {d.lower() for d in detected}
     for m in MAPPINGS["mappings"]:
         for os_key in ("linux", "macos", "windows"):
             for name in m["detect"].get(os_key, []):
-                if name.lower() in dl or any(name.lower() in d for d in dl):
-                    results.append(
-                        {
-                            "source_app": m["source_app"],
-                            "matched_name": name,
-                            "target": m["omarchy_target"],
-                            "defer": m.get("defer", False),
-                            "config_paths": m.get("config_paths", []),
-                        }
-                    )
-                    break
+                nl = name.lower()
+                if nl in dl:
+                    matched_via = name
+                elif any(_match_boundary(nl, d) for d in dl):
+                    matched_via = name
+                else:
+                    continue
+                results.append(
+                    {
+                        "source_app": m["source_app"],
+                        "matched_name": matched_via,
+                        "target": m["omarchy_target"],
+                        "defer": m.get("defer", False),
+                        "config_paths": m.get("config_paths", []),
+                    }
+                )
+                break
             else:
                 continue
             break
