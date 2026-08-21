@@ -10,9 +10,9 @@ MIGRATION instead of a fresh install. Same structure:
   confirmation — table, re-run on reject
   JSON out     — the migration plan (instead of archinstall configs)
 
-Tokyo Night palette (from the Omarchy installer):
-  bg #1a1b26  red #f7768e  green #9ece6a  yellow #e0af68
-  blue #7aa2f7  magenta #bb9af7  cyan #7dcfff  fg #a9b1d6  bright #c0caf5
+Osaka Jade palette (official Omarchy theme):
+  bg #111c18  red #FF5345  green #549e6a  yellow #459451
+  blue #509475  magenta #D2689C  cyan #2DD5B7  fg #C1C497  bright #F6F5DD
 """
 
 import os
@@ -21,18 +21,19 @@ import subprocess
 import sys
 from pathlib import Path
 
-# ── Tokyo Night palette (exact hex from the Omarchy installer) ──────────
-BG = "\x1b[48;2;26;27;38m"
-RED = "\x1b[38;2;247;118;142m"
-GREEN = "\x1b[38;2;158;206;106m"
-YELLOW = "\x1b[38;2;224;175;104m"
-BLUE = "\x1b[38;2;122;162;247m"
-MAGENTA = "\x1b[38;2;187;154;247m"
-CYAN = "\x1b[38;2;125;207;255m"
-FG = "\x1b[38;2;169;177;214m"
-BRIGHT = "\x1b[38;2;192;202;245m"
-BOLD = "\x1b[1m"
+# ── Osaka Jade palette (official Omarchy theme, exact hex) ───────────────
+BG = "\x1b[48;2;17;28;24m"          # #111c18 background
+RED = "\x1b[38;2;255;83;69m"        # #FF5345 errors
+GREEN = "\x1b[38;2;84;158;106m"     # #549e6a success
+YELLOW = "\x1b[38;2;69;148;81m"     # #459451 warnings
+BLUE = "\x1b[38;2;80;148;117m"      # #509475 info
+MAGENTA = "\x1b[38;2;210;104;156m"  # #D2689C highlights
+CYAN = "\x1b[38;2;45;213;183m"      # #2DD5B7 accent
+FG = "\x1b[38;2;193;196;151m"       # #C1C497 foreground
+BRIGHT = "\x1b[38;2;246;245;221m"   # #F6F5DD bright white
+BRIGHT_CYAN = "\x1b[38;2;140;211;203m"  # #8CD3CB bright cyan
 DIM = "\x1b[2m"
+BOLD = "\x1b[1m"
 RESET = "\x1b[0m"
 
 PADDING_LEFT = "  "
