@@ -26,3 +26,4 @@ cleanup.json
 .idea/
 .vscode/
 *.swp
+omarchy-user-config.json
