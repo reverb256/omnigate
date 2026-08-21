@@ -124,7 +124,7 @@ def tier_screen(page: ft.Page, source: str = "Windows"):
 
 
 def launch_tier(page: ft.Page, tier: str):
-    """Launch the chosen demo tier (placeholder — wired to the core next)."""
+    """Launch the chosen demo tier."""
     page.clean()
     page.add(
         ft.Container(
@@ -142,6 +142,20 @@ def launch_tier(page: ft.Page, tier: str):
             ),
         )
     )
+    # Launch the real tier backend (async so the UI stays responsive)
+    import subprocess
+    import threading
+
+    def _run():
+        script = str(Path(__file__).parent / "demo_tier1.sh")
+        try:
+            subprocess.Popen([script], start_new_session=True)
+        except Exception as e:  # pragma: no cover
+            print(f"tier launch failed: {e}")
+
+    if tier == "container":
+        threading.Thread(target=_run, daemon=True).start()
+    # microvm / fullvm / native: wired in the next iteration (QEMU/cocoon backends)
 
 
 def main(page: ft.Page):
