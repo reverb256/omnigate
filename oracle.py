@@ -43,6 +43,16 @@ except Exception:
 _PREINSTALLED = set(_BASE.get("preinstalled", []))
 _EQUIV = _BASE.get("equivalent_suggestions", {})
 
+# Omarchy Package Repository (OPR) — Omarchy's own repo, curated.
+_REPO = {}
+try:
+    _repo_path = REPO / "mappings" / "omarchy-repo.json"
+    if _repo_path.exists():
+        _REPO = _json.loads(_repo_path.read_text())
+except Exception:
+    _REPO = {}
+_OPR = set(_REPO.get("packages", []))
+
 # Cache dirs that are re-downloadable / rebuildable — never migrate these.
 REDOWNLOADABLE = {
     "node_modules", "target", ".venv", "venv", "build", "dist", "cache",
@@ -180,7 +190,7 @@ def _suggest_safe(name: str) -> dict | None:
     Priority (Omarchy's own distribution ladder):
       1. Preinstalled (OPR base manifest) — zero install, ships with the OS
       2. Official Arch repos (vetted, pacman -S)
-      3. OPR (Omarchy-curated)
+      3. Omarchy Package Repository (OPR) — Omarchy's own curated repo
     AUR is never suggested by default (NOT vetted by Arch team).
 
     Falls back to the app's own name if it's already a preinstalled package.
@@ -192,10 +202,25 @@ def _suggest_safe(name: str) -> dict | None:
     # The app itself is preinstalled → suggest it (it's already there)
     if key in _PREINSTALLED:
         return {"pkg": key, "tier": 1, "reason": "Preinstalled with Omarchy"}
+    # In Omarchy's own repo (OPR) → curated by DHH
+    if key in _OPR:
+        return {"pkg": key, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
     # Try a suffix match (e.g. "Code - OSS" → "code", "Spotify" → "spotify")
     for cand in _PREINSTALLED:
         if key in cand or cand in key:
             return {"pkg": cand, "tier": 1, "reason": "Preinstalled with Omarchy"}
+    # Also try suffix match against OPR (e.g. "VS Code" → "visual-studio-code-bin")
+    for cand in _OPR:
+        if key in cand or cand in key:
+            return {"pkg": cand, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
+    # Normalize spaces→hyphens and retry (e.g. "claude code" → "claude-code")
+    nkey = key.replace(" ", "-")
+    if nkey != key:
+        if nkey in _OPR:
+            return {"pkg": nkey, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
+        for cand in _OPR:
+            if nkey in cand or cand in nkey:
+                return {"pkg": cand, "tier": 3, "reason": "Omarchy's own repo (OPR)"}
     return None
 
 
@@ -326,8 +351,9 @@ def _render_plan_md(plan: dict) -> str:
     lines.append("## Suggestions (known-safe, Omarchy distro default)")
     lines.append("")
     lines.append("Tier 1 = Omarchy preinstalled · Tier 2 = official Arch "
-                 "(vetted) · Tier 4 = AUR (your pick — not vetted, shown with "
-                 "warning only).")
+                 "(vetted) · Tier 3 = Omarchy's own repo (OPR, curated) · "
+                 "Tier 4 = AUR (your pick — not vetted, shown with warning "
+                 "only).")
     lines.append("")
     lines.append("## Union spec (Ghost Drive)")
     for u in plan["union_spec"]:
