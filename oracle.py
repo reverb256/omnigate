@@ -313,6 +313,11 @@ def _render_plan_md(plan: dict) -> str:
                 if sug:
                     lines.append(f"- {name} → **{sug['pkg']}** "
                                  f"(tier {sug['tier']}: {sug['reason']})")
+                    alts = sug.get("alternatives")
+                    if alts:
+                        for a in alts:
+                            lines.append(f"  - or **{a['pkg']}** "
+                                         f"(tier {a['tier']}: {a['reason']})")
                 else:
                     lines.append(f"- {name} → no known-safe suggestion (review)")
             else:
@@ -321,7 +326,8 @@ def _render_plan_md(plan: dict) -> str:
     lines.append("## Suggestions (known-safe, Omarchy distro default)")
     lines.append("")
     lines.append("Tier 1 = Omarchy preinstalled · Tier 2 = official Arch "
-                 "(vetted) · AUR never auto-suggested (not vetted).")
+                 "(vetted) · Tier 4 = AUR (your pick — not vetted, shown with "
+                 "warning only).")
     lines.append("")
     lines.append("## Union spec (Ghost Drive)")
     for u in plan["union_spec"]:

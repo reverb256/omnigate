@@ -40,10 +40,39 @@
     "notepad++": {"pkg": "nvim", "tier": 1, "reason": "Omarchy ships Neovim (btw)"},
     "visual studio code": {"pkg": "code", "tier": 2, "reason": "Official Arch vscode"},
     "vs code": {"pkg": "code", "tier": 2, "reason": "Official Arch vscode"},
-    "microsoft office": {"pkg": "libreoffice-fresh", "tier": 1, "reason": "Preinstalled"},
-    "word": {"pkg": "libreoffice-fresh", "tier": 1, "reason": "Preinstalled"},
-    "excel": {"pkg": "libreoffice-fresh", "tier": 1, "reason": "Preinstalled"},
-    "powerpoint": {"pkg": "libreoffice-fresh", "tier": 1, "reason": "Preinstalled"},
+    "microsoft office": {
+      "pkg": "collabora-office",
+      "tier": 4,
+      "reason": "Your preferred pick (AUR)",
+      "alternatives": [
+        {"pkg": "libreoffice-fresh", "tier": 1, "reason": "Preinstalled with Omarchy"},
+        {"pkg": "onlyoffice-bin", "tier": 4, "reason": "AUR — good DOCX compat (not vetted)"}
+      ]
+    },
+    "word": {
+      "pkg": "collabora-office",
+      "tier": 4,
+      "reason": "Your preferred pick (AUR)",
+      "alternatives": [
+        {"pkg": "libreoffice-fresh", "tier": 1, "reason": "Preinstalled with Omarchy"}
+      ]
+    },
+    "excel": {
+      "pkg": "collabora-office",
+      "tier": 4,
+      "reason": "Your preferred pick (AUR)",
+      "alternatives": [
+        {"pkg": "libreoffice-fresh", "tier": 1, "reason": "Preinstalled with Omarchy"}
+      ]
+    },
+    "powerpoint": {
+      "pkg": "collabora-office",
+      "tier": 4,
+      "reason": "Your preferred pick (AUR)",
+      "alternatives": [
+        {"pkg": "libreoffice-fresh", "tier": 1, "reason": "Preinstalled with Omarchy"}
+      ]
+    },
     "photoshop": {"pkg": "gimp", "tier": 2, "reason": "Official Arch"},
     "premiere": {"pkg": "kdenlive", "tier": 1, "reason": "Preinstalled"},
     "spotify": {"pkg": "spotify", "tier": 1, "reason": "Preinstalled"},
