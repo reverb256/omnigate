@@ -6,7 +6,7 @@
 
 [![Status: Alpha](https://img.shields.io/badge/status-alpha-orange)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/reverb256/omnigate/actions/workflows/ci.yml/badge.svg)](https://github.com/reverb256/omnigate/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/reverb256/omnigate/ci.yml?style=flat-square)](https://github.com/reverb256/omnigate/actions/workflows/ci.yml)
 
 `omnigate` moves a full OS setup — apps, configs, user data, even a 1 TB
 game library — from Linux, macOS, or Windows to [Omarchy], without treating
