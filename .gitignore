@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Test / tooling
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Migration output / staging
+out/
+*.zip
+.omarchy-migrate-stage/
+.omarchy-migrate-backup-*/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

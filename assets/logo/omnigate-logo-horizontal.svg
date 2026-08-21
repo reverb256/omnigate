@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 80" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">omnigate logo</title>
+  <desc id="logo-desc">A geometric mark of two layers fusing into one, with the wordmark omnigate</desc>
+  <defs>
+    <linearGradient id="omni-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5" />
+      <stop offset="100%" style="stop-color:#7C3AED" />
+    </linearGradient>
+    <style>
+      .icon-back { fill: url(#omni-grad); }
+      .icon-front { fill: #FFFFFF; }
+      .icon-accent { fill: #10B981; }
+      .wordmark { font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; font-size: 30px; font-weight: 700; fill: #1F2937; letter-spacing: -0.5px; }
+      .wordmark-accent { fill: #4F46E5; }
+    </style>
+  </defs>
+
+  <!-- Icon: two layers fusing into one (the union-mount / zero-copy concept) -->
+  <g id="logo-symbol">
+    <!-- Bottom layer (the old system, sliding under) -->
+    <path class="icon-back" d="M12,46 L40,34 L40,50 L12,62 Z" opacity="0.55" />
+    <!-- Top layer (the new system) -->
+    <path class="icon-back" d="M28,28 L56,16 L56,32 L28,44 Z" />
+    <!-- The fused seam / mount point (green accent = the zero-copy join) -->
+    <path class="icon-accent" d="M20,44 L48,32 L48,36 L20,48 Z" />
+    <!-- Arrow: forward movement (migration direction) -->
+    <path d="M8,54 L8,50 L16,52 L8,54 Z" fill="#1F2937" opacity="0.35" />
+  </g>
+
+  <!-- Wordmark -->
+  <g id="logo-text">
+    <text x="66" y="45" class="wordmark">
+      omni<tspan class="wordmark-accent">gate</tspan>
+    </text>
+  </g>
+</svg>

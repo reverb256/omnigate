@@ -1,53 +1,91 @@
-# omarchy-migrate — migrate your OS to Omarchy, world-breaking edition
+# omnigate
 
-AI is used to BUILD this; the tool itself is deterministic and hyper-optimized.
+**Migrate to Omarchy. Natively.**
 
-## The vision: don't migrate data, MOUNT it
+![omnigate logo](assets/logo/omnigate-logo-horizontal.svg)
 
-Copying a terabyte is the boring way. The world-breaking way:
+`omnigate` moves a full OS setup — apps, configs, user data, even a 1 TB
+game library — from Linux, macOS, or Windows to [Omarchy], without treating
+migration as a file copy.
 
-```
-Layer 1 — UNION MOUNT (mount.py):  the old disk is mounted read-only as a
-  lower layer under the new Omarchy install (overlayfs). Data appears at its
-  new path with ZERO copy. Steam games launch immediately. Migration = a mount
-  entry, not a copy. Then sync lazily + unmount.
+[Omarchy]: https://omarchy.org
 
-Layer 2 — DIFFERENTIAL SYNC:  copy only what changed/needs to be local in the
-  background (skipping re-downloadable content — Steam manifests, caches).
-  1TB "migration" becomes a 20G copy of what matters.
+## Why it's different
 
-Layer 3 — DECLARATIVE MANIFEST (destination):  the whole machine — apps,
-  configs, data, Steam library — described by a manifest. Rebuild any machine
-  from it in minutes. Migration stops being a thing because the machine is
-  declarative (this is the Reverb-OS/HM end-state).
-```
+Copying a terabyte is the boring way. `omnigate` is built on three layers
+that treat migration as a *mount*, then a *smart sync*, then a *manifest*:
 
-## Two-sided, cross-platform
+| Layer | What it does | The world-breaking bit |
+|-------|--------------|------------------------|
+| **1 — Union mount** | Mount the old disk read-only as an overlayfs lower layer under the new OS | **Data appears at its new path with ZERO copy.** Steam games launch immediately. Migration = a mount entry, not a copy. |
+| **2 — Differential sync** | Copy only what *changed*, skip what's re-downloadable | Reflink-first (btrfs/XFS CoW — near-instant, no duplicate space). 1 TB "migration" becomes a small copy of what matters. |
+| **3 — Declarative manifest** | Describe the whole machine (apps, configs, data, library) as a rebuildable manifest | Migration stops being a thing — the machine *is* the manifest. |
 
-- SOURCE side (old machine, Linux/macOS/Windows): `migrate.py export` —
-  detect apps, collect configs, build a package
-- TARGET side (fresh Omarchy): `migrate.py import` — map (defer rule),
-  port configs, generate HM profile; `mount.py mount` — union-mount the old
-  data with zero copy
+Plus a two-sided export/import (Win2Linux-style) for apps + configs:
 
-## Components
+- **Source side** (old machine): detect installed apps, collect configs, build a package
+- **Target side** (fresh Omarchy): map to Omarchy targets — **deferring to
+  Omarchy on everything it already provides** — port configs, generate a
+  Home Manager profile fragment for [Reverb-OS]
 
-- `scanner/detect.py` — detect installed apps (Linux/macOS/Windows)
-- `mapper/map.py` — classify: DEFER to Omarchy / MAP / UNKNOWN
-- `mapper/compat.py` — compatibility gate (never auto-map unknown)
-- `mapper/port_configs.py` — port configs (backup + normalize)
-- `generator/gen_hm.py` — emit a Reverb-OS HM profile fragment
-- `mount.py` — union-mount the old disk under Omarchy (the world-breaker)
-- `migrate.py` — export/import CLI (Win2Linux-style two-sided helper)
-
-## Governing rule
-
-If Omarchy has a supported way to provide/configure something, defer to
-Omarchy. Never guess an unknown app — flag it for review.
+[Reverb-OS]: https://github.com/reverb256/Reverb-OS
 
 ## Status
 
-AI-built, deterministic runtime. Scanner + mapper + gate + generator +
-export/import working. Union-mount designed (needs a root test on a real
-overlay). Differential sync + manifest are the next layers. Plan:
-`.hermes/plans/2026-08-21_omarchy-migration-tool.md`.
+Early but working. Scanner, mapper, compatibility gate, config porter, HM
+generator, export/import, union mount, and differential sync are
+implemented. See `docs/` for details.
+
+## Quick start
+
+```bash
+# On the OLD machine — detect apps + configs, build a package
+python3 migrate.py export --os linux --out my-setup.zip
+
+# On the fresh Omarchy box — import (defer rule + compat gate + HM profile)
+python3 migrate.py import my-setup.zip --dry-run
+
+# World-breaking: mount the old disk, zero copy
+sudo python3 mount.py mount /dev/sdb2 /data/games
+python3 mount.py list
+```
+
+## Architecture
+
+```
+SOURCE (old machine)                    TARGET (fresh Omarchy)
+────────────────────                    ─────────────────────
+detect apps ──┐                         import: map (defer rule)
+collect configs│  ── package.zip ──▶       compat gate
+              │                          port configs
+              └── old disk ──mount──▶   generate HM profile
+                                        union mount (zero copy)
+                                        differential sync
+```
+
+## Governing rule
+
+> If Omarchy has a supported way to provide or configure something, defer to
+> Omarchy. Never guess an unknown app — flag it for review.
+
+This is what keeps `omnigate` additive: it never fights Omarchy, never
+duplicates what Omarchy ships, and only carries what the user's system
+genuinely adds on top.
+
+## Development
+
+`omnigate` is **AI-built**: agents design and write the code, curate the
+mapping database, and tune the algorithms. The shipped runtime is
+deterministic and hyper-optimized — no LLM calls at runtime.
+
+```bash
+python3 scanner/detect.py --os linux --json   # detect apps
+python3 mapper/map.py scan.json               # classify (defer/map/unknown)
+python3 mapper/port_configs.py map.json       # port configs (dry-run safe)
+python3 generator/gen_hm.py map.json          # emit HM profile fragment
+python3 sync.py <src> <dst> --dry-run         # differential sync
+```
+
+## License
+
+MIT

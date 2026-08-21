@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Syntax check all Python
+        run: |
+          python -m compileall -q scanner mapper generator migrate.py mount.py sync.py
+
+      - name: Validate mapping DB
+        run: |
+          python -c "import json; json.load(open('mappings/apps.json')); print('mappings OK')"
+
+      - name: Scanner smoke test (Linux detect path)
+        run: |
+          python scanner/detect.py --os linux --json > /tmp/scan.json && echo "scan OK"
+
+      - name: Mapper smoke test
+        run: |
+          python mapper/map.py /tmp/scan.json --json > /tmp/map.json && echo "map OK"
+
+      - name: Generator smoke test (valid Nix output)
+        run: |
+          python generator/gen_hm.py /tmp/map.json > /tmp/profile.nix
+          grep -q "programs\." /tmp/profile.nix && echo "HM fragment OK"
