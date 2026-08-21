@@ -101,7 +101,7 @@ def phase2_confirm(manifest: dict, report: dict) -> bool:
 
 
 def phase3_show(report: dict, dry_run: bool) -> int:
-    """The installation show — restore configs + HM with progress bars."""
+    """The installation show — ACTUALLY restore configs + HM with progress."""
     step("omnigate — Phase 3: Installation show")
     configs = report.get("configs", {})
     if not configs:
@@ -109,11 +109,39 @@ def phase3_show(report: dict, dry_run: bool) -> int:
     else:
         items = list(configs.items())
         total = len(items)
+        stage = Path.home() / ".omarchy-migrate-stage"
+        backup_root = Path.home() / f".omarchy-migrate-backup-{datetime.now():%Y%m%d-%H%M%S}"
         for i, (app_key, src) in enumerate(items, 1):
-            # progress bar per config
             pct = i / total
-            print(f"  {style('▸', CYAN)} {app_key.split('__')[0]:<20} "
-                  f"{bar(pct, 1.0)}{RESET}  {i}/{total}")
+            app_name = app_key.split("__")[0]
+            # The actual restore (mirror migrate.cmd_import, fixed file-vs-dir)
+            staged = stage / "configs" / app_key
+            if not staged.exists():
+                print(f"  {style('▸', CYAN)} {app_name:<20} {bar(pct, 1.0)}{RESET}"
+                      f"  {i}/{total}  {YELLOW}skip (not in package){RESET}")
+                continue
+            try:
+                from migrate import _target_path
+                dst = _target_path(src, report.get("os", "linux"))
+                if dst.exists() and not dry_run:
+                    rel = str(dst).lstrip("/").replace("/", "_")
+                    backup = backup_root / rel
+                    backup.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.move(str(dst), str(backup))
+                if not dry_run:
+                    dst.parent.mkdir(parents=True, exist_ok=True)
+                    if staged.is_dir():
+                        shutil.copytree(staged, dst, dirs_exist_ok=True)
+                    else:
+                        shutil.copy2(staged, dst)
+                    print(f"  {style('▸', CYAN)} {app_name:<20} {bar(pct, 1.0)}{RESET}"
+                          f"  {i}/{total}  {GREEN}✓{RESET}")
+                else:
+                    print(f"  {style('▸', CYAN)} {app_name:<20} {bar(pct, 1.0)}{RESET}"
+                          f"  {i}/{total}  {YELLOW}· dry-run{RESET}")
+            except Exception as e:
+                print(f"  {style('▸', CYAN)} {app_name:<20} {bar(pct, 1.0)}{RESET}"
+                      f"  {i}/{total}  {RED}✗ {e}{RESET}")
     print(f"{GREEN}  ✓ Configs restored{RESET}\n")
 
     # HM fragment

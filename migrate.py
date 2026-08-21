@@ -176,14 +176,19 @@ def cmd_import(args: list[str]) -> int:
 
     # ── Phase 3: SHOW (the installation show) ───────────────────────────
     print("\n\x1b[1mPhase 3/4: Installation show\x1b[0m\n")
+    backup_root = Path.home() / f".omarchy-migrate-backup-{datetime.now():%Y%m%d-%H%M%S}"
     for app_key, src in configs.items():
         staged = stage / "configs" / app_key
         if not staged.exists():
+            print(f"  · skip {app_key} (not in package)")
             continue
         app_name = app_key.split("__")[0]
+        # The target path: map the ORIGINAL source path to the Omarchy layout.
         dst = _target_path(src, manifest.get("os"))
+        # If the mapped target collides with an existing file-or-dir, back it up.
         if dst.exists() and not dry_run:
-            backup = Path.home() / f".omarchy-migrate-backup-{datetime.now():%Y%m%d-%H%M%S}" / dst.name
+            rel = str(dst).lstrip("/").replace("/", "_")
+            backup = backup_root / rel
             backup.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(dst), str(backup))
         if dry_run:
@@ -191,8 +196,10 @@ def cmd_import(args: list[str]) -> int:
         else:
             dst.parent.mkdir(parents=True, exist_ok=True)
             if staged.is_dir():
+                # dir → dir: copy contents into dst (dst is the dir itself)
                 shutil.copytree(staged, dst, dirs_exist_ok=True)
             else:
+                # file → file: copy2 directly (never nest as a dir)
                 shutil.copy2(staged, dst)
             print(f"  · restored {app_name} -> {dst}")
 
