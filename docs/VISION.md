@@ -133,7 +133,9 @@ Hard wall: kernel-level anti-cheat (Valorant/Vanguard) cannot run on Linux.
 2. ✅ Union mount (Layer 1) + `ghost` (Ghost Drive, #1)
 3. ✅ Differential sync (Layer 2, reflink-first)
 4. 🔜 Manifest with state (Layer 3, #5)
-5. 🔜 Oracle (#8 — the export side at full power)
+5. 🔜 Oracle (#8 — the export side at full power; on-device LLM research
+   done, see `docs/ONDEVICE_LLM_RESEARCH.md` — decision: small model as
+   extractor + confidence gate, deterministic DB as the oracle)
 6. 🔜 State Alchemy (#9)
 7. 🔜 Chunked sync (#6 — upgrades Layer 2)
 8. 🔜 Coffin (#2) + Process Resurrection (#7)

@@ -40,6 +40,12 @@ Early but working. Scanner, mapper, compatibility gate, config porter, HM
 generator, export/import, union mount, and differential sync are
 implemented. See `docs/` for details.
 
+**Verification:** 56/56 tests pass. End-to-end pipeline proven against a
+live Omarchy guest (export → map → defer → HM fragment). Zephyr (daily
+driver) migration report complete: 128 packages, 27 mapped, 2 deferred,
+0 unknown. On-device LLM research (Needle spike) is documented in
+[`docs/ONDEVICE_LLM_RESEARCH.md`](docs/ONDEVICE_LLM_RESEARCH.md).
+
 ## Quick start
 
 ```bash

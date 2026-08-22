@@ -10,20 +10,10 @@ build/
 # Test / tooling
 .pytest_cache/
 .coverage
-htmlcov/
 
-# Migration output / staging
-out/
-*.zip
-.omarchy-migrate-stage/
-.omarchy-migrate-backup-*/
-plan.json
-plan.md
-cleanup.json
-
-# Editor / OS
-.DS_Store
-.idea/
-.vscode/
-*.swp
-omarchy-user-config.json
+# Needle spike artifacts (large binaries — not committed)
+.venv-needle/
+checkpoints/
+linux-x86_64/
+needle2.cact
+needle*.jsonl
