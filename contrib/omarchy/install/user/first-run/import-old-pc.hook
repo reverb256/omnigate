@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+# Invite once. Already done? Silence.
+omarchy-done ensure import-old-pc-invitation || exit 0
+
+# Only fire if we see evidence of a prior omnigate export
+# (zip on a USB mount or in home)
+for cand in ~/omnigate-setup.zip /run/media/*/omnigate-setup.zip /media/*/omnigate-setup.zip; do
+    if [[ -f "$cand" ]]; then
+        omarchy-notification-send -u normal \
+            "Bring in your files" \
+            "We found your old PC's files. Click to import them." \
+            --exec "omarchy menu summon setup.import"
+        exit 0
+    fi
+done

@@ -1,0 +1,48 @@
+#!/bin/bash
+# omarchy:group=setup
+# omarchy:summary=Import files from your old Windows or Mac
+# omarchy:args=
+set -euo pipefail
+
+OMARCHY_SETUP_IMPORT_VERSION="0.1"
+
+echo "Import files from your old PC"
+echo
+
+# Look for the zip on a USB or in home
+ZIP_PATH=""
+for cand in ~/omnigate-setup.zip /run/media/*/omnigate-setup.zip /media/*/omnigate-setup.zip; do
+    [[ -f "$cand" ]] && ZIP_PATH="$cand" && break
+done
+
+if [[ -z "$ZIP_PATH" ]]; then
+    ZIP_PATH=$(gum file --header "Find your omnigate-setup.zip" ~ 2>/dev/null || true)
+    [[ -z "$ZIP_PATH" ]] && echo "No zip found. Plug in your USB and try again." && exit 0
+fi
+
+[[ -f "$ZIP_PATH" ]] || { echo "File not found: $ZIP_PATH"; exit 1; }
+
+echo "Found: $ZIP_PATH"
+echo
+gum confirm "Import your files?" || exit 0
+
+# Find the omnigate repo (installed alongside Omarchy, or use the bundled one)
+OMNIGATE_DIR="${OMNIGATE_DIR:-/usr/share/omnigate}"
+if [[ ! -d "$OMNIGATE_DIR" ]]; then
+    OMNIGATE_DIR="$(gum file --directory --header "Find the omnigate-migrate folder" ~ 2>/dev/null || true)"
+    [[ -z "$OMNIGATE_DIR" ]] && echo "omnigate-migrate folder not found." && exit 1
+fi
+
+# Import (dry-run first)
+echo
+echo "Dry run:"
+python3 "$OMNIGATE_DIR/migrate.py" import "$ZIP_PATH" --dry-run
+
+echo
+if gum confirm "Apply this import?"; then
+    python3 "$OMNIGATE_DIR/migrate.py" import "$ZIP_PATH"
+    echo
+    echo "Done. Your files are on Omarchy."
+else
+    echo "Nothing imported. Run again with: omarchy setup import"
+fi

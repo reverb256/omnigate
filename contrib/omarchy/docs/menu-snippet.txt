@@ -1,0 +1,8 @@
+# Paste this into default/omarchy/omarchy-menu.jsonc under the "setup" group:
+#
+#   "setup.import": {
+#     "icon": "󰇘",
+#     "iconFont": "omarchy",
+#     "label": "Import from your old PC",
+#     "action": "omarchy-setup-import"
+#   },
