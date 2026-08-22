@@ -1,0 +1,896 @@
+{
+  "schema": "omnigate/plan/v1",
+  "generated": "2026-08-22T06:45:22.845906",
+  "source": {
+    "host": "local",
+    "os": "VERSION_ID=\"26.11\"",
+    "kernel": "Linux zephyr 7.1.3-cachyos #1-NixOS SMP PREEMPT_DYNAMIC Tue Jan  1 00:00:00 UTC 1980 x86_64 GNU/Linux",
+    "kexec": true,
+    "k3s_role": "none"
+  },
+  "summary": {
+    "services_mapped": 24,
+    "services_defer": 0,
+    "services_unknown": 3,
+    "secrets_mapped": 2,
+    "secrets_review": 10,
+    "packages_map": 0,
+    "packages_defer": 0,
+    "packages_unknown": 112
+  },
+  "services": [
+    {
+      "name": "flatpak",
+      "nixos_decl": "/etc/nixos/modules/desktop/flatpak.nix",
+      "arch_equivalent": "defer_omarchy",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "cluster-mesh",
+      "nixos_decl": "/etc/nixos/modules/services/services.nix",
+      "arch_equivalent": "tailscale",
+      "install": "pacman -S tailscale",
+      "target_path": "/etc/systemd/system/tailscale.service",
+      "systemd_units": [
+        "tailscaled.service"
+      ],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "recovery-specialisation",
+      "nixos_decl": "/etc/nixos/modules/services/services.nix",
+      "arch_equivalent": "defer_omarchy",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "cachix-auth",
+      "nixos_decl": "/etc/nixos/modules/services/services.nix",
+      "arch_equivalent": "cachix",
+      "install": "pacman -S cachix",
+      "target_path": "/etc/cachix/cachix.conf",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "cns-setup",
+      "nixos_decl": "/etc/nixos/modules/system/cns-README.md",
+      "arch_equivalent": "tailscale",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "cns-watcher",
+      "nixos_decl": "/etc/nixos/modules/system/cns-README.md",
+      "arch_equivalent": "tailscale",
+      "install": "",
+      "target_path": "/etc/systemd/system/cns-watcher.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "pcscd",
+      "nixos_decl": "/etc/nixos/modules/security/gpg.nix",
+      "arch_equivalent": "pcsclite",
+      "install": "pacman -S pcsclite",
+      "target_path": "/etc/systemd/system/pcscd.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "gaming",
+      "nixos_decl": "/etc/nixos/modules/profiles/role/implementations.nix",
+      "arch_equivalent": "defer_omarchy",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "opencode",
+      "nixos_decl": "/etc/nixos/modules/profiles/role/implementations.nix",
+      "arch_equivalent": "openrouter-cli",
+      "install": "",
+      "target_path": "/etc/systemd/system/opencode.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "my-service",
+      "nixos_decl": "/etc/nixos/modules/README.md",
+      "arch_equivalent": "defer_omarchy",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "sunshine",
+      "nixos_decl": "/etc/nixos/modules/gaming-modules.nix",
+      "arch_equivalent": "sunshine",
+      "install": "yay -S sunshine --noconfirm || pacman -S sunshine",
+      "target_path": "/etc/systemd/system/sunshine.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "freebuff-desktop",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "defer_omarchy",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "status-auto-update",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "pacman-init",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "systemd-user-timeout",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "systemd (default)",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "cluster-ca",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "step-ca",
+      "install": "yay -S step-ca --noconfirm",
+      "target_path": "/etc/step/config/ca.json",
+      "systemd_units": [
+        "step-ca.service"
+      ],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "unbound-common",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": null,
+      "status": "unknown",
+      "reason": "No mapping in nixos-to-arch.json \u2014 manual review required"
+    },
+    {
+      "name": "fake-backlight-bridge",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "defer_omarchy",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "storage-assertions",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "defer_omarchy",
+      "install": "",
+      "target_path": "",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "thermal-monitor",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "sensors + lm_sensors",
+      "install": "pacman -S lm_sensors",
+      "target_path": "/etc/systemd/system/healthd.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "hermes-a2a",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "hermes-a2a-mesh",
+      "install": "cargo build --release -p hermes-a2a",
+      "target_path": "/etc/systemd/system/hermes-a2a.service",
+      "systemd_units": [
+        "hermes-a2a.service"
+      ],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "memlawb-healthcheck",
+      "nixos_decl": "/etc/nixos/hosts/zephyr/configuration.nix",
+      "arch_equivalent": "systemd timer",
+      "install": "",
+      "target_path": "/etc/systemd/system/memlawb-healthcheck.timer",
+      "systemd_units": [
+        "memlawb-healthcheck.timer"
+      ],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "gitlawb-client",
+      "nixos_decl": "/etc/nixos/hosts/nexus/configuration.nix",
+      "arch_equivalent": "gitlawb",
+      "install": "cargo build --release -p gitlawb",
+      "target_path": "/etc/systemd/system/gitlawb-client.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "power-profiles-daemon",
+      "nixos_decl": "/etc/nixos/hosts/nexus/configuration.nix",
+      "arch_equivalent": "power-profiles-daemon",
+      "install": "pacman -S power-profiles-daemon",
+      "target_path": "/etc/systemd/system/power-profiles-daemon.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "llama-swap-cluster",
+      "nixos_decl": "/etc/nixos/hosts/nexus/configuration.nix",
+      "arch_equivalent": "llama-swap",
+      "install": "",
+      "target_path": "/etc/systemd/system/llama-swap@.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "gitlawb-node",
+      "nixos_decl": "/etc/nixos/hosts/sentry/configuration.nix",
+      "arch_equivalent": "gitlawb",
+      "install": "cargo build --release -p gitlawb",
+      "target_path": "/etc/systemd/system/gitlawb-node@.service",
+      "systemd_units": [],
+      "config_source": null,
+      "status": "mapped"
+    },
+    {
+      "name": "memlawb-backup",
+      "nixos_decl": "/etc/nixos/hosts/sentry/configuration.nix",
+      "arch_equivalent": null,
+      "status": "unknown",
+      "reason": "No mapping in nixos-to-arch.json \u2014 manual review required"
+    },
+    {
+      "name": "openssh",
+      "nixos_decl": "/etc/nixos/hosts/ci-test/configuration.nix",
+      "arch_equivalent": null,
+      "status": "unknown",
+      "reason": "No mapping in nixos-to-arch.json \u2014 manual review required"
+    }
+  ],
+  "secrets": [
+    {
+      "source": "/etc/nixos/secretspec.toml",
+      "target": "/etc/omnigate/secretspec.toml",
+      "type": "secretspec_toml",
+      "perms": "0600",
+      "runtime": false
+    },
+    {
+      "source": "/etc/nixos/.age/key.txt",
+      "target": "/etc/age/keys.txt",
+      "type": "age_key",
+      "perms": "0600",
+      "runtime": false
+    },
+    {
+      "source": "/etc/nixos/hosts/zephyr/k8s-haven/haven-secret.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/etc/nixos/hosts/zephyr/k8s-haven/haven-namespace-secrets.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/etc/nixos/hosts/zephyr/k8s-haven/haven-cloudflared-cm-secret.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/etc/nixos/kubernetes-manifests/ai-inference/helm/ai-inference-gateway/templates/secret.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/etc/nixos/kubernetes-manifests/ai-inference/ai-inference-gateway-secrets.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/etc/nixos/kubernetes-manifests/archive/backup-20260322/xmrig-proxy-secret.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/etc/nixos/kubernetes-manifests/mining/xmrig-proxy-secret.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/etc/nixos/docs/kubernetes/storage/garage-s3-secret.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/etc/nixos/secrets/cloud/cloudflared-token.yaml",
+      "target": null,
+      "type": "sops_yaml",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    },
+    {
+      "source": "/home/j_kro/.config/fish/conf.d/api-keys.fish",
+      "target": null,
+      "type": "user_env_creds",
+      "status": "review",
+      "reason": "No secret mapping \u2014 needs manual path decision"
+    }
+  ],
+  "partitions": {
+    "strategy": "ghost-drive",
+    "current_disk": "nvme0n1",
+    "btrfs_partition": "nvme1n1p2",
+    "btrfs_mount": "/var/lib/containers/storage/overlay",
+    "ghost_partition": null,
+    "arch_root": "new 50GB partition carved from btrfs",
+    "actions": [
+      "1. Shrink btrfs partition by 50GB (btrfs filesystem resize)",
+      "2. Create new partition in freed space (50GB, ext4)",
+      "3. Install Arch + Omarchy into new partition",
+      "4. Mount old btrfs as /nixos-legacy (ghost, read-only)",
+      "5. Bind-mount preserved dirs from /nixos-legacy to Arch"
+    ],
+    "warnings": [
+      "btrfs shrink requires defrag + balance first (run: btrfs filesystem defrag -r /)",
+      "Old NixOS EFI entry stays in ESP \u2014 both boot entries available",
+      "Rollback: boot old NixOS entry from GRUB/systemd-boot menu"
+    ]
+  },
+  "packages": {
+    "defer": [],
+    "map": [],
+    "unknown": [
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "name:",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "flake",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "original",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "locked",
+        "reason": "no Arch mapping known"
+      },
+      {
+        "name": "store",
+        "reason": "no Arch mapping known"
+      }
+    ]
+  },
+  "conflicts": [
+    {
+      "type": "info",
+      "msg": "btrfs partition needs defrag+balance before shrink",
+      "resolvable": true
+    }
+  ],
+  "stages": [
+    {
+      "id": 0,
+      "name": "discovery",
+      "status": "complete",
+      "desc": "audit.py scan executed"
+    },
+    {
+      "id": 1,
+      "name": "plan",
+      "status": "complete",
+      "desc": "plan.py generated this transformation plan"
+    },
+    {
+      "id": 2,
+      "name": "vm-test",
+      "status": "pending",
+      "desc": "Boot omarchy ISO in QEMU, validate configs restore"
+    },
+    {
+      "id": 3,
+      "name": "transform",
+      "status": "pending",
+      "desc": "Ghost-drive: shrink btrfs, install Arch+omarchy beside NixOS"
+    },
+    {
+      "id": 4,
+      "name": "restore",
+      "status": "pending",
+      "desc": "Bind-mount preserved dirs, port services, port secrets"
+    }
+  ],
+  "methods": {
+    "ghost": "Shrink btrfs, dual-boot with instant rollback",
+    "kexec": "kexec into ISO installer (headless capable)",
+    "vm": "Boot ISO in QEMU, test restore without touching host disk"
+  }
+}
