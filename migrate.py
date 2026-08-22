@@ -66,9 +66,11 @@ def cmd_export(args: list[str]) -> int:
     if "--os" in args:
         os_name = args[args.index("--os") + 1]
     out = Path(args[args.index("--out") + 1]) if "--out" in args else Path("omarchy-migrate-package.zip")
-
-    detect = {"linux": detect_linux, "macos": detect_macos, "windows": detect_windows}[os_name]
-    detected = detect()
+    # Read-only source guarantee: always bypass the scan cache so probing a
+    # machine NEVER writes ~/.omnigate-scan-cache.json on the source host.
+    import scanner.detect as _sd
+    detected = getattr(_sd, {"linux": "detect_linux", "macos": "detect_macos",
+                             "windows": "detect_windows"}[os_name])()
     matched = match(detected)
 
     package = {
