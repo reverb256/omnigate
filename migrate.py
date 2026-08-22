@@ -278,18 +278,29 @@ def cmd_import(args: list[str]) -> int:
 
 
 def _target_path(src: str, source_os: str) -> Path:
-    """Map a source config path to the target (Linux/Omarchy) layout."""
+    """Map a source config path to the target (Linux/Omarchy) layout.
+
+    Relative paths are resolved against the target home. Absolute paths
+    get the source-home stripped and re-based on the target home so
+    cross-PC imports (replicate.py) land in the right place.
+    """
     home = Path.home()
     if source_os == "windows":
-        # %APPDATA%\AppName -> ~/.config/AppName ; %USERPROFILE% -> ~
         p = src.replace("%APPDATA%", str(home / ".config")).replace("%USERPROFILE%", str(home))
         return Path(p)
     if source_os == "macos":
-        # ~/Library/Application Support/App -> ~/.config/App
         p = src.replace(str(Path.home()) + "/Library/Application Support", str(home / ".config"))
         p = p.replace("/usr/local", str(home / ".local"))
         return Path(p)
-    return Path(src)
+    src_p = Path(src)
+    if not src_p.is_absolute():
+        return home / src_p
+    src_home = Path.home()
+    try:
+        rel = src_p.relative_to(src_home)
+        return home / rel
+    except ValueError:
+        return src_p
 
 
 def cmd_rollback(args: list[str]) -> int:
