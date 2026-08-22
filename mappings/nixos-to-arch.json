@@ -1,0 +1,296 @@
+{
+  "schema": "omnigate/nixos-transform/v1",
+  "name": "NixOS → Arch service mapping",
+  "description": "Maps NixOS declarative modules to Arch Linux equivalents for the omnigate transformation",
+
+  "service_map": {
+    "services.caddy": {
+      "arch_equivalent": "caddy",
+      "install": "pacman -S caddy",
+      "config_source": "/etc/nixos/hosts/*/caddy/",
+      "target_path": "/etc/caddy/Caddyfile",
+      "systemd_unit": "caddy.service"
+    },
+
+    "services.pipewire": {
+      "arch_equivalent": "pipewire-pulse wireplumber",
+      "install": "pacman -S pipewire-pulse wireplumber",
+      "config_sources": ["/etc/nixos/modules/desktop/desktop.nix"],
+      "target_paths": ["/etc/pipewire/pipewire.conf.d/", "/etc/wireplumber/"],
+      "systemd_units": ["pipewire", "wireplumber", "pipewire-pulse"],
+      "notes": "Use the 99-lowlatency.conf with rt.prio + quantum 64/256"
+    },
+
+    "services.peakminer": {
+      "arch_equivalent": "peakminer (binary or AUR)",
+      "install": "yay -S peakminer-bin --noconfirm || wget peakminer release",
+      "config_source": "/etc/nixos/hosts/*/peakminer.nix",
+      "target_path": "/etc/systemd/system/peakminer@.service",
+      "systemd_units": ["peakminer@.service", "mining-coordinator.service"],
+      "template": "ExecStart=/usr/bin/peakminer --url %i --wallet krxXVNVMM7 ..."
+    },
+
+    "services.gaming": {
+      "arch_equivalent": "defer_omarchy",
+      "notes": "Omarchy handles gaming UX (niri, gamescope, gamemode)"
+    },
+
+    "services.displayManager": {
+      "arch_equivalent": "sddm",
+      "install": "pacman -S sddm",
+      "target_path": "/etc/sddm.conf.d/",
+      "notes": "SDDM + uwsm sessions configured by Omarchy layer"
+    },
+
+    "services.k3s": {
+      "arch_equivalent": "k3s-binary",
+      "install": "curl -sfL https://get.k3s.io | sh -",
+      "config_source": "/etc/nixos/modules/services/k3s.nix",
+      "target_path": "/etc/systemd/system/k3s.service",
+      "systemd_units": ["k3s.service", "k3s-agent.service"],
+      "data_to_preserve": ["/var/lib/rancher/k3s/", "/var/lib/cni/"]
+    },
+
+    "services.memlawb": {
+      "arch_equivalent": "memlawb-server",
+      "install": "cargo build --release -p memlawb-server",
+      "config_source": "/etc/nixos/modules/services/hermes/memlawb.nix",
+      "target_path": "/etc/systemd/system/memlawb-server.service",
+      "systemd_units": ["memlawb-server.service"]
+    },
+
+    "services.loki": {
+      "arch_equivalent": "loki",
+      "install": "yay -S loki --noconfirm || download binary",
+      "config_source": "/etc/nixos/modules/services/monitoring/loki.nix",
+      "target_path": "/etc/systemd/system/loki.service"
+    },
+
+    "services.prometheus": {
+      "arch_equivalent": "prometheus",
+      "install": "pacman -S prometheus",
+      "config_source": "/etc/nixos/modules/services/monitoring/prometheus.nix",
+      "target_path": "/etc/systemd/system/prometheus.service"
+    },
+
+    "services.grafana": {
+      "arch_equivalent": "grafana",
+      "install": "pacman -S grafana",
+      "config_source": "/etc/nixos/modules/services/monitoring/grafana.nix",
+      "target_path": "/etc/systemd/system/grafana.service"
+    },
+
+    "services.ollama": {
+      "arch_equivalent": "ollama",
+      "install": "pacman -S ollama",
+      "config_source": "/etc/nixos/modules/services/ai-inference/ollama.nix",
+      "target_path": "/etc/systemd/system/ollama.service"
+    },
+
+    "services.freebuff-desktop": {
+      "arch_equivalent": "defer_omarchy",
+      "install": "",
+      "target_path": "",
+      "notes": "Desktop UX component — owned by Omarchy"
+    },
+
+    "services.cluster-mesh": {
+      "arch_equivalent": "tailscale",
+      "install": "pacman -S tailscale",
+      "target_path": "/etc/systemd/system/tailscale.service",
+      "systemd_units": ["tailscaled.service"],
+      "notes": "Mesh networking via Tailscale"
+    },
+
+    "services.unbound": {
+      "arch_equivalent": "unbound",
+      "install": "pacman -S unbound",
+      "target_path": "/etc/systemd/system/unbound.service",
+      "notes": "DNS resolver"
+    },
+
+    "services.cluster-ca": {
+      "arch_equivalent": "step-ca",
+      "install": "yay -S step-ca --noconfirm",
+      "target_path": "/etc/step/config/ca.json",
+      "systemd_units": ["step-ca.service"]
+    },
+
+    "services.hermes-a2a": {
+      "arch_equivalent": "hermes-a2a-mesh",
+      "install": "cargo build --release -p hermes-a2a",
+      "target_path": "/etc/systemd/system/hermes-a2a.service",
+      "systemd_units": ["hermes-a2a.service"]
+    },
+
+    "services.gitlawb-node": {
+      "arch_equivalent": "gitlawb",
+      "install": "cargo build --release -p gitlawb",
+      "target_path": "/etc/systemd/system/gitlawb-node@.service"
+    },
+
+    "services.memlawb-healthcheck": {
+      "arch_equivalent": "systemd timer",
+      "install": "",
+      "target_path": "/etc/systemd/system/memlawb-healthcheck.timer",
+      "systemd_units": ["memlawb-healthcheck.timer"]
+    },
+
+    "services.status-auto-update": {
+      "arch_equivalent": "pacman-init",
+      "install": "",
+      "target_path": "",
+      "notes": "Defer — Omarchy handles system updates"
+    },
+
+    "services.storage-assertions": {
+      "arch_equivalent": "defer_omarchy",
+      "notes": "NixOS-only storage validation — no Arch equivalent needed"
+    },
+
+    "services.thermal-monitor": {
+      "arch_equivalent": "sensors + lm_sensors",
+      "install": "pacman -S lm_sensors",
+      "target_path": "/etc/systemd/system/healthd.service"
+    },
+
+    "services.fake-backlight-bridge": {
+      "arch_equivalent": "defer_omarchy",
+      "notes": "Display brightness — Omarchy/hardware-specific handling"
+    },
+
+    "services.recovery-specialisation": {
+      "arch_equivalent": "defer_omarchy",
+      "notes": "NixOS system generation rollback — use Arch rollback hooks instead"
+    },
+
+    "services.cachix-auth": {
+      "arch_equivalent": "cachix",
+      "install": "pacman -S cachix",
+      "target_path": "/etc/cachix/cachix.conf",
+      "notes": "Binary cache authentication"
+    },
+
+    "services.pcscd": {
+      "arch_equivalent": "pcsclite",
+      "install": "pacman -S pcsclite",
+      "target_path": "/etc/systemd/system/pcscd.service"
+    },
+
+    "services.systemd-user-timeout": {
+      "arch_equivalent": "systemd (default)",
+      "install": "",
+      "target_path": "",
+      "notes": "Core systemd property — no port needed"
+    },
+
+    "services.flatpak": {
+      "arch_equivalent": "defer_omarchy",
+      "notes": "Defer to Omarchy's Flatpak management"
+    },
+
+    "services.power-profiles-daemon": {
+      "arch_equivalent": "power-profiles-daemon",
+      "install": "pacman -S power-profiles-daemon",
+      "target_path": "/etc/systemd/system/power-profiles-daemon.service"
+    },
+
+    "services.sunshine": {
+      "arch_equivalent": "sunshine",
+      "install": "yay -S sunshine --noconfirm || pacman -S sunshine",
+      "target_path": "/etc/systemd/system/sunshine.service"
+    },
+
+    "services.llama-swap": {
+      "arch_equivalent": "llama-swap",
+      "install": "cargo build --release -p llama-swap",
+      "target_path": "/etc/systemd/system/llama-swap.service",
+      "config_source": "/etc/nixos/hosts/*/llama-swap.nix",
+      "systemd_units": ["llama-swap.service"]
+    },
+
+    "services.gitlawb-client": {
+      "arch_equivalent": "gitlawb",
+      "install": "cargo build --release -p gitlawb",
+      "target_path": "/etc/systemd/system/gitlawb-client.service"
+    },
+
+    "services.cns-setup": {
+      "arch_equivalent": "tailscale",
+      "install": "",
+      "target_path": "",
+      "notes": "CNS = cluster networking — uses tailscale + systemd-networkd on Arch"
+    },
+
+    "services.cns-watcher": {
+      "arch_equivalent": "tailscale",
+      "install": "",
+      "target_path": "/etc/systemd/system/cns-watcher.service",
+      "notes": "DNS/service discovery watcher for cluster mesh"
+    },
+
+    "services.opencode": {
+      "arch_equivalent": "openrouter-cli",
+      "install": "",
+      "target_path": "/etc/systemd/system/opencode.service",
+      "notes": "Defer — Omarchy provides CLI agent tooling"
+    },
+
+    "services.my-service": {
+      "arch_equivalent": "defer_omarchy",
+      "notes": "Custom service — review required"
+    },
+
+    "services.unbound": {
+      "arch_equivalent": "unbound",
+      "install": "pacman -S unbound",
+      "target_path": "/etc/systemd/system/unbound.service"
+    },
+
+    "services.llama-swap": {
+      "arch_equivalent": "llama-swap",
+      "install": "cargo build --release -p llama-swap",
+      "target_path": "/etc/systemd/system/llama-swap.service",
+      "config_source": "/etc/nixos/hosts/*/llama-swap.nix",
+      "systemd_units": ["llama-swap.service"]
+    },
+
+    "services.llama-swap-cluster": {
+      "arch_equivalent": "llama-swap",
+      "install": "",
+      "target_path": "/etc/systemd/system/llama-swap@.service",
+      "notes": "Cluster mode of llama-swap — port to template unit"
+    }
+  },
+
+  "package_map": {
+    "nNixPkgs": {
+      "niri": { "type": "arch_pkg", "name": "niri", "source": "omarchy_opr" },
+      "fuzzel": { "type": "arch_pkg", "name": "fuzzel", "source": "extra" },
+      "waybar": { "type": "arch_pkg", "name": "waybar", "source": "extra" },
+      "caddy": { "type": "arch_pkg", "name": "caddy", "source": "extra" },
+      "pipewire-pulse": { "type": "arch_pkg", "name": "pipewire-pulse", "source": "extra" },
+      "wireplumber": { "type": "arch_pkg", "name": "wireplumber", "source": "extra" },
+      "nvidia": { "type": "arch_pkg", "name": "nvidia", "source": "extra" },
+      "docker": { "type": "arch_pkg", "name": "docker", "source": "extra" },
+      "k3s": { "type": "script", "installer": "curl -sfL https://get.k3s.io | sh -" },
+      "llama-swap": { "type": "source", "build": "cargo build --release -p llama-swap" },
+      "peakminer": { "type": "binary", "install": "yay -S peakminer-bin --noconfirm" },
+      "memlawb-server": { "type": "source", "build": "cargo build --release -p memlawb-server" }
+    }
+  },
+
+  "secret_map": {
+    "/etc/nixos/.age/key.txt": { "target": "/etc/age/keys.txt", "perms": "0600", "owner": "root" },
+    "/etc/nixos/secretspec.toml": { "target": "/etc/omnigate/secretspec.toml", "perms": "0600", "owner": "root" },
+    "/run/agenix/*": { "target": "/run/secrets/*", "runtime": true }
+  },
+
+  "defer_to_omarchy": [
+    "services.profiles.desktop",
+    "services.gaming",
+    "programs.niri",
+    "stylix",
+    "home-manager modules for UX (zen, fuzzel, waybar)"
+  ]
+}

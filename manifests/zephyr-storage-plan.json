@@ -1,0 +1,45 @@
+{
+  "zephyr-storage": {
+    "disk": "nvme0n1",
+    "model": "Samsung SSD 980 1TB",
+    "partition": "nvme0n1p2",
+    "filesystem": "btrfs",
+    "size_gb": 930.5,
+    "used_gb": 770,
+    "free_gb": 133,
+    "subvolumes": {
+      "@": { "mountpoint": "/", "subvolid": 256, "used_gb": 720, "contents": "root + /models + /etc/nixos" },
+      "@home": { "mountpoint": "/home", "subvolid": 257, "used_gb": 50, "contents": "user data + configs" }
+    },
+    "efi": "nvme0n1p1 (1GB vfat, /boot — separate, can install dual-boot bootloader)",
+    "second_disk": "nvme1n1 (953GB) — /var, /nix, /data/projects, /data/games (container overlay)",
+    "omarchy_iso": "/tmp/omarchy-iso mounted from /home/j_kro/omarchy-test/omarchy-4.0.0.iso"
+  },
+  "ghost_drive_plan": {
+    "strategy": "shrink btrfs subvolume @, install Arch in freed space",
+    "steps": [
+      "1. btrfs filesystem defrag -r /  (defragment before shrink)",
+      "2. btrfs filesystem resize -50G /@  (shrink root subvolume by 50GB)",
+      "3. btrfs filesystem balance /  (rebalance after shrink)",
+      "4. partprobe  (re-read partition table)",
+      "5. Allocate 50GB new partition in freed space (ext4 or btrfs)",
+      "6. Install Arch Linux base into new partition",
+      "7. Install omarchy ISO overlay (themes, CLI, dots)",
+      "8. Install systemd-boot entries for both NixOS + Arch",
+      "9. First boot into NixOS, bind-mount new Arch partition at /mnt/arch",
+      "10. Run omniport install --method ghost --ghost-mount /mnt/arch",
+      "11. Port services: pipewire config, caddy systemd unit, peakminer unit",
+      "12. Port secrets: age keys (/etc/age/keys.txt), hermes .env, secretspec.toml",
+      "13. Reboot → select Arch from boot menu"
+    ],
+    "rollback": "Boot NixOS entry from systemd-boot menu — full state preserved",
+    "data_preserved": [
+      "/models (on @ subvolume)",
+      "/home/j_kro/.config (on @home subvolume)",
+      "/etc/nixos (on @ subvolume)",
+      "/etc/nixos/.age/key.txt (age keys)",
+      "/home/j_kro/.ssh/ (SSH keys)",
+      "/home/j_kro/.hermes/ (Hermes config + memories)"
+    ]
+  }
+}
