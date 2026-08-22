@@ -1,0 +1,72 @@
+{
+  "schema": "omnigate/cluster-plan/v1",
+  "generated": "2026-08-22T07:06:48.064780",
+  "hosts": {
+    "zephyr": {
+      "role": "workstation",
+      "ip": "10.1.0.110",
+      "disk": "nvme0n1",
+      "deps": [
+        "sentry",
+        "nexus"
+      ],
+      "parallel": "forge"
+    },
+    "nexus": {
+      "role": "k3s-server-builder",
+      "ip": "10.0.1.120",
+      "disk": "nvme0n1",
+      "deps": [
+        "sentry"
+      ],
+      "parallel": null
+    },
+    "forge": {
+      "role": "mining-gpu",
+      "ip": "10.0.1.110",
+      "disk": "nvme0n1",
+      "deps": [
+        "sentry",
+        "nexus"
+      ],
+      "parallel": "zephyr"
+    },
+    "sentry": {
+      "role": "control-plane",
+      "ip": "10.1.1.140",
+      "disk": "nvme0n1",
+      "deps": [],
+      "parallel": null
+    }
+  },
+  "stages": [
+    {
+      "order": 0,
+      "hosts": [
+        "sentry"
+      ],
+      "parallel": false,
+      "barrier": "git-commit:manifests/sentry",
+      "rollback_barrier": "git-tag:sentry-pre-transform"
+    },
+    {
+      "order": 1,
+      "hosts": [
+        "nexus"
+      ],
+      "parallel": false,
+      "barrier": "git-commit:manifests/nexus",
+      "rollback_barrier": "git-tag:nexus-pre-transform"
+    },
+    {
+      "order": 2,
+      "hosts": [
+        "zephyr",
+        "forge"
+      ],
+      "parallel": true,
+      "barrier": "git-commit:plans/{host}",
+      "rollback_barrier": "git-tag:{host}-pre-transform"
+    }
+  ]
+}
