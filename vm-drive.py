@@ -48,7 +48,7 @@ def main():
     send("btrfs subvolume create /mnt/test/@test-arch 2>&1\n", 2)
     send("btrfs subvolume list /mnt/test\n", 2)
     send("mkdir -p /mnt/arch && mount -o subvol=/@test-arch /dev/vdb /mnt/arch 2>&1\n", 2)
-    send("pacstrap /mnt/arch base linux linux-firmware --noconfirm 2>&1 | tail -3\n", 150)
+    send("pacstrap /mnt/arch base linux linux-firmware --noconfirm 2>&1 | tail -3\n", 240)
     send("ls /mnt/arch/ | head\n", 2)
     send("btrfs subvolume list /mnt/test\n", 2)
     send("echo GHOST_SCRIPT_TEST_DONE\n", 2)
