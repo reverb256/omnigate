@@ -329,6 +329,20 @@ def main(page: ft.Page):
             ))
         elif beat == Beat.LAND:
             page.add(build_land_screen(page, on_quit=lambda: page.window.close()))
+        # Resumable: persist where we are so a reopen continues here
+        try:
+            from txn import save_wizard_state
+            save_wizard_state({
+                "beat": beat.value,
+                "platform": platform_info.os,
+                "counts": {
+                    "coming": len(counts.coming),
+                    "already": len(counts.already),
+                    "decide": counts.unknown_count,
+                },
+            })
+        except Exception:
+            pass  # state save is best-effort; never block the wizard
         page.update()
 
     _go_beat(Beat.LOOK)

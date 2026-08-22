@@ -178,32 +178,68 @@ def cmd_import(args: list[str]) -> int:
     print("\n\x1b[1mPhase 3/4: Installation show\x1b[0m\n")
     backup_root = Path.home() / f".omarchy-migrate-backup-{datetime.now():%Y%m%d-%H%M%S}"
     backup_manifest: dict[str, str] = {}
-    for app_key, src in configs.items():
-        staged = stage / "configs" / app_key
-        if not staged.exists():
-            print(f"  · skip {app_key} (not in package)")
-            continue
-        app_name = app_key.split("__")[0]
-        # The target path: map the ORIGINAL source path to the Omarchy layout.
-        dst = _target_path(src, manifest.get("os"))
-        # If the mapped target collides with an existing file-or-dir, back it up.
-        if dst.exists() and not dry_run:
-            rel = str(dst).lstrip("/").replace("/", "_")
-            backup = backup_root / rel
-            backup.parent.mkdir(parents=True, exist_ok=True)
-            shutil.move(str(dst), str(backup))
-            backup_manifest[rel] = str(dst)
-        if dry_run:
-            print(f"  · restore {app_name}: {src} -> {dst} (dry-run)")
-        else:
-            dst.parent.mkdir(parents=True, exist_ok=True)
+
+    # ATOMIC + IDEMPOTENT: stage→verify→move via txn. Identical targets are
+    # skipped; differing targets get backed up; a crash leaves a txn log.
+    try:
+        import txn
+        pairs = []
+        for app_key, src in configs.items():
+            staged = stage / "configs" / app_key
+            if not staged.exists():
+                print(f"  · skip {app_key} (not in package)")
+                continue
+            dst = _target_path(src, manifest.get("os"))
             if staged.is_dir():
-                # dir → dir: copy contents into dst (dst is the dir itself)
+                # dir → dir: queue each file so hashing is per-file
+                for f in sorted(staged.rglob("*")):
+                    if f.is_file():
+                        rel = f.relative_to(staged)
+                        pairs.append((f, dst / rel))
+            else:
+                pairs.append((staged, dst))
+        if dry_run:
+            plan_preview = txn.TxnPlan()
+            for s, d in pairs:
+                if d.is_file():
+                    plan_preview.skipped.append({"dst": str(d)})
+                else:
+                    plan_preview.entries.append({"dst": str(d), "action": "move"})
+            print(f"  · would restore {len(plan_preview.entries)} files "
+                  f"({len(plan_preview.skipped)} already identical) (dry-run)")
+        else:
+            plan = txn.stage_import(pairs)
+            summary = txn.commit_import(plan, backup_dir=backup_root)
+            for e in summary.get("backups", []):
+                rel = e["from"].lstrip("/").replace("/", "_")
+                backup_manifest[rel] = e["from"]
+            print(f"  · restored {summary['moved']} files "
+                  f"({summary['skipped_identical']} already identical, ok={summary['ok']})")
+            if not summary["ok"]:
+                print(f"  !! errors during commit — see {summary['log']}")
+    except ImportError:
+        # txn module missing → fall back to legacy copy (still backed-up)
+        for app_key, src in configs.items():
+            staged = stage / "configs" / app_key
+            if not staged.exists():
+                continue
+            dst = _target_path(src, manifest.get("os"))
+            if dst.exists() and not dry_run:
+                rel = str(dst).lstrip("/").replace("/", "_")
+                backup = backup_root / rel
+                backup.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(dst), str(backup))
+                backup_manifest[rel] = str(dst)
+            if dry_run:
+                print(f"  · restore {app_key}: {src} -> {dst} (dry-run)")
+            elif staged.is_dir():
                 shutil.copytree(staged, dst, dirs_exist_ok=True)
             else:
-                # file → file: copy2 directly (never nest as a dir)
                 shutil.copy2(staged, dst)
-            print(f"  · restored {app_name} -> {dst}")
+    for app_key, src in configs.items():
+        staged = stage / "configs" / app_key
+        if staged.exists() and not dry_run:
+            pass  # names printed above by the txn path
     if backup_manifest:
         (backup_root / "manifest.json").write_text(
             json.dumps(backup_manifest, indent=2))
