@@ -38,9 +38,51 @@ not our bug.
 
 ## What actually works
 
-**Structured extraction.** Base Needle 2 reliably turns text into JSON
-against a schema (its documented strength). Useful for parsing messy source
-data (registry strings, Steam manifests) into the mapping schema.
+**Structured extraction on clean input.** Base Needle 2 turns simple text
+into JSON against a schema. But on real messy data (registry GUID strings,
+desktop files) it fails — grabs "HKLM" as the app, mislabels fields. The
+45M model was trained on clean tool-call examples, not registry noise.
+
+## Extended testing (2026-08-22, same session)
+
+After Needle, we tested the full small-model landscape on the same
+classification task:
+
+| Model | Size | Tool-calling / structured | Verdict |
+|---|---|---|---|
+| Needle 2 | 14MB | ❌ narrates, won't emit; extraction fails on messy input | extraction on clean input only |
+| Qwen3.5-0.8B (llamafile) | 1.2GB | ❌ hallucinated a fake package | too small |
+| Nexus-TinyFunction-1.2B | 730MB | ⚠️ right pkg sometimes, wrong tier; can't follow mapping table | extraction, not reasoning |
+| Qwen3.5-4B (untested, benchmarked) | 3.4GB | ✅ 97.5% tool calling | the only reliable Oracle |
+
+**The wall is fundamental, not a tuning issue.** Sub-3B models reliably do
+*structured output on clean input* but cannot reason over a domain mapping
+table from a system prompt. Research confirms: EdgeVox benchmark (18
+models), STAR paper (super-tiny needs KD+RL to work), our own tests.
+
+**llamafile (Mozilla.ai) is the right DELIVERY mechanism, regardless of
+model:** one APE executable = llama.cpp runtime + GGUF weights + `.args`,
+runs on 6 OSes (Windows/macOS/Linux/FreeBSD/NetBSD/OpenBSD), no install.
+Build your own with `zipalign -j0 omnigate.llamafile model.gguf .args`.
+Under 4GB works on Windows as `.exe`. Apache-2.0 (llamafile) + MIT
+(llama.cpp changes).
+
+## Decision / recommendation (final)
+
+Keep the deterministic mapping DB (45 entries, 56 tests) as the source of
+truth. It already handles messy data correctly (word-boundary matcher,
+registry prefix strip) — better than any small model, free, offline,
+deterministic.
+
+The only model that genuinely helps is the **4B-class Oracle**
+(Qwen3.5-4B, 97.5% tool calling) delivered as a **llamafile** — an
+optional, downloaded-on-demand enhancement that pre-ranks the
+unknown-review list + narrates the migration plan. Gated behind the
+never-auto-map rule (suggestions are human-confirmed). This is a demo /
+differentiation layer, not the core.
+
+Do NOT use a ≤1B model for mapping decisions or messy-data extraction.
+The core wins on this task.
 
 ## Alternatives researched (better for our case)
 
