@@ -46,15 +46,6 @@ def _human_bytes(n: float) -> str:
     return f"{n:.1f} PB"
 
 
-def phase0_paradigm(source: str | None = None, animate: bool = True) -> None:
-    """Phase 0 — the paradigm ceremony (the 'your OS is becoming' moment)."""
-    try:
-        from paradigm import render as paradigm_render
-        paradigm_render(source or "windows", animate=animate)
-    except Exception:
-        pass
-
-
 def phase1_collect(pkg_path: Path) -> tuple[dict, dict]:
     """Load the package + run the compat gate. Returns (manifest, report)."""
     step("omnigate — Phase 1: Collect")
@@ -201,8 +192,6 @@ def main() -> int:
     p.add_argument("--yes", action="store_true", help="skip confirmation")
     p.add_argument("--reboot", action="store_true", help="reboot after")
     p.add_argument("--dry-run", action="store_true", help="no writes")
-    p.add_argument("--no-animate", action="store_true",
-                   help="skip the paradigm ceremony animation")
     opts = p.parse_args()
 
     pkg = Path(opts.package)
@@ -211,10 +200,6 @@ def main() -> int:
         return 2
 
     manifest, report = phase1_collect(pkg)
-
-    # Phase 0 — the paradigm ceremony (uses the package's source OS) — the
-    # opening beat, before any review: the old OS becomes the new paradigm.
-    phase0_paradigm(report.get("os", "linux"), animate=not opts.no_animate)
 
     if not opts.yes:
         ok = phase2_confirm(manifest, report)

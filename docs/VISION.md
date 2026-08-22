@@ -1,9 +1,6 @@
 # omnigate — Vision
 
-> Five minutes. Feels like fifteen seconds. Then Omarchy.
-> Keep the old disk. Mount, don't copy. We get out of the way.
-
-Omnigate is the on-ramp. Omarchy is the home — for people who love their computers, or want to. Do not sand Omarchy down. Do not linger.
+> AI builds it. The runtime is deterministic and hyper-optimized.
 
 ## Credits & attribution
 
@@ -28,19 +25,11 @@ research agent; licenses verified 2026-08-21):**
 | The Oracle | fanotify kernel API | GPL-2.0 (kernel) | Linux 2.6.36 (2010) |
 | State Alchemy | Win2Linux mapping engine pattern | GPL-3.0 (Win2Linux) | 2025 |
 | Cross-OS Delta Feed | zsync/rsync algorithm, IPFS/kubo | GPL-2.0+ / MIT+Apache-2.0 | 2003 / 2015 |
-| Hardware snapshot | win2linux-prewipe pattern (IDs before wipe) | MIT (prewipe) | 2026 |
-| In-place Linux install | Omarchy Jump (ISO→RAM, no USB) | community | 2026 |
-| Native Windows deploy | iGloo (partition + restore) | GPL-3.0 | 2026 |
 
 **Pattern inspiration:** the two-sided export/import shape follows the
 Win2Linux migration helper (`AtillaTokmak/Win2Linux`, GPL-3.0) and the
 dotfiles-migration pattern (`fedesapuppo/dotfiles-migration`, **no license —
-referenced as a pattern only; no code copied**). Hardware compatibility
-records follow the *intent* of `RadioPizza/win2linux-prewipe` (MIT) —
-keep PCI/GPU/display IDs that a wipe destroys; no code copied. Omarchy
-Jump and iGloo are adjacent installers (USB-less Linux hop; Windows-native
-repartition). Neither does mount-not-copy. We credit them; we do not
-vendor them.
+referenced as a pattern only; no code copied**).
 
 **License compliance stance:** `omnigate` is MIT. We do NOT copy code from
 any referenced project — we call standard systemd/QEMU/kernel tools (GPL is
@@ -54,15 +43,9 @@ are the research agent's synthesis of verified technology.
 
 ## The thesis
 
-Migrating an OS is not a file copy. It is **nixos-anywhere for Omarchy**:
-reach the machine, install Omarchy, **keep the old disk**, and bring
-every app, config, and library with you. The install is a mount + a
-delta + a manifest — a 0-second event. The old system stays bootable.
-
-nixos-anywhere (nix-community, MIT) is SSH → kexec → **wipe** → install →
-reboot. omnigate anywhere is the same reach with the opposite disk ethic:
-SSH → export stuff → **keep-disk** → install Omarchy beside the old OS →
-restore → optional reboot. Wipe is opt-in (`--wipe --i-understand-wipe`).
+Migrating an OS is not a file copy. It is a **mount**, a **delta**, and a
+**manifest** — and with the right primitives, the "migration" becomes a
+**0-second event** and the old system keeps living alongside the new one.
 
 ## The three pillars (current)
 
@@ -149,21 +132,17 @@ Hard wall: kernel-level anti-cheat (Valorant/Vanguard) cannot run on Linux.
 1. ✅ Core pipeline (scanner/mapper/gate/generator/export-import)
 2. ✅ Union mount (Layer 1) + `ghost` (Ghost Drive, #1)
 3. ✅ Differential sync (Layer 2, reflink-first)
-4. 🔜 **Flet wizard** — one window, three piles, five minutes (Phase 1–4)
-5. 🔜 **Dual-boot walk** — wizard points at official Omarchy ISO + keep-disk
-6. 🔜 **`omarchy setup import`** — destination first-run hook + menu leaf
-7. 🔜 Manifest with state (Layer 3, #5)
-8. 🔜 Oracle (#8 — the export side at full power; on-device LLM research
-   done, see `docs/ONDEVICE_LLM_RESEARCH.md` — decision: **Needle is a
-   leftover/path verb classifier, not the mapping oracle. Tables + curated DB
-   are the oracle.**)
-9. 🔜 State Alchemy (#9)
-10. 🔜 Chunked sync (#6 — upgrades Layer 2)
+4. 🔜 Manifest with state (Layer 3, #5)
+5. 🔜 Oracle (#8 — the export side at full power)
+6. 🔜 State Alchemy (#9)
+7. 🔜 Chunked sync (#6 — upgrades Layer 2)
+8. 🔜 Coffin (#2) + Process Resurrection (#7)
+9. 🔜 Living Ghost VM (#3) + Time-Travel Boot (#4)
+10. 🔜 Cross-OS Delta Feed (#10)
 
 ## Principles
 
-- **Tables first; Needle second.** Never auto-map a package. Needle is
-  internal (leftover/path verbs). Not a chat. Fail-open without the engine.
+- **AI builds it; runtime is deterministic.** No LLM calls at runtime.
 - **Defer to Omarchy.** If Omarchy provides it, don't duplicate it.
 - **Never guess.** Unknown apps get flagged, not auto-mapped.
 - **Zero-copy first.** Mount before you copy. Copy only what changed.
