@@ -66,6 +66,13 @@ def cmd_export(args: list[str]) -> int:
     if "--os" in args:
         os_name = args[args.index("--os") + 1]
     out = Path(args[args.index("--out") + 1]) if "--out" in args else Path("omarchy-migrate-package.zip")
+    # Optional: explicit config paths to include (comma-separated). If omitted,
+    # all matched config paths are included (the full export).
+    explicit_configs = None
+    if "--configs" in args:
+        raw = args[args.index("--configs") + 1]
+        explicit_configs = {c.strip() for c in raw.split(",") if c.strip()}
+
     # Read-only source guarantee: always bypass the scan cache so probing a
     # machine NEVER writes ~/.omnigate-scan-cache.json on the source host.
     import scanner.detect as _sd
@@ -90,6 +97,10 @@ def cmd_export(args: list[str]) -> int:
         for cp in m.get("config_paths", []):
             p = normalize(cp, Path.home(), Path.home())
             if p is not None and p.exists():
+                # If explicit_configs is set, only include paths in that set
+                if explicit_configs is not None:
+                    if str(p) not in explicit_configs and cp not in explicit_configs:
+                        continue
                 configs[f"{m['source_app']}__{cp.replace('/', '_').replace(chr(92), '_')}"] = str(p)
     package["configs"] = configs
 
