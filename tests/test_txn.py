@@ -80,9 +80,14 @@ class TestStageImport(TxnTestBase):
         leftovers = list((self.tmp / ".omnigate").glob("staging-*"))
         self.assertEqual(leftovers, [])
 
-    def test_nothing_to_do_raises(self):
-        with self.assertRaises(ValueError):
-            stage_import([])
+    def test_nothing_to_do_is_valid_noop(self):
+        # Manifest-only packages (no config files) are legitimate.
+        plan = stage_import([])
+        self.assertEqual(plan.moves, [])
+        self.assertIsNone(plan.staged_dir)
+        summary = commit_import(plan)
+        self.assertTrue(summary["ok"])
+        self.assertEqual(summary["moved"], 0)
 
     def test_target_untouched_after_staging(self):
         f = self.src / "c.txt"

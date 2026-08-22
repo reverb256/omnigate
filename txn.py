@@ -94,7 +94,9 @@ def stage_import(pairs: list[tuple[Path, Path]]) -> TxnPlan:
     A failure here raises and the staging dir is removed — no side effects.
     """
     if not pairs:
-        raise ValueError("stage_import: nothing to do")
+        # A manifest-only package (no config files) is legitimate.
+        # Return an empty committed-noop plan instead of raising.
+        return TxnPlan()
 
     staged_root = STATE_DIR / f"staging-{int(time.time())}"
     staged_root.mkdir(parents=True, exist_ok=True)
@@ -135,8 +137,18 @@ def commit_import(plan: TxnPlan, backup_dir: Path | None = None) -> dict:
     Backup: any existing target that differs from the staged content is
     moved into backup_dir before being replaced. Returns a summary dict.
     """
-    if plan.staged_dir is None or not plan.staged_dir.exists():
-        raise ValueError("commit_import: no staging dir (already committed?)")
+    if plan.staged_dir is None:
+        # Empty plan from stage_import (manifest-only package) = valid noop.
+        return {
+            "moved": 0,
+            "skipped_identical": len(plan.skipped),
+            "backups": [],
+            "errors": [],
+            "log": None,
+            "ok": True,
+        }
+    if not plan.staged_dir.exists():
+        raise ValueError("commit_import: staging dir gone (already committed?)")
 
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     log_path = STATE_DIR / f"txn-{int(time.time())}.json"
