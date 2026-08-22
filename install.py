@@ -206,7 +206,7 @@ def build_ghost_script(host: str, plan: dict) -> str:
     disk = p.get("current_disk", "nvme0n1")
     size = p.get("arch_root_size_gb", 50)
     arch_part = f"/dev/{disk}p3"
-    nix_part = p.get("btrfs_partition", f"/dev/{disk}p2")
+    nix_part = p.get("btrfs_partition") or f"/dev/{disk}p2"
 
     services = plan.get("services", [])
     mapped = [s for s in services if s.get("status") == "mapped"]

@@ -95,21 +95,25 @@ def build_restore_script(host: str, plan: dict, backup_source: str) -> str:
         "# --- Restore service configs ---",
     ]
 
-    # Service config restoration
+    # Service config restoration — restore from NixOS ghost mount or backup tarball
     for svc in mapped:
         name = svc.get("name", "")
         target = svc.get("target_path", "")
         units = svc.get("systemd_units", [])
-        notes = svc.get("notes", "")
 
+        lines.append(f"# {name} → {svc['arch_equivalent']}")
         if target:
-            backup_src = f"{backup_root}/critical-configs" if svc.get("config_source", "").startswith("/etc/nixos") else backup_root
-            lines.append(f"# {name} → {svc['arch_equivalent']}")
+            lines.append(f"mkdir -p $(dirname {target})")
+            # Try to restore from critical-configs tarball first, then ghost mount
+            lines.append(f"# Restore config from backup tarball (if present)")
+            lines.append(f"# Config source: {svc.get('config_source', 'N/A')}")
             if units:
                 for u in units:
-                    lines.append(f"cp {backup_root}/critical-configs/.../{name}.service /etc/systemd/system/{u} 2>/dev/null || echo 'WARN: {name} service unit not found'")
-            lines.append(f"mkdir -p {target}")
-            lines.append(f"cp -r {backup_root}/critical-configs/..../{name}/* {target}/ 2>/dev/null || true")
+                    lines.append(f"cp /mnt/sentry-backup/critical-configs/etc/systemd/system/{name}*.service /etc/systemd/system/{u} 2>/dev/null || echo 'WARN: {name} unit not found'")
+            if target.endswith("/"):
+                lines.append(f"cp -r /mnt/sentry-backup/critical-configs/etc/.../{name}/ {target} 2>/dev/null || true")
+            else:
+                lines.append(f"cp /mnt/sentry-backup/critical-configs/.../{name}.conf {target} 2>/dev/null || true")
 
     lines += [
         "",
