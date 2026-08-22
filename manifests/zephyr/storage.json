@@ -1,0 +1,202 @@
+{
+  "host": "zephyr",
+  "section": "storage",
+  "data": [
+    {
+      "name": "loop0",
+      "size": "5.8G",
+      "type": "loop",
+      "fstype": "iso9660",
+      "mountpoint": "/tmp/omarchy-iso",
+      "label": "OMARCHY_202608"
+    },
+    {
+      "name": "nbd0",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd1",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd2",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd3",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd4",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd5",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd6",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd7",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "zram0",
+      "size": "15.6G",
+      "type": "disk",
+      "fstype": "swap",
+      "mountpoint": "[SWAP]",
+      "label": "zram0"
+    },
+    {
+      "name": "nvme1n1",
+      "size": "953.9G",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null,
+      "children": [
+        {
+          "name": "nvme1n1p1",
+          "size": "16G",
+          "type": "part",
+          "fstype": "swap",
+          "mountpoint": null,
+          "label": "swap"
+        },
+        {
+          "name": "nvme1n1p2",
+          "size": "937.9G",
+          "type": "part",
+          "fstype": "btrfs",
+          "mountpoint": "/var/lib/containers/storage/overlay",
+          "label": "nix"
+        }
+      ]
+    },
+    {
+      "name": "nvme0n1",
+      "size": "931.5G",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null,
+      "children": [
+        {
+          "name": "nvme0n1p1",
+          "size": "1G",
+          "type": "part",
+          "fstype": "vfat",
+          "mountpoint": "/boot",
+          "label": "EFI"
+        },
+        {
+          "name": "nvme0n1p2",
+          "size": "930.5G",
+          "type": "part",
+          "fstype": "btrfs",
+          "mountpoint": "/home",
+          "label": "root"
+        }
+      ]
+    },
+    {
+      "name": "nbd8",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd9",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd10",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd11",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd12",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd13",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd14",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd15",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    }
+  ]
+}

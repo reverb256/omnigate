@@ -1,0 +1,800 @@
+{
+  "schema": "omnigate/audit/v1",
+  "timestamp": "2026-08-22T06:45:12.313359",
+  "target": "local",
+  "probe": {
+    "ok": true,
+    "target": "local",
+    "remote": false,
+    "uname": "Linux zephyr 7.1.3-cachyos #1-NixOS SMP PREEMPT_DYNAMIC Tue Jan  1 00:00:00 UTC 1980 x86_64 GNU/Linux",
+    "os_release": "ANSI_COLOR=\"0;38;2;126;186;228\"\nBUG_REPORT_URL=\"https://github.com/NixOS/nixpkgs/issues\"\nBUILD_ID=\"26.11pre-git\"\nCPE_NAME=\"cpe:/o:nixos:nixos:26.11\"\nDEFAULT_HOSTNAME=nixos\nDOCUMENTATION_URL=\"https://nixos.org/learn.html\"\nHOME_URL=\"https://nixos.org/\"\nID=nixos\nID_LIKE=\"\"\nIMAGE_ID=\"\"\nLOGO=\"nix-snowflake\"\nNAME=NixOS\nPRETTY_NAME=\"NixOS 26.11 (Zokor)\"\nSUPPORT_URL=\"https://nixos.org/community.html\"\nVARIANT=\"\"\nVARIANT_ID=\"\"\nVENDOR_NAME=NixOS\nVENDOR_URL=\"https://nixos.org/\"\nVERSION=\"26.11 (Zokor)\"\nVERSION_CODENAME=zokor\nVERSION_ID=\"26.11\"",
+    "kexec": true,
+    "lsblk": [
+      {
+        "name": "loop0",
+        "size": "5.8G",
+        "type": "loop",
+        "fstype": "iso9660",
+        "mountpoint": "/tmp/omarchy-iso",
+        "label": "OMARCHY_202608"
+      },
+      {
+        "name": "nbd0",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd1",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd2",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd3",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd4",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd5",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd6",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd7",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "zram0",
+        "size": "15.6G",
+        "type": "disk",
+        "fstype": "swap",
+        "mountpoint": "[SWAP]",
+        "label": "zram0"
+      },
+      {
+        "name": "nvme1n1",
+        "size": "953.9G",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null,
+        "children": [
+          {
+            "name": "nvme1n1p1",
+            "size": "16G",
+            "type": "part",
+            "fstype": "swap",
+            "mountpoint": null,
+            "label": "swap"
+          },
+          {
+            "name": "nvme1n1p2",
+            "size": "937.9G",
+            "type": "part",
+            "fstype": "btrfs",
+            "mountpoint": "/var/lib/containers/storage/overlay",
+            "label": "nix"
+          }
+        ]
+      },
+      {
+        "name": "nvme0n1",
+        "size": "931.5G",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null,
+        "children": [
+          {
+            "name": "nvme0n1p1",
+            "size": "1G",
+            "type": "part",
+            "fstype": "vfat",
+            "mountpoint": "/boot",
+            "label": "EFI"
+          },
+          {
+            "name": "nvme0n1p2",
+            "size": "930.5G",
+            "type": "part",
+            "fstype": "btrfs",
+            "mountpoint": "/home",
+            "label": "root"
+          }
+        ]
+      },
+      {
+        "name": "nbd8",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd9",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd10",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd11",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd12",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd13",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd14",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      },
+      {
+        "name": "nbd15",
+        "size": "0B",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null
+      }
+    ],
+    "error": null
+  },
+  "services": [
+    {
+      "name": "flatpak",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/desktop/flatpak.nix"
+    },
+    {
+      "name": "flatpak",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/desktop/common-desktop.nix"
+    },
+    {
+      "name": "cluster-mesh",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/services/services.nix"
+    },
+    {
+      "name": "recovery-specialisation",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/services/services.nix"
+    },
+    {
+      "name": "cachix-auth",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/services/services.nix"
+    },
+    {
+      "name": "cns-setup",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/system/cns-README.md"
+    },
+    {
+      "name": "cns-watcher",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/system/cns-README.md"
+    },
+    {
+      "name": "pcscd",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/security/gpg.nix"
+    },
+    {
+      "name": "gaming",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/profiles/role/implementations.nix"
+    },
+    {
+      "name": "gaming",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/profiles/role/implementations.nix"
+    },
+    {
+      "name": "opencode",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/profiles/role/implementations.nix"
+    },
+    {
+      "name": "my-service",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/README.md"
+    },
+    {
+      "name": "sunshine",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/gaming-modules.nix"
+    },
+    {
+      "name": "freebuff-desktop",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "status-auto-update",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "systemd-user-timeout",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "cluster-ca",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "unbound-common",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "fake-backlight-bridge",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "storage-assertions",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "thermal-monitor",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "hermes-a2a",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "memlawb-healthcheck",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "flatpak",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/desktop.nix"
+    },
+    {
+      "name": "cluster-mesh",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/services.nix"
+    },
+    {
+      "name": "recovery-specialisation",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/services.nix"
+    },
+    {
+      "name": "cachix-auth",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/services.nix"
+    },
+    {
+      "name": "storage-assertions",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/configuration.nix"
+    },
+    {
+      "name": "thermal-monitor",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/configuration.nix"
+    },
+    {
+      "name": "recovery-specialisation",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/services.nix"
+    },
+    {
+      "name": "flatpak",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/desktop.nix"
+    },
+    {
+      "name": "gitlawb-client",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "status-auto-update",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "power-profiles-daemon",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "unbound-common",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "storage-assertions",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "thermal-monitor",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "llama-swap-cluster",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "gitlawb-node",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "memlawb-backup",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "storage-assertions",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "thermal-monitor",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "llama-swap-cluster",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "openssh",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/ci-test/configuration.nix"
+    }
+  ],
+  "packages": [
+    "Name:               OVMF",
+    "Flake attribute:    legacyPackages.x86_64-linux.OVMF",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/5n2syhldjxscldjqzanr238g8rgd5jxf-OVMF-202605",
+    "Name:               cargo",
+    "Flake attribute:    legacyPackages.x86_64-linux.cargo",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/cavxgwfb7l7akyvvqvnl39d6nw0wckgh-cargo-1.97.1",
+    "Name:               chntpw",
+    "Flake attribute:    legacyPackages.x86_64-linux.chntpw",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/fgv7gzcc9hyjddlwmalhr7cykzaqj40m-chntpw-140201",
+    "Name:               element-desktop",
+    "Flake attribute:    legacyPackages.x86_64-linux.element-desktop",
+    "Original flake URL: github:NixOS/nixpkgs/nixos-unstable",
+    "Locked flake URL:   github:NixOS/nixpkgs/ec2d622de0773551768cf98f3fc50cbcc003b9c5",
+    "Store paths:        /nix/store/yi4rd1bs0jvwijdyg09nd2d1lwqcfzx1-element-desktop-1.12.24",
+    "Name:               freerdp",
+    "Flake attribute:    legacyPackages.x86_64-linux.freerdp",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/likgdsnwxxga0cdc9ny22mkmp0par337-freerdp-3.30.0",
+    "Name:               hermes-agent",
+    "Flake attribute:    packages.x86_64-linux.default",
+    "Original flake URL: github:NousResearch/hermes-agent",
+    "Locked flake URL:   github:NousResearch/hermes-agent/2d92793045432be06eedde29ff64743ead6ed240",
+    "Store paths:        /nix/store/0jp6rq29n8crgvb6pp60d3rgz6d9sx1q-hermes-agent-0.20.4",
+    "Name:               hivex",
+    "Flake attribute:    legacyPackages.x86_64-linux.hivex",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/xm3qvxkq97l8zpb3adrlbrqlrlsjfn84-hivex-1.3.24",
+    "Name:               home-manager-path",
+    "Store paths:        /nix/store/lhyqyzzclw92d918v2xspaa6q2fd6ibp-home-manager-path",
+    "Name:               imagemagick",
+    "Flake attribute:    legacyPackages.x86_64-linux.imagemagick",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/8vqxf9rr4ahfvm27h3a3nqvym06d8ky4-imagemagick-7.1.2-29",
+    "Name:               libguestfs",
+    "Flake attribute:    legacyPackages.x86_64-linux.libguestfs",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/wl0i3wvy7w90ps46l7fw5250b3lnq0cw-libguestfs-1.56.2",
+    "Name:               ntfs3g",
+    "Flake attribute:    legacyPackages.x86_64-linux.ntfs3g",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/6d8gvhq6n9yk9s7x83saxhz2xlabd81j-ntfs3g-2026.7.7 /nix/store/nd8dlbr0z8g3ln62i6bgcqrs5rnrc60z-ntfs3g-2026.7.7-man",
+    "Name:               p7zip",
+    "Flake attribute:    legacyPackages.x86_64-linux.p7zip",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/24iyzdfav0x5nkcki8b2zimk2xay7fss-p7zip-17.06-man /nix/store/skwca13npxljlrdlrnj0xzjs8q4iicpg-p7zip-17.06",
+    "Name:               qemu",
+    "Flake attribute:    legacyPackages.x86_64-linux.qemu",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/037j0xk9zyspzrd5s7y3k846qhjxvi0v-qemu-11.1.0",
+    "Name:               quickemu",
+    "Flake attribute:    legacyPackages.x86_64-linux.quickemu",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/jyzifq6birs8df7cb92knkavg4gp8qwz-quickemu-4.9.9",
+    "Name:               rclone-browser",
+    "Flake attribute:    legacyPackages.x86_64-linux.rclone-browser",
+    "Original flake URL: git+https://github.com/NixOS/nixpkgs?rev=0ae2bc1419c3f345984c2629e72e7a631820fa4d",
+    "Locked flake URL:   git+https://github.com/NixOS/nixpkgs?rev=0ae2bc1419c3f345984c2629e72e7a631820fa4d",
+    "Store paths:        /nix/store/8ahw2d80pll11zgf12p6pan4sxw386ra-rclone-browser-1.8.0",
+    "Name:               rustc",
+    "Flake attribute:    legacyPackages.x86_64-linux.rustc",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/paaihvr59q1101200mabmk7y4yhw42g7-rustc-wrapper-1.97.1 /nix/store/pskqgcrxc2dysf2iy1fgz9gcl65ys6d0-rustc-wrapper-1.97.1-man",
+    "Name:               secretspec",
+    "Flake attribute:    packages.x86_64-linux.secretspec",
+    "Original flake URL: git+file:///etc/nixos",
+    "Locked flake URL:   git+file:///etc/nixos",
+    "Store paths:        /nix/store/62pplmi72gkrr2xflxq7sy84n9v5kplc-secretspec-0.19.1",
+    "Name:               sshpass",
+    "Flake attribute:    legacyPackages.x86_64-linux.sshpass",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/r1005dhll0k4n5k0ld3x1gzr0yhd1xv9-sshpass-1.10",
+    "Name:               tesseract",
+    "Flake attribute:    legacyPackages.x86_64-linux.tesseract",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/sihhjsdmf6vsfw8nl94dp61g30dm86dg-tesseract-5.5.3",
+    "Name:               tigervnc",
+    "Flake attribute:    legacyPackages.x86_64-linux.tigervnc",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/6khkw2y2akw28s86mxh4n7jlmnqrcx6l-tigervnc-1.16.2",
+    "Name:               vncdotool",
+    "Flake attribute:    legacyPackages.x86_64-linux.python3Packages.vncdotool",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/i0diykw7l7111vxwfav6x0akyplkfij0-python3.14-vncdotool-1.2.0",
+    "Name:               wimlib",
+    "Flake attribute:    legacyPackages.x86_64-linux.wimlib",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/fmgrizq5lmvs39805xx7sdvpl8flrhkg-wimlib-1.14.5",
+    "Name:               xorriso",
+    "Flake attribute:    legacyPackages.x86_64-linux.xorriso",
+    "Original flake URL: github:NixOS/nixpkgs",
+    "Locked flake URL:   github:NixOS/nixpkgs/01c1c776ee31f21cdf5fdda63040215a0c2ffdcc",
+    "Store paths:        /nix/store/89sk3drdimdhj13d5dgn22rhbydyhi61-libisoburn-1.5.8.pl02-man /nix/store/fzlsr4pypsga23x580mflap88vdwdrcd-libisoburn-1.5.8.pl02"
+  ],
+  "secrets": [
+    {
+      "path": "/etc/nixos/secretspec.toml",
+      "type": "secretspec_toml"
+    },
+    {
+      "path": "/etc/nixos/.age/key.txt",
+      "type": "age_key"
+    },
+    {
+      "path": "/etc/nixos/hosts/zephyr/k8s-haven/haven-secret.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/etc/nixos/hosts/zephyr/k8s-haven/haven-namespace-secrets.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/etc/nixos/hosts/zephyr/k8s-haven/haven-cloudflared-cm-secret.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/etc/nixos/kubernetes-manifests/ai-inference/helm/ai-inference-gateway/templates/secret.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/etc/nixos/kubernetes-manifests/ai-inference/ai-inference-gateway-secrets.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/etc/nixos/kubernetes-manifests/archive/backup-20260322/xmrig-proxy-secret.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/etc/nixos/kubernetes-manifests/mining/xmrig-proxy-secret.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/etc/nixos/docs/kubernetes/storage/garage-s3-secret.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/etc/nixos/secrets/cloud/cloudflared-token.yaml",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/home/j_kro/.config/fish/conf.d/api-keys.fish",
+      "type": "user_env_creds"
+    }
+  ],
+  "k3s": {
+    "nodes": [],
+    "role": "none"
+  },
+  "storage": [
+    {
+      "name": "loop0",
+      "size": "5.8G",
+      "type": "loop",
+      "fstype": "iso9660",
+      "mountpoint": "/tmp/omarchy-iso",
+      "label": "OMARCHY_202608"
+    },
+    {
+      "name": "nbd0",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd1",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd2",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd3",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd4",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd5",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd6",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd7",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "zram0",
+      "size": "15.6G",
+      "type": "disk",
+      "fstype": "swap",
+      "mountpoint": "[SWAP]",
+      "label": "zram0"
+    },
+    {
+      "name": "nvme1n1",
+      "size": "953.9G",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null,
+      "children": [
+        {
+          "name": "nvme1n1p1",
+          "size": "16G",
+          "type": "part",
+          "fstype": "swap",
+          "mountpoint": null,
+          "label": "swap"
+        },
+        {
+          "name": "nvme1n1p2",
+          "size": "937.9G",
+          "type": "part",
+          "fstype": "btrfs",
+          "mountpoint": "/var/lib/containers/storage/overlay",
+          "label": "nix"
+        }
+      ]
+    },
+    {
+      "name": "nvme0n1",
+      "size": "931.5G",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null,
+      "children": [
+        {
+          "name": "nvme0n1p1",
+          "size": "1G",
+          "type": "part",
+          "fstype": "vfat",
+          "mountpoint": "/boot",
+          "label": "EFI"
+        },
+        {
+          "name": "nvme0n1p2",
+          "size": "930.5G",
+          "type": "part",
+          "fstype": "btrfs",
+          "mountpoint": "/home",
+          "label": "root"
+        }
+      ]
+    },
+    {
+      "name": "nbd8",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd9",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd10",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd11",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd12",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd13",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd14",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    },
+    {
+      "name": "nbd15",
+      "size": "0B",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null
+    }
+  ]
+}

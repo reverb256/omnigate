@@ -1,0 +1,8 @@
+{
+  "host": "zephyr",
+  "section": "k3s",
+  "data": {
+    "nodes": [],
+    "role": "none"
+  }
+}

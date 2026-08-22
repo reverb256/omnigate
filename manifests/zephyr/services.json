@@ -1,0 +1,226 @@
+{
+  "host": "zephyr",
+  "section": "services",
+  "data": [
+    {
+      "name": "flatpak",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/desktop/flatpak.nix"
+    },
+    {
+      "name": "flatpak",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/desktop/common-desktop.nix"
+    },
+    {
+      "name": "cluster-mesh",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/services/services.nix"
+    },
+    {
+      "name": "recovery-specialisation",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/services/services.nix"
+    },
+    {
+      "name": "cachix-auth",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/services/services.nix"
+    },
+    {
+      "name": "cns-setup",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/system/cns-README.md"
+    },
+    {
+      "name": "cns-watcher",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/system/cns-README.md"
+    },
+    {
+      "name": "pcscd",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/security/gpg.nix"
+    },
+    {
+      "name": "gaming",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/profiles/role/implementations.nix"
+    },
+    {
+      "name": "gaming",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/profiles/role/implementations.nix"
+    },
+    {
+      "name": "opencode",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/profiles/role/implementations.nix"
+    },
+    {
+      "name": "my-service",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/README.md"
+    },
+    {
+      "name": "sunshine",
+      "type": "nixos_service",
+      "file": "/etc/nixos/modules/gaming-modules.nix"
+    },
+    {
+      "name": "freebuff-desktop",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "status-auto-update",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "systemd-user-timeout",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "cluster-ca",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "unbound-common",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "fake-backlight-bridge",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "storage-assertions",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "thermal-monitor",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "hermes-a2a",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "memlawb-healthcheck",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/zephyr/configuration.nix"
+    },
+    {
+      "name": "flatpak",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/desktop.nix"
+    },
+    {
+      "name": "cluster-mesh",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/services.nix"
+    },
+    {
+      "name": "recovery-specialisation",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/services.nix"
+    },
+    {
+      "name": "cachix-auth",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/services.nix"
+    },
+    {
+      "name": "storage-assertions",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/configuration.nix"
+    },
+    {
+      "name": "thermal-monitor",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/forge/configuration.nix"
+    },
+    {
+      "name": "recovery-specialisation",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/services.nix"
+    },
+    {
+      "name": "flatpak",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/desktop.nix"
+    },
+    {
+      "name": "gitlawb-client",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "status-auto-update",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "power-profiles-daemon",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "unbound-common",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "storage-assertions",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "thermal-monitor",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "llama-swap-cluster",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/nexus/configuration.nix"
+    },
+    {
+      "name": "gitlawb-node",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "memlawb-backup",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "storage-assertions",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "thermal-monitor",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "llama-swap-cluster",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/sentry/configuration.nix"
+    },
+    {
+      "name": "openssh",
+      "type": "nixos_service",
+      "file": "/etc/nixos/hosts/ci-test/configuration.nix"
+    }
+  ]
+}
