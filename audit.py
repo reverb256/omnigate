@@ -132,20 +132,87 @@ def find_storage(target: str | None) -> list[dict]:
     return []
 
 
+def find_storage_windows(target: str | None) -> list[dict]:
+    """Discover disk/partition layout on Windows via PowerShell."""
+    prefix = ssh_prefix(target)
+    ps = "Get-Disk | Get-Partition | Select-Object DiskNumber,PartitionNumber,Size,Type,DriveLetter | ConvertTo-Json"
+    rc, out = _run(prefix + ["powershell", "-NoProfile", "-Command", ps], timeout=15)
+    if rc == 0:
+        try:
+            data = json.loads(out)
+            if isinstance(data, dict):
+                data = [data]
+            return [{"windows_partition": p} for p in data]
+        except json.JSONDecodeError:
+            pass
+    return []
+
+
+def find_storage_macos(target: str | None) -> list[dict]:
+    """Discover disk/partition layout on macOS via diskutil."""
+    prefix = ssh_prefix(target)
+    rc, out = _run(prefix + ["diskutil", "list", "-plist"], timeout=10)
+    if rc == 0:
+        # plist XML — return raw text for now
+        return [{"macos_disks": out[:2000]}]
+    return []
+
+
+def detect_source_os(target: str | None) -> str:
+    """Best-effort detection of the source OS."""
+    prefix = ssh_prefix(target)
+    rc, out = _run(prefix + ["uname", "-s"], timeout=5)
+    if rc == 0:
+        out = out.strip()
+        if out == "Linux":
+            # Check for NixOS
+            rc2, out2 = _run(prefix + ["test", "-e", "/etc/NIXOS"], timeout=3)
+            if rc2 == 0:
+                return "nixos"
+            return "linux"
+        if out == "Darwin":
+            return "macos"
+    # Check for Windows
+    rc, out = _run(prefix + ["cmd", "/c", "ver"], timeout=5)
+    if rc == 0 and "Windows" in out:
+        return "windows"
+    return "unknown"
+
+
 def full_scan(target: str | None = None) -> dict:
-    """Complete audit: probe + services + packages + secrets + k3s + storage."""
+    """Complete audit: probe + OS-specific discovery.
+
+    Dispatches to OS-specific scanners based on detect_source_os().
+    Output drives method selection (Ghost Drive vs Cocoon vs backup-wipe).
+    """
     p = probe(target)
-    return {
+    os_name = detect_source_os(target)
+
+    # OS-specific discovery
+    if os_name == "windows":
+        storage = find_storage_windows(target)
+    elif os_name == "macos":
+        storage = find_storage_macos(target)
+    else:
+        storage = find_storage(target)
+
+    audit = {
         "schema": "omnigate/audit/v1",
         "timestamp": datetime.now().isoformat(),
         "target": p.get("target", "local"),
+        "source_os": os_name,
         "probe": p,
-        "services": find_services(target),
-        "packages": find_pkgs(target),
-        "secrets": find_secrets(target),
-        "k3s": find_k3s(target),
-        "storage": find_storage(target),
+        "storage": storage,
     }
+
+    # NixOS-specific discovery
+    if os_name == "nixos":
+        audit["services"] = find_services(target)
+        audit["packages"] = find_pkgs(target)
+        audit["secrets"] = find_secrets(target)
+        audit["k3s"] = find_k3s(target)
+
+    return audit
 
 
 def main() -> int:

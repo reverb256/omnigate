@@ -91,6 +91,11 @@ COMMANDS: dict[str, dict[str, str]] = {
         "args": "share|receive [ARGS]",
         "desc": "peer-to-peer setup replication (Like Bitcoin): share your setup or pull a friend's",
     },
+    "audit": {
+        "script": "audit.py",
+        "args": "scan [--target user@host] [--out PATH]",
+        "desc": "Stage 0: non-destructive source-OS audit (detect OS, storage, services)",
+    },
     "wizard": {
         "script": "app.py",
         "args": "",
