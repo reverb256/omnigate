@@ -128,6 +128,8 @@ def build_choose_screen(
     on_next: callable,
 ) -> ft.Control:
     """Beat 1: three piles, honest labels."""
+    from verbs import wizard_label
+
     cards = []
     for key, label, color, items in [
         ("coming", LABELS["map"], GREEN, counts.coming),
@@ -136,7 +138,20 @@ def build_choose_screen(
     ]:
         if not items:
             continue
-        preview = ", ".join(i.get("source_app", i) if isinstance(i, dict) else str(i) for i in items[:3])
+        # For the decide pile, show honest labels per item (Windows only, etc.)
+        if key == "decide":
+            preview_parts = []
+            for i in items[:5]:
+                name = i.get("source_app", i) if isinstance(i, dict) else str(i)
+                verb = i.get("verb", "real_unknown") if isinstance(i, dict) else "real_unknown"
+                lbl = wizard_label(verb)
+                if lbl and lbl != "Needs a decision":
+                    preview_parts.append(f"{name} — {lbl}")
+                else:
+                    preview_parts.append(name)
+            preview = ", ".join(preview_parts)
+        else:
+            preview = ", ".join(i.get("source_app", i) if isinstance(i, dict) else str(i) for i in items[:3])
         cards.append(
             ft.Container(
                 padding=16,

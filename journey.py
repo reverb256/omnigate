@@ -86,16 +86,41 @@ def scan_counts(os_name: str | None = None) -> ScanCounts:
         return ScanCounts(elapsed_s=time.monotonic() - t0)
 
     from mapper.map import classify
+    from verbs import classify_leftovers
+
     report = classify(matched)
 
     coming = report.get("map", [])
     already = report.get("defer", [])
-    decide = report.get("unknown", [])
+    raw_decide = report.get("unknown", [])
+
+    # Stamp the unknowns with verbs (skip / no_linux / containerize / noise)
+    decide = classify_leftovers(
+        [i.get("source_app", i) if isinstance(i, dict) else str(i) for i in raw_decide],
+        source_os=target_os,
+    )
+    # Re-merge: stamp dictates verb, keep source_app name
+    decide_final = []
+    for d in decide:
+        name = d.get("name", "")
+        # Find the original matched dict if it exists
+        orig = next((i for i in raw_decide
+                     if (i.get("source_app", i) if isinstance(i, dict) else str(i)) == name), None)
+        if isinstance(orig, dict):
+            orig["verb"] = d.get("verb", "real_unknown")
+            orig["wizard_label"] = d.get("wizard_label", orig.get("wizard_label", ""))
+            decide_final.append(orig)
+        else:
+            decide_final.append({
+                "source_app": name,
+                "verb": d.get("verb", "real_unknown"),
+                "wizard_label": d.get("wizard_label", ""),
+            })
 
     # Cap at 200 per pile to keep the UI calm
     coming = coming[:200]
     already = already[:200]
-    decide = decide[:200]
+    decide = decide_final[:200]
 
     return ScanCounts(
         coming=coming,
