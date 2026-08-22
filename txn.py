@@ -156,8 +156,14 @@ def commit_import(plan: TxnPlan, backup_dir: Path | None = None) -> dict:
     moved = []
     errors = []
 
-    # Log BEFORE moving so a crash mid-move still tells us what happened.
-    log_path.write_text(plan.to_json())
+    # Log BEFORE moving so a crash mid-move still tells us what happens.
+    # Write the full summary (with backup_dir) so rollback can find backups.
+    log_path.write_text(json.dumps({
+        "schema": "omnigate/txn/v1",
+        "entries": plan.entries,
+        "skipped": plan.skipped,
+        "backup_dir": str(backup_dir) if backup_dir else None,
+    }, indent=2))
 
     for e in plan.moves:
         staged, dst = Path(e["staged"]), Path(e["dst"])
@@ -186,6 +192,7 @@ def commit_import(plan: TxnPlan, backup_dir: Path | None = None) -> dict:
         "moved": len(moved),
         "skipped_identical": len(plan.skipped),
         "backups": backup_made,
+        "backup_dir": str(backup_dir) if backup_dir else None,
         "errors": errors,
         "log": str(log_path),
         "ok": not errors,
@@ -205,15 +212,25 @@ def rollback_last_txn(log_path: str | None = None) -> dict:
         log_path = str(logs[-1])
     log = json.loads(Path(log_path).read_text())
     restored = []
-    # Backups live in the summary we returned; reconstruct from backups dirs.
+
+    # Determine backup dir: from log's backup_dir, or reconstruct from entries
+    backup_dir = log.get("backup_dir")
+    if backup_dir:
+        backup_dir = Path(backup_dir)
+
     for entry in log.get("entries", []):
         dst = Path(entry["dst"])
-        parent_backups = sorted(dst.parent.glob(".omnigate-backup-*"))
-        if parent_backups:
+        if backup_dir:
+            src = backup_dir / dst.name
+        else:
+            # Fallback: search for backup dirs by timestamp pattern
+            parent_backups = sorted(dst.parent.glob(".omnigate-backup-*"))
+            if not parent_backups:
+                continue
             newest = parent_backups[-1]
             src = newest / dst.name
-            if src.is_file():
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.move(str(src), str(dst))
-                restored.append(str(dst))
+        if src.is_file():
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(src), str(dst))
+            restored.append(str(dst))
     return {"ok": bool(restored), "restored": restored, "log": log_path}
