@@ -30,7 +30,7 @@ class TestDetectPlatform(unittest.TestCase):
 
 class TestBeatOrder(unittest.TestCase):
     def test_order_is_look_choose_keep_land(self):
-        self.assertEqual(BEATS, (Beat.LOOK, Beat.CHOOSE, Beat.KEEP, Beat.LAND))
+        self.assertEqual(BEATS, (Beat.LOOK, Beat.CHOOSE, Beat.KEEP, Beat.LAND, Beat.OSR))
 
 
 class TestAutoAdvance(unittest.TestCase):
@@ -57,8 +57,13 @@ class TestBeatNavigation(unittest.TestCase):
     def test_next_from_look_is_choose(self):
         self.assertEqual(next_beat(Beat.LOOK), Beat.CHOOSE)
 
-    def test_next_from_land_is_none(self):
-        self.assertIsNone(next_beat(Beat.LAND))
+    def test_next_from_land_is_osr(self):
+        # LAND -> OSR (share/pull setup)
+        assert next_beat(Beat.LAND) == Beat.OSR
+
+    def test_next_from_osr_is_none(self):
+        # OSR is last
+        assert next_beat(Beat.OSR) is None
 
     def test_prev_from_choose_is_look(self):
         self.assertEqual(prev_beat(Beat.CHOOSE), Beat.LOOK)

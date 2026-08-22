@@ -86,17 +86,18 @@ COMMANDS: dict[str, dict[str, str]] = {
         "args": "mount|list|unmount [ARGS]",
         "desc": "union-mount the old disk (Linux target only, requires root)",
     },
-    "anywhere": {
-        "script": "anywhere.py",
-        "args": "plan|probe|run|script [--target user@host] [--dry-run]",
-        "desc": "nixos-anywhere for Omarchy: SSH in, KEEP the disk, migrate stuff",
+    "replicate": {
+        "script": "replicate.py",
+        "args": "share|receive [ARGS]",
+        "desc": "peer-to-peer setup replication (Like Bitcoin): share your setup or pull a friend's",
     },
     "wizard": {
         "script": "app.py",
         "args": "",
-        "desc": "the on-ramp wizard (Flet, three piles, five minutes)",
+        "desc": "launch the Flet on-ramp wizard (Look → Choose → Keep → Land → OSR)",
     },
 }
+
 
 INSTALL_HINTS = {
     "win32": (

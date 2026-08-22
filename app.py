@@ -255,6 +255,7 @@ def build_keep_screen(
 def build_land_screen(
     page: ft.Page,
     on_quit: callable,
+    on_osr: callable,
 ) -> ft.Control:
     """Beat 3: put zip on USB, done."""
     return ft.Container(
@@ -274,13 +275,25 @@ def build_land_screen(
                 ft.Text("Super+Space is the new Start menu.", size=16, color=CYAN),
                 ft.Text("Super+K shows every hotkey.", size=16, color=CYAN),
                 ft.Container(height=20),
-                ft.FilledButton("Close",
-                                bgcolor=GREEN, color=BG,
-                                on_click=lambda _: on_quit(),
-                                style=ft.ButtonStyle(
-                                    shape=ft.RoundedRectangleBorder(radius=12),
-                                    padding=ft.padding.symmetric(horizontal=48, vertical=18),
-                                )),
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=12,
+                    controls=[
+                        ft.FilledButton("Close",
+                                        bgcolor=GREEN, color=BG,
+                                        on_click=lambda _: on_quit(),
+                                        style=ft.ButtonStyle(
+                                            shape=ft.RoundedRectangleBorder(radius=12),
+                                            padding=ft.padding.symmetric(horizontal=48, vertical=18),
+                                        )),
+                        ft.OutlinedButton("Or: share / pull a setup",
+                                           color=CYAN,
+                                           on_click=lambda _: on_osr(),
+                                           style=ft.ButtonStyle(
+                                               shape=ft.RoundedRectangleBorder(radius=12),
+                                           )),
+                    ],
+                ),
                 ft.Container(height=20),
                 ft.Text("Five minutes. Then Omarchy.", size=14, color=DIM,
                         italic=True),
@@ -289,7 +302,119 @@ def build_land_screen(
     )
 
 
-def main(page: ft.Page):
+def build_osr_screen(
+    page: ft.Page,
+    on_back: callable,
+    on_share: callable,
+    on_receive: callable,
+) -> ft.Control:
+    """Beat OSR: pull a friend's setup or share your own (Like Bitcoin)."""
+    return ft.Container(
+        expand=True,
+        bgcolor=BG,
+        padding=40,
+        content=ft.Column(
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=18,
+            controls=[
+                ft.Container(height=20),
+                ft.Text("Replicate a setup", size=32, color=FG,
+                        weight=ft.FontWeight.W_600),
+                ft.Text("Pull a friend's tuned Omarchy. No cloud, no login.",
+                        size=16, color=CYAN),
+                ft.Text("Or share your own setup as a QR code.",
+                        size=16, color=FG),
+                ft.Container(height=20),
+                ft.ElevatedButton("Pull a friend's setup",
+                                   bgcolor=CYAN, color=BG,
+                                   on_click=lambda _: on_receive(),
+                                   style=ft.ButtonStyle(
+                                       shape=ft.RoundedRectangleBorder(radius=12),
+                                       padding=ft.padding.symmetric(horizontal=32, vertical=16),
+                                   )),
+                ft.ElevatedButton("Share my setup",
+                                   bgcolor=GREEN, color=BG,
+                                   on_click=lambda _: on_share(),
+                                   style=ft.ButtonStyle(
+                                       shape=ft.RoundedRectangleBorder(radius=12),
+                                       padding=ft.padding.symmetric(horizontal=32, vertical=16),
+                                   )),
+                ft.Container(height=20),
+                ft.TextButton("Back", on_click=lambda _: on_back(),
+                              style=ft.ButtonStyle(color=FG)),
+            ],
+        ),
+    )
+
+
+def _do_share(page: ft.Page):
+    """Run replicate.share in a background thread and show the QR."""
+    import replicate
+
+    share_dir = Path.home() / ".config"  # sensible default: share configs
+
+    def _share():
+        try:
+            rc = replicate.cmd_share(port=5317, src_dir=share_dir)
+        except KeyboardInterrupt:
+            pass
+
+    threading.Thread(target=_share, daemon=True).start()
+    page.snack_bar = ft.SnackBar(
+        content=ft.Text(f"Sharing {share_dir} on port 5317…", color=FG),
+        bgcolor=GREEN,
+    )
+    page.snack_bar.open = True
+    page.update()
+
+
+def _do_receive(page: ft.Page):
+    """Prompt for manifest URL, then run replicate.receive."""
+    import replicate
+
+    url_field = ft.TextField(
+        label="Friend's manifest URL",
+        hint_text="http://192.168.x.x:5317/omarchy-setup-manifest.json",
+        color=FG,
+        bgcolor="#16241d",
+        border_color=CYAN,
+    )
+
+    def _on_submit(_: ft.ControlEvent):
+        url = url_field.value
+        if not url:
+            return
+        dlg.open = False
+        page.update()
+
+        def _receive():
+            try:
+                rc = replicate.cmd_receive(url)
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Receive complete (exit {rc})", color=FG),
+                    bgcolor=GREEN if rc == 0 else RED,
+                )
+                page.snack_bar.open = True
+                page.update()
+            except Exception as e:
+                page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Receive failed: {e}", color=WHITE),
+                    bgcolor=RED,
+                )
+                page.snack_bar.open = True
+                page.update()
+
+        threading.Thread(target=_receive, daemon=True).start()
+
+    dlg = ft.AlertDialog(
+        title=ft.Text("Pull a setup", color=FG),
+        content=url_field,
+        actions=[ft.TextButton("Pull", on_click=_on_submit)],
+        bgcolor=BG,
+    )
+    page.dialog = dlg
+    dlg.open = True
+    page.update()
     page.title = "omnigate — your OS is becoming"
     page.theme = make_theme()
     page.bgcolor = BG
@@ -328,7 +453,14 @@ def main(page: ft.Page):
                 on_next=lambda: _go_beat(Beat.LAND),
             ))
         elif beat == Beat.LAND:
-            page.add(build_land_screen(page, on_quit=lambda: page.window.close()))
+            page.add(build_land_screen(page, on_quit=lambda: page.window.close(), on_osr=lambda: _go_beat(Beat.OSR)))
+        elif beat == Beat.OSR:
+            page.add(build_osr_screen(
+                page,
+                on_back=lambda: _go_beat(Beat.LAND),
+                on_share=lambda: _do_share(page),
+                on_receive=lambda: _do_receive(page),
+            ))
         # Resumable: persist where we are so a reopen continues here
         try:
             from txn import save_wizard_state

@@ -32,9 +32,10 @@ class Beat(Enum):
     CHOOSE = "choose"
     KEEP = "keep"
     LAND = "land"
+    OSR = "osr"  # peer-to-peer setup replication
 
 
-BEATS = (Beat.LOOK, Beat.CHOOSE, Beat.KEEP, Beat.LAND)
+BEATS = (Beat.LOOK, Beat.CHOOSE, Beat.KEEP, Beat.LAND, Beat.OSR)
 
 
 @dataclass
