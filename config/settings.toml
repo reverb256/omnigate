@@ -1,0 +1,29 @@
+# Default settings for omarchy-migrate.
+# Install to ~/.config/omarchy/migrate/settings.toml
+
+[export]
+# What to include in the migration package
+include_configs = true
+include_creds = true
+
+# Exclude patterns (gitignore syntax, $HOME-relative)
+excludes = [
+    "*.tmp",
+    "*.cache",
+    ".cache",
+    "node_modules",
+    "__pycache__",
+    "*.pyc",
+]
+
+[import]
+# Defer rule: skip anything Omarchy already provides
+defer_to_omarchy = true
+# Atomic: stage → commit (with rollback)
+atomic = true
+
+[replicate]
+# Default share port
+port = 5317
+# Announce via UDP multicast (LocalSend-style)
+multicast = true

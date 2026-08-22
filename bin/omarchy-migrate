@@ -1,0 +1,163 @@
+#!/bin/bash
+# omarchy-migrate — migrate files from your old Windows or macOS
+#
+# Bash router for Linux + macOS. Delegates to the Python engine.
+# On Windows, use omarchy-migrate.ps1 instead.
+#
+# Conventions (from ~/Projects/omarchy AGENTS.md):
+#   - #!/bin/bash shebang
+#   - Two-space indent
+#   - [[ ]] for string/file tests
+#   - Quote paths with spaces
+#
+# XDG paths:
+#   State:  ~/.local/state/omarchy/migrate/
+#   Config: ~/.config/omarchy/migrate/
+#   Data:   ~/.local/share/omarchy/migrate/
+
+set -euo pipefail
+
+OMARCHY_MIGRATE_VERSION="0.2.0"
+
+# Resolve the omnigate repo root
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO=$(dirname "$SCRIPT_DIR")
+
+# XDG-compliant directories
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/migrate"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/omarchy/migrate"
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/omarchy/migrate"
+
+# Ensure dirs exist
+mkdir -p "$STATE_DIR" "$CONFIG_DIR" "$DATA_DIR/backups" "$DATA_DIR/cache"
+
+# Run a Python omnigate command
+run_py() {
+    cd "$REPO"
+    python3 "$@"
+}
+
+# Detect current OS
+detect_os() {
+    case "$(uname -s)" in
+        Linux*)  echo "linux";;
+        Darwin*) echo "macos";;
+        *)       echo "unknown";;
+    esac
+}
+
+# Commands
+cmd_detect() {
+    local os_name
+    os_name=$(detect_os)
+    echo "Detecting apps on $os_name..."
+    run_py -c "
+import sys; sys.path.insert(0, '$REPO')
+from lib.core import detect
+r = detect('$os_name')
+print(f'OS: {r.os_name}')
+print(f'Apps found: {len(r.apps)}')
+print(f'Storage devices: {len(r.storage)}')
+for app in sorted(r.apps)[:20]:
+    print(f'  {app}')
+"
+}
+
+cmd_export() {
+    local out os_name
+    os_name=$(detect_os)
+    out="${1:-$HOME/omarchy-migrate-package.zip}"
+    echo "Exporting from $os_name to $out..."
+    run_py lib/core.py export --os "$os_name" --out "$out"
+}
+
+cmd_import() {
+    local pkg="${1:-}"
+    if [[ -z "$pkg" ]]; then
+        echo "Usage: omarchy-migrate import <package.zip>" >&2
+        return 1
+    fi
+    shift
+    run_py lib/core.py import --pkg "$pkg" "$@"
+}
+
+cmd_share() {
+    local port="${1:-5317}"
+    run_py lib/core.py share --port "$port"
+}
+
+cmd_receive() {
+    local url="${1:-}"
+    if [[ -z "$url" ]]; then
+        echo "Usage: omarchy-migrate receive <manifest-url>" >&2
+        return 1
+    fi
+    run_py lib/core.py receive --url "$url"
+}
+
+cmd_doctor() {
+    local py_cmd git_cmd
+    py_cmd=$(command -v python3 || true)
+    git_cmd=$(command -v git || true)
+
+    echo "omarchy-migrate v${OMARCHY_MIGRATE_VERSION}"
+    echo ""
+    echo "Environment:"
+    [[ -n "$py_cmd" ]] && echo "  python3: $py_cmd" || echo "  python3: NOT FOUND"
+    [[ -n "$git_cmd" ]] && echo "  git:     $git_cmd" || echo "  git:     NOT FOUND"
+
+    local os_name
+    os_name=$(detect_os)
+    echo "  os:      $os_name"
+
+    echo ""
+    echo "Directories:"
+    echo "  state:   $STATE_DIR"
+    echo "  config:  $CONFIG_DIR"
+    echo "  data:    $DATA_DIR"
+
+    if [[ -z "$py_cmd" ]]; then
+        echo ""
+        echo "Install python3 to use omnigate:"
+        echo "  Arch/Omarchy: sudo pacman -S python3"
+        echo "  macOS:        brew install python3"
+        return 1
+    fi
+
+    echo ""
+    echo "Environment OK."
+}
+
+# Main router
+case "${1:-}" in
+    detect)     shift; cmd_detect "$@";;
+    export)     shift; cmd_export "$@";;
+    import)     shift; cmd_import "$@";;
+    share)      shift; cmd_share "$@";;
+    receive)    shift; cmd_receive "$@";;
+    doctor)     shift; cmd_doctor "$@";;
+    --help|-h)
+        echo "omarchy-migrate v${OMARCHY_MIGRATE_VERSION}"
+        echo ""
+        echo "Usage: omarchy-migrate <command> [args]"
+        echo ""
+        echo "Commands:"
+        echo "  detect              Scan for installed apps and storage"
+        echo "  export [OUT]        Build migration package (default: ~/omarchy-migrate-package.zip)"
+        echo "  import PKG          Import a migration package"
+        echo "  share [PORT]        Share your setup via QR (default port 5317)"
+        echo "  receive URL         Pull a friend's setup"
+        echo "  doctor              Verify environment"
+        echo ""
+        echo "Examples:"
+        echo "  omarchy-migrate detect"
+        echo "  omarchy-migrate export --out ~/old-pc.zip"
+        echo "  omarchy-migrate import ~/old-pc.zip --dry-run"
+        ;;
+    *)
+        echo "omarchy-migrate v${OMARCHY_MIGRATE_VERSION}" >&2
+        echo "Unknown command: ${1:-}" >&2
+        echo "Run 'omarchy-migrate --help' for usage." >&2
+        return 1
+        ;;
+esac

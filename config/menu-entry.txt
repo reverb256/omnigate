@@ -1,0 +1,9 @@
+# Menu entry for Omarchy. Paste this into default/omarchy/omarchy-menu.jsonc
+# under the "setup" group:
+#
+#   "setup.import": {
+#     "icon": "󰇘",
+#     "iconFont": "omarchy",
+#     "label": "Bring files from another PC",
+#     "action": "omarchy-migrate"
+#   },

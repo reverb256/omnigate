@@ -1,0 +1,24 @@
+#!/bin/bash
+# First-run hook: invite the user to bring files from their old PC.
+# Fires once if we see evidence of a prior migration export
+# (zip on a USB, or a known cloud location).
+set -e
+
+if omarchy-done ensure migrate-invitation; then
+  exit 0
+fi
+
+# Check for a migration package on a mounted USB or in ~/Downloads
+found=""
+for dir in /media/*/ ~/Downloads ~/Desktop; do
+  if [[ -f "$dir/omarchy-migrate-package.zip" ]]; then
+    found="$dir/omarchy-migrate-package.zip"
+    break
+  fi
+done
+
+if [[ -n "$found" ]]; then
+  omarchy-notification-send -u critical -g 󰇘 "Bring your files from your old PC" \
+    "Click to import your apps, configs, and data." \
+    --exec "omarchy-launch-floating-terminal-with-presentation omarchy-migrate import $found"
+fi
