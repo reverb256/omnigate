@@ -36,28 +36,48 @@ Plus a two-sided export/import (Win2Linux-style) for apps + configs:
 
 ## Status
 
-Early but working. Scanner, mapper, compatibility gate, config porter, HM
-generator, export/import, union mount, and differential sync are
-implemented. See `docs/` for details.
+**0.2.0** — on-ramp wizard, OSR peer-to-peer replication, atomic import with
+rollback, Stage-0 audit, 213/213 tests green.
 
-**Verification:** 56/56 tests pass. End-to-end pipeline proven against a
-live Omarchy guest (export → map → defer → HM fragment). Zephyr (daily
-driver) migration report complete: 128 packages, 27 mapped, 2 deferred,
-0 unknown. On-device LLM research (Needle spike) is documented in
-[`docs/ONDEVICE_LLM_RESEARCH.md`](docs/ONDEVICE_LLM_RESEARCH.md).
+| Capability | Status |
+|-----------|--------|
+| Source detection (Linux/macOS/Windows) | ✅ `scanner/detect.py` |
+| App mapping + defer rule | ✅ `mapper/map.py` |
+| Compatibility gate | ✅ `mapper/compat.py` |
+| Config porting | ✅ `mapper/port_configs.py` |
+| HM profile generator | ✅ `generator/gen_hm.py` |
+| Export/import CLI | ✅ `migrate.py` |
+| Atomic two-phase import + rollback | ✅ `txn.py` |
+| Flet on-ramp wizard | ✅ `app.py` |
+| OSR P2P replication (share/pull via QR) | ✅ `replicate.py` |
+| Stage-0 audit (auto-detect OS + storage) | ✅ `audit.py` |
+| Union mount / Ghost Drive | ✅ `mount.py` |
+| Differential sync | ✅ `sync.py` |
+| Credential tiering (age) | ✅ `creds.py` |
+| Bootstrap launcher | ✅ `bootstrap.py` |
+| Cluster orchestration | ✅ `orchestrate.py` |
+
+See `docs/` for architecture, `CHANGELOG.md` for history.
 
 ## Quick start
 
 ```bash
-# On the OLD machine — detect apps + configs, build a package
-python3 migrate.py export --os linux --out my-setup.zip
+# 1. On the OLD machine — launch the wizard
+python3 bootstrap.py wizard
+# Or: export a package directly
+python3 bootstrap.py export --os linux --out my-setup.zip
 
-# On the fresh Omarchy box — import (defer rule + compat gate + HM profile)
-python3 migrate.py import my-setup.zip --dry-run
+# 2. On the fresh Omarchy box — import
+python3 bootstrap.py import my-setup.zip --dry-run
+python3 bootstrap.py import my-setup.zip --yes
 
-# World-breaking: mount the old disk, zero copy
-sudo python3 mount.py mount /dev/sdb2 /data/games
-python3 mount.py list
+# 3. Or: share your setup to a friend over the LAN
+python3 bootstrap.py replicate share --dir ~/.config
+# Friend pulls:
+python3 bootstrap.py replicate receive http://YOUR_IP:5317/omarchy-setup-manifest.json
+
+# 4. Verify the environment
+python3 bootstrap.py doctor
 ```
 
 ## Cross-platform
