@@ -86,6 +86,16 @@ COMMANDS: dict[str, dict[str, str]] = {
         "args": "mount|list|unmount [ARGS]",
         "desc": "union-mount the old disk (Linux target only, requires root)",
     },
+    "anywhere": {
+        "script": "anywhere.py",
+        "args": "plan|probe|run|script [--target user@host] [--dry-run]",
+        "desc": "nixos-anywhere for Omarchy: SSH in, KEEP the disk, migrate stuff",
+    },
+    "wizard": {
+        "script": "app.py",
+        "args": "",
+        "desc": "the on-ramp wizard (Flet, three piles, five minutes)",
+    },
 }
 
 INSTALL_HINTS = {
