@@ -45,14 +45,15 @@ def main():
     # Mount real backup
     send("mkdir -p /mnt/backup\n", 1)
     send("mount -t 9p backup /mnt/backup 2>&1\n", 2)
-    send("ls /mnt/backup/ | head\n", 2)
-    # Simulate ghost mount: backup has critical-configs + home-j_kro
-    send("mkdir -p /mnt/nixos-legacy\n", 1)
-    send("ln -sfd /mnt/backup/critical-configs /mnt/nixos-legacy/etc 2>&1\n", 1)
-    send("ln -sfd /mnt/backup/home-j_kro /mnt/nixos-legacy/home-j_kro 2>&1\n", 1)
-    # Verify the symlink targets resolve
-    send("ls -la /mnt/nixos-legacy/home/j_kro/.ssh/ 2>&1 | head\n", 2)
-    send("ls -la /mnt/nixos-legacy/home/j_kro/.age/ 2>&1 | head\n", 2)
+    send("ls /mnt/backup/home-j_kro/ | head -3\n", 2)
+    # Verify the REAL paths exist in backup (what restore.py symlinks to)
+    send("ls -ld /mnt/backup/home-j_kro/.ssh /mnt/backup/home-j_kro/.config /mnt/backup/home-j_kro/.hermes /mnt/backup/home-j_kro/.age 2>&1\n", 2)
+    send("ls -la /mnt/backup/home-j_kro/.age/key.txt 2>&1\n", 2)
+    # Simulate ghost mount: backup's home-j_kro stands in for /mnt/nixos-legacy/home/j_kro
+    send("mkdir -p /mnt/nixos-legacy/home\n", 1)
+    send("ln -sfd /mnt/backup/home-j_kro /mnt/nixos-legacy/home/j_kro 2>&1\n", 1)
+    # Verify symlink chain resolves to REAL files
+    send("ls -ld /mnt/nixos-legacy/home/j_kro/.ssh /mnt/nixos-legacy/home/j_kro/.config /mnt/nixos-legacy/home/j_kro/.hermes 2>&1\n", 2)
     # Test the actual restore.sh symlink logic in a sandbox
     send("mkdir -p /test-root/home/j_kro /test-root/etc/age\n", 1)
     send("ln -sfd /mnt/nixos-legacy/home/j_kro/.ssh /test-root/home/j_kro/.ssh 2>&1\n", 1)

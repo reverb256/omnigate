@@ -61,15 +61,14 @@ def build_restore_script(host: str, plan: dict, backup_source: str) -> str:
         tgt = sec.get("target", "")
         s_type = sec.get("type", "")
 
-        # Map source path to backup path
-        if src.startswith("/etc/nixos/"):
-            backup_src = f"{backup_root}/critical-configs/nixos/{src.replace('/etc/nixos/', '')}"
-        elif src.startswith("/home/j_kro/.ssh/"):
+        # Map source path to backup path (real backup structure:
+        # /home/j_kro/zephyr-backup/home-j_kro/ is a full home copy)
+        if src.startswith("/etc/nixos/.age/"):
+            backup_src = f"{backup_root}/home-j_kro/.age/{src.replace('/etc/nixos/.age/', '')}"
+        elif src.startswith("/home/j_kro/"):
             backup_src = f"{backup_root}/home-j_kro/{src.replace('/home/j_kro/', '')}"
-        elif src.startswith("/home/j_kro/.age"):
-            backup_src = f"{backup_root}/home-j_kro/{src.replace('/home/j_kro/', '')}"
-        elif src.startswith("/home/j_kro/.hermes"):
-            backup_src = f"{backup_root}/home-j_kro/{src.replace('/home/j_kro/', '')}"
+        elif src.startswith("/etc/nixos/"):
+            backup_src = f"{backup_root}/home-j_kro/.config/nixos/{src.replace('/etc/nixos/', '')}"
         else:
             backup_src = f"{backup_root}/{src.lstrip('/')}"
 
