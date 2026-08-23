@@ -1,41 +1,142 @@
-# Dev cache exclusions for zephyr /home/j_kro backup to garage S3
-# These are regenerable; do NOT back them up.
-.bun
-.npm
-.cache
-node_modules
-target
-.cargo
-.rustup
-.m2
-.gradle
-.go
-.deno
-.local/share/pnpm
-.local/share/fnm
-.vscode-server
-.zoom
+# rclone exclude rules for zephyr /home/j_kro -> garage S3
+#
+# SYNTAX (rclone.org/filtering + fs/filter/filter.go Add()):
+#   A bare name like ".bun" is a FILE rule ONLY. It matches a file named
+#   ".bun" and does NOT exclude the directory's contents — rclone still
+#   recurses in and copies everything. Excluding a directory REQUIRES
+#   "dir/**" (or a trailing "/"). Leading "/" anchors to the source root.
+#   Docs list this as pitfall: "Not using ** to match the contents of a
+#   directory."
+#
+# Verify any change with:
+#   rclone ls /home/j_kro --exclude-from backup-excludes.txt --dry-run | wc -l
 
-# Browser CACHE only (not profiles!) — profiles are REAL DATA
-.config/Code/Cache
-.config/Code/CachedData
-.config/google-chrome*/Cache
-.config/google-chrome*/User Data/*/Cache
-.var/app/*/cache
+# --- Language / package manager caches (regenerable) ---
+/.bun/**
+/.npm/**
+/.npm-global/**
+/.cache/**
+/.cargo/**
+/.rustup/**
+/.m2/**
+/.gradle/**
+/.deno/**
+/.local/share/pnpm/**
+/.local/share/fnm/**
+/.local/state/**
+/.nix-profile/**
+/.nix-defexpr/**
+/.vscode-server/**
+/.zoom/**
 
-# Python venvs inside hermes workspaces (regenerable)
-.hermes/kanban/workspaces/*/.venv
-.agents/skills/*/*.bak
+# --- Regenerable agent runtime state (NOT personal data) ---
+/.hermes/kanban/workspaces/**
+/.hermes/cache/**
+/.agents/cache/**
+
+# --- Per-project build/dep dirs, at ANY depth ---
+# NOTE: "**/x/**" does NOT match "x/" at the source root (it requires a
+# leading path segment). Use the bare-dir form "x/**" which rclone matches
+# at any depth, per rclone.org/filtering pattern semantics.
+node_modules/**
+__pycache__/**
+.pytest_cache/**
+.mypy_cache/**
+.ruff_cache/**
+.venv/**
+venv/**
+.tox/**
+.next/**
+.turbo/**
+.parcel-cache/**
+dist/**
+build/**
+target/debug/**
+target/release/**
+
+# --- Cache-type dirs at ANY depth (nested copies under Projects/, .config/, etc) ---
+.cache/**
+cache/**
+Cache/**
+CachedData/**
+GPUCache/**
+.bun/**
+.rustup/**
+.npm/**
+.cargo/registry/**
+.cargo/git/**
+.gradle/caches/**
+.m2/repository/**
+
+# --- Large redownloadable BLOBS (74GiB models, 35GiB ISOs, VM images) ---
+# Empirically the byte hogs: models 74.6G, Downloads 35.2G, omarchy-test 22G,
+# VMs 12.4G, Videos 14G, .microsandbox 8G. All redownloadable or reproducible.
+# Model weights: HuggingFace. ISOs: vendor. VM disks: rebuildable from configs.
+/models/**
+/Downloads/**
+/omarchy-test/**
+/VMs/**
+/Videos/**
+/.microsandbox/**
+/builds/**
+# hermes state DB snapshots (3GB each, live state.db IS kept)
+/.hermes/state-snapshots/**
+# large model/llamafile blobs inside repos
+**/llamafiles/**
+*.gguf
+*.qcow2
+*.iso
+*.iso.part
+*.img
+*.ext4
+*.vmdk
+*.vdi
+
+# --- Large redownloadable runtimes / toolchains (NOT personal data) ---
+# Identified empirically: .local alone held 484,891 files, dominated by Steam
+# runtimes and podman overlay storage. go/ 93k, flutter 15k, .pub-cache 16k.
+/.local/share/Steam/**
+/.local/share/containers/**
+/.local/share/lutris/**
+/.local/share/Trash/**
+/.local/share/flatpak/**
+/.local/lib/**
+/go/**
+/flutter/**
+/.pub-cache/**
+/.dartServer/**
+/.wine/**
+/.lmstudio/**
+/StabilityMatrix/**
+/playwright-browsers/**
+/.venv-hermes/**
+/.hound-env/**
+/.grok/**
+
+# --- Git object stores (source is on GitHub; refs/config still backed up) ---
+.git/objects/**
+
+# --- Application CACHES only. Profiles themselves are kept. ---
+/.var/app/*/cache/**
+/.config/*/Cache/**
+/.config/*/CachedData/**
+/.config/*/Code Cache/**
+/.config/*/GPUCache/**
+/.config/*/Service Worker/CacheStorage/**
+/.mozilla/firefox/*/cache2/**
+/.config/zen/*/cache2/**
+/.config/zen/*/*/cache2/**
 
 # ============================================================
-# EXPLICITLY INCLUDED (DO NOT ADD TO EXCLUDES):
-#   ~/.gnupg                  — GPG keys (248K)
-#   ~/.pki                    — client certs (68K)
-#   ~/.local/share/keyrings/  — gnome-keyring (login.keyring, user.keystore)
-#   ~/.config/zen             — Zen browser profile (1GB, bookmarks/logins)
-#   ~/.config/chromium        — Chromium profile
-#   ~/.mozilla                — Firefox profile
-#   ~/.config/gh              — gh CLI auth token store
-#   ~/.ssh ~/.age             — SSH + age keys
-#   ~/.config ~/.hermes       — all app config + agent memory
+# EXPLICITLY INCLUDED — never add these to the rules above:
+#   /.gnupg/**                  GPG keys
+#   /.pki/**                    client certs
+#   /.local/share/keyrings/**   gnome-keyring (login.keyring, user.keystore)
+#   /.ssh/** /.age/**           SSH + age keys
+#   /.config/zen/**             Zen browser profile (bookmarks, logins)
+#   /.config/chromium/**        Chromium profile
+#   /.mozilla/**                Firefox profile
+#   /.config/gh/**              gh CLI auth
+#   /.config/** /.hermes/**     app config + agent memory/skills
+#   /Projects/**                source repos (working trees)
 # ============================================================
