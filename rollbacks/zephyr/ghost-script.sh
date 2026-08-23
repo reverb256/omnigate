@@ -19,6 +19,7 @@ DISK="${DISK:-/dev/nvme0n1}"
 PART="${PART:-${DISK}p2}"
 SUBVOL="@${HOST}-arch"
 HOME_SUBVOL="@home"          # reuse existing @home (user data preserved)
+GHOST_SNAPSHOT="@nixos-ghost-$(date +%Y%m%d)"   # read-only 1-month safety net
 MNT="/mnt/${HOST}-arch"
 BACKUP="${BACKUP:-/home/j_kro/zephyr-backup}"
 LEGACY="${LEGACY:-/nixos-legacy}"
@@ -30,8 +31,28 @@ TIMEZONE="${TIMEZONE:-America/Winnipeg}"
 
 echo "=== omniport ghost transform: $HOST ==="
 echo "Disk: $DISK  Partition: $PART  Subvolume: $SUBVOL"
+echo "Ghost snapshot: $GHOST_SNAPSHOT (read-only, 1-month rollback)"
 echo "User: $USERNAME  Hostname: $HOSTNAME  TZ: $TIMEZONE"
 echo ""
+
+# 0. GHOST DRIVE: freeze NixOS as a permanent, reachable lower layer (non-destructive)
+#    - read-only btrfs snapshot (CoW, ~0 space, uncorruptable)
+#    - rewrite old partition GPT GUID -> Discoverable Partitions Spec so
+#      systemd-gpt-auto-generator auto-mounts it forever under Arch
+echo "--- Step 0: Ghost Drive (freeze + permanent mount) ---"
+if ! sudo btrfs subvolume list "$PART" 2>/dev/null | grep -q "$GHOST_SNAPSHOT"; then
+  sudo btrfs subvolume snapshot -r "$PART" "@" "$GHOST_SNAPSHOT"
+  echo "Frozen read-only snapshot: $GHOST_SNAPSHOT"
+fi
+# Rewrite GPT type GUID to root (x8664) discoverable-partitions type so the
+# old NixOS partition auto-mounts as /nixos-ghost under Arch (reversible).
+OLD_GUID=$(lsblk -no PARTTYPE "$PART" 2>/dev/null)
+if [[ "$OLD_GUID" != "4f68bce3-e8cd-4db1-96e7-fbcaf984b709" ]]; then
+  echo "Old PARTTYPE: $OLD_GUID"
+  sudo sfdisk --part-type "$DISK" "$(echo "$PART" | grep -oE '[0-9]+$')" 4f68bce3-e8cd-4db1-96e7-fbcaf984b709
+  echo "Rewrote PARTTYPE -> Discoverable Partitions root (Ghost Drive on)"
+fi
+mkdir -p /nixos-ghost
 
 # 1. Create subvolume (isolation, no resize)
 echo "--- Step 1: btrfs subvolume ---"
@@ -103,22 +124,24 @@ sudo arch-chroot "$MNT" /bin/bash -c "
   [[ -f /opt/omarchy/install/user/all.sh ]] && source /opt/omarchy/install/user/all.sh
 "
 
-# 8. Bootloader: omarchy installs Limine + add NixOS entry
-echo "--- Step 8: bootloader handoff (Limine) ---"
-sudo arch-chroot "$MNT" /bin/bash -c "
-  command -v omarchy-refresh-limine >/dev/null 2>&1 && omarchy-refresh-limine
-"
-sudo tee -a "$MNT/boot/limine.conf" >/dev/null <<EOF
-
-# NixOS (legacy rollback)
-menuentry "NixOS ($HOST legacy)" {
-    comment "Original NixOS install on @ subvolume"
-    protocol "linux"
-    kernel_path "boot:///vmlinuz-linux"
-}
+# 8. Bootloader: ADD Arch entry to existing systemd-boot (non-destructive).
+#    We DEFER Limine — systemd-boot stays the default, we only append a file.
+#    (Limine can be installed later once Arch is confirmed bootable.)
+echo "--- Step 8: bootloader (systemd-boot Arch entry) ---"
+ARCH_KERNEL=$(ls "$MNT/boot/vmlinuz-linux"* 2>/dev/null | head -1 | xargs -r basename)
+ARCH_INITRD=$(ls "$MNT/boot/initramfs-linux"*.img 2>/dev/null | head -1 | xargs -r basename)
+ROOT_PARTUUID=$(blkid -s PARTUUID -o value "$PART")
+sudo tee "$MNT/boot/loader/entries/arch-${HOST}.conf" >/dev/null <<EOF
+title   Arch (omarchy) — ${HOST}
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options root=PARTUUID=${ROOT_PARTUUID} rootflags=subvol=${SUBVOL} rw
 EOF
+echo "Added systemd-boot entry: arch-${HOST}.conf (systemd-boot remains default)"
 
 # 9. Done
 echo "=== Transform scaffold complete ==="
-echo "Reboot → Limine menu: Arch (omarchy) or NixOS (legacy)."
-echo "Rollback: select NixOS entry (old @ subvolume untouched)."
+echo "Reboot → systemd-boot menu: Arch (omarchy) or NixOS (still default)."
+echo "Ghost Drive: old NixOS frozen at /nixos-ghost (read-only, 1-month rollback)."
+echo "Rollback: select NixOS entry OR mount /nixos-ghost to recover configs."
+echo "After 1 month: run ghost-retire.sh to delete snapshot + Ghost Drive mapping."
