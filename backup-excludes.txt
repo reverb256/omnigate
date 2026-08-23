@@ -1,0 +1,41 @@
+# Dev cache exclusions for zephyr /home/j_kro backup to garage S3
+# These are regenerable; do NOT back them up.
+.bun
+.npm
+.cache
+node_modules
+target
+.cargo
+.rustup
+.m2
+.gradle
+.go
+.deno
+.local/share/pnpm
+.local/share/fnm
+.vscode-server
+.zoom
+
+# Browser CACHE only (not profiles!) — profiles are REAL DATA
+.config/Code/Cache
+.config/Code/CachedData
+.config/google-chrome*/Cache
+.config/google-chrome*/User Data/*/Cache
+.var/app/*/cache
+
+# Python venvs inside hermes workspaces (regenerable)
+.hermes/kanban/workspaces/*/.venv
+.agents/skills/*/*.bak
+
+# ============================================================
+# EXPLICITLY INCLUDED (DO NOT ADD TO EXCLUDES):
+#   ~/.gnupg                  — GPG keys (248K)
+#   ~/.pki                    — client certs (68K)
+#   ~/.local/share/keyrings/  — gnome-keyring (login.keyring, user.keystore)
+#   ~/.config/zen             — Zen browser profile (1GB, bookmarks/logins)
+#   ~/.config/chromium        — Chromium profile
+#   ~/.mozilla                — Firefox profile
+#   ~/.config/gh              — gh CLI auth token store
+#   ~/.ssh ~/.age             — SSH + age keys
+#   ~/.config ~/.hermes       — all app config + agent memory
+# ============================================================
