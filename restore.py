@@ -95,7 +95,7 @@ def build_restore_script(host: str, plan: dict, backup_source: str) -> str:
         "# --- Restore service configs ---",
     ]
 
-    # Service config restoration — restore from NixOS ghost mount or backup tarball
+    # Service config restoration — SYMLINK from ghost mount (user preference)
     for svc in mapped:
         name = svc.get("name", "")
         target = svc.get("target_path", "")
@@ -104,23 +104,24 @@ def build_restore_script(host: str, plan: dict, backup_source: str) -> str:
         lines.append(f"# {name} → {svc['arch_equivalent']}")
         if target:
             lines.append(f"mkdir -p $(dirname {target})")
-            # Try to restore from critical-configs tarball first, then ghost mount
-            lines.append(f"# Restore config from backup tarball (if present)")
+            # Symlink from NixOS legacy ghost mount (preserves rollback)
+            ghost_src = f"/mnt/nixos-legacy{target}"
+            lines.append(f"# Symlink config from ghost mount (rollback-safe)")
             lines.append(f"# Config source: {svc.get('config_source', 'N/A')}")
             if units:
                 for u in units:
-                    lines.append(f"cp /mnt/sentry-backup/critical-configs/etc/systemd/system/{name}*.service /etc/systemd/system/{u} 2>/dev/null || echo 'WARN: {name} unit not found'")
+                    lines.append(f"ln -sf /mnt/nixos-legacy/etc/systemd/system/{name}*.service /etc/systemd/system/{u} 2>/dev/null || echo 'WARN: {name} unit not found in ghost'")
             if target.endswith("/"):
-                lines.append(f"cp -r /mnt/sentry-backup/critical-configs/etc/.../{name}/ {target} 2>/dev/null || true")
+                lines.append(f"ln -sfd {ghost_src} {target} 2>/dev/null || true")
             else:
-                lines.append(f"cp /mnt/sentry-backup/critical-configs/.../{name}.conf {target} 2>/dev/null || true")
+                lines.append(f"ln -sf {ghost_src} {target} 2>/dev/null || true")
 
     lines += [
         "",
-        "# --- Restore user dotfiles ---",
-        "rsync -avz /mnt/backup/home-j_kro/.config /home/j_kro/.config/ 2>/dev/null || true",
-        "rsync -avz /mnt/backup/home-j_kro/.ssh /home/j_kro/.ssh/ 2>/dev/null || true",
-        "rsync -avz /mnt/backup/home-j_kro/.hermes /home/j_kro/.hermes/ 2>/dev/null || true",
+        "# --- Restore user dotfiles (SYMLINK from backup/ghost) ---",
+        "ln -sfd /mnt/nixos-legacy/home/j_kro/.config /home/j_kro/.config 2>/dev/null || true",
+        "ln -sfd /mnt/nixos-legacy/home/j_kro/.ssh /home/j_kro/.ssh 2>/dev/null || true",
+        "ln -sfd /mnt/nixos-legacy/home/j_kro/.hermes /home/j_kro/.hermes 2>/dev/null || true",
         "",
         "# --- Enable services ---",
         "systemctl daemon-reload",
