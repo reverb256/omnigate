@@ -179,6 +179,78 @@ def detect_source_os(target: str | None) -> str:
     return "unknown"
 
 
+def find_bootloader(target: str | None) -> dict:
+    """Detect active bootloader + EFI state on the source host.
+
+    Returns: { active, present[], efi_partition, entries_path, notes }
+    active is one of: systemd-boot, grub, limine, unknown
+    """
+    prefix = ssh_prefix(target)
+    result = {
+        "active": "unknown",
+        "present": [],
+        "efi_partition": None,
+        "entries_path": None,
+        "uefi": False,
+    }
+
+    # 1. Check UEFI mode
+    rc, out = _run(prefix + ["test", "-d", "/sys/firmware/efi"], timeout=5)
+    result["uefi"] = (rc == 0)
+
+    # 2. bootctl status (systemd-boot)
+    rc, out = _run(prefix + ["bootctl", "status"], timeout=8)
+    if rc == 0 and "systemd-boot" in out.lower():
+        result["active"] = "systemd-boot"
+        result["present"].append("systemd-boot")
+
+    # 3. GRUB dir
+    rc, out = _run(prefix + ["bash", "-c", "test -d /boot/grub && echo yes"], timeout=5)
+    if rc == 0:
+        result["present"].append("grub")
+
+    # 4. Limine config
+    rc, out = _run(prefix + ["bash", "-c", "test -f /boot/limine.conf && echo yes"], timeout=5)
+    if rc == 0:
+        result["present"].append("limine")
+
+    # 5. systemd-boot entries dir
+    rc, out = _run(prefix + ["bash", "-c", "ls /boot/loader/entries/ 2>/dev/null | head -3"], timeout=5)
+    if rc == 0 and out.strip():
+        if "systemd-boot" not in result["present"]:
+            result["present"].append("systemd-boot")
+        result["entries_path"] = "/boot/loader/entries/"
+        if result["active"] == "unknown":
+            result["active"] = "systemd-boot"
+
+    # 6. EFI partition mount
+    rc, out = _run(prefix + ["findmnt", "-n", "-o", "SOURCE", "/boot/efi"], timeout=5)
+    if rc == 0 and out.strip():
+        result["efi_partition"] = out.strip()
+    else:
+        rc, out = _run(prefix + ["findmnt", "-n", "-o", "SOURCE", "/boot"], timeout=5)
+        if rc == 0 and out.strip():
+            result["efi_partition"] = out.strip()
+
+    # 7. efibootmgr (what's actually the default)
+    rc, out = _run(prefix + ["efibootmgr"], timeout=8)
+    if rc == 0:
+        for line in out.splitlines():
+            if "BootOrder" in line or "* " in line:
+                if "systemd-boot" in line.lower() or "systemd" in line.lower():
+                    result["active"] = "systemd-boot"
+                elif "grub" in line.lower():
+                    result["active"] = "grub"
+                elif "limine" in line.lower():
+                    result["active"] = "limine"
+
+    # 8. If GRUB dir exists but systemd-boot is active, note it
+    if "grub" in result["present"] and result["active"] == "systemd-boot":
+        result["notes"] = "GRUB directory present but systemd-boot is the active bootloader"
+
+    return result
+
+
 def full_scan(target: str | None = None) -> dict:
     """Complete audit: probe + OS-specific discovery.
 
@@ -211,6 +283,7 @@ def full_scan(target: str | None = None) -> dict:
         audit["packages"] = find_pkgs(target)
         audit["secrets"] = find_secrets(target)
         audit["k3s"] = find_k3s(target)
+        audit["bootloader"] = find_bootloader(target)
 
     return audit
 
