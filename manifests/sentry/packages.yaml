@@ -1,0 +1,10 @@
+data:
+- 'Name:               hermes-agent'
+- 'Flake attribute:    packages.x86_64-linux.default'
+- 'Original flake URL: github:NousResearch/hermes-agent'
+- 'Locked flake URL:   github:NousResearch/hermes-agent/2d92793045432be06eedde29ff64743ead6ed240'
+- 'Store paths:        /nix/store/0jp6rq29n8crgvb6pp60d3rgz6d9sx1q-hermes-agent-0.20.4'
+- 'Name:               home-manager-path'
+- 'Store paths:        /nix/store/a6g9gbp6paa5j3vr1b3zr6p5wmqpki3q-home-manager-path'
+host: sentry
+section: packages

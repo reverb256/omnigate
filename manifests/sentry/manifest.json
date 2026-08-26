@@ -1,0 +1,279 @@
+{
+  "schema": "omnigate/audit/v1",
+  "timestamp": "2026-08-26T11:37:34.624327",
+  "target": "sentry",
+  "source_os": "nixos",
+  "probe": {
+    "ok": true,
+    "target": "sentry",
+    "remote": true,
+    "uname": "Linux sentry 7.1.3-cachyos #1-NixOS SMP PREEMPT_DYNAMIC Tue Jan  1 00:00:00 UTC 1980 x86_64 GNU/Linux",
+    "os_release": "ANSI_COLOR=\"0;38;2;126;186;228\"\nBUG_REPORT_URL=\"https://github.com/NixOS/nixpkgs/issues\"\nBUILD_ID=\"26.11pre-git\"\nCPE_NAME=\"cpe:/o:nixos:nixos:26.11\"\nDEFAULT_HOSTNAME=nixos\nDOCUMENTATION_URL=\"https://nixos.org/learn.html\"\nHOME_URL=\"https://nixos.org/\"\nID=nixos\nID_LIKE=\"\"\nIMAGE_ID=\"\"\nLOGO=\"nix-snowflake\"\nNAME=NixOS\nPRETTY_NAME=\"NixOS 26.11 (Zokor)\"\nSUPPORT_URL=\"https://nixos.org/community.html\"\nVARIANT=\"\"\nVARIANT_ID=\"\"\nVENDOR_NAME=NixOS\nVENDOR_URL=\"https://nixos.org/\"\nVERSION=\"26.11 (Zokor)\"\nVERSION_CODENAME=zokor\nVERSION_ID=\"26.11\"",
+    "kexec": false,
+    "lsblk": [
+      {
+        "name": "sda",
+        "size": "931.5G",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null,
+        "children": [
+          {
+            "name": "sda1",
+            "size": "931.5G",
+            "type": "part",
+            "fstype": "btrfs",
+            "mountpoint": "/var/storage",
+            "label": null
+          }
+        ]
+      },
+      {
+        "name": "sdb",
+        "size": "238.5G",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "label": null,
+        "children": [
+          {
+            "name": "sdb1",
+            "size": "1G",
+            "type": "part",
+            "fstype": "vfat",
+            "mountpoint": "/boot",
+            "label": null
+          },
+          {
+            "name": "sdb2",
+            "size": "8G",
+            "type": "part",
+            "fstype": "swap",
+            "mountpoint": "[SWAP]",
+            "label": null
+          },
+          {
+            "name": "sdb3",
+            "size": "229.5G",
+            "type": "part",
+            "fstype": "btrfs",
+            "mountpoint": "/home/j_kro/.screenrc",
+            "label": null
+          }
+        ]
+      }
+    ],
+    "error": null
+  },
+  "storage": [
+    {
+      "name": "sda",
+      "size": "931.5G",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null,
+      "children": [
+        {
+          "name": "sda1",
+          "size": "931.5G",
+          "type": "part",
+          "fstype": "btrfs",
+          "mountpoint": "/var/storage",
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "sdb",
+      "size": "238.5G",
+      "type": "disk",
+      "fstype": null,
+      "mountpoint": null,
+      "label": null,
+      "children": [
+        {
+          "name": "sdb1",
+          "size": "1G",
+          "type": "part",
+          "fstype": "vfat",
+          "mountpoint": "/boot",
+          "label": null
+        },
+        {
+          "name": "sdb2",
+          "size": "8G",
+          "type": "part",
+          "fstype": "swap",
+          "mountpoint": "[SWAP]",
+          "label": null
+        },
+        {
+          "name": "sdb3",
+          "size": "229.5G",
+          "type": "part",
+          "fstype": "btrfs",
+          "mountpoint": "/home/j_kro/.screenrc",
+          "label": null
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "packages": [
+    "Name:               hermes-agent",
+    "Flake attribute:    packages.x86_64-linux.default",
+    "Original flake URL: github:NousResearch/hermes-agent",
+    "Locked flake URL:   github:NousResearch/hermes-agent/2d92793045432be06eedde29ff64743ead6ed240",
+    "Store paths:        /nix/store/0jp6rq29n8crgvb6pp60d3rgz6d9sx1q-hermes-agent-0.20.4",
+    "Name:               home-manager-path",
+    "Store paths:        /nix/store/a6g9gbp6paa5j3vr1b3zr6p5wmqpki3q-home-manager-path"
+  ],
+  "secrets": [
+    {
+      "path": "Command '['ssh', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=accept-new', '-o', 'ConnectTimeout=12', 'sentry', 'bash', '-c', \"find /etc/nixos -name 'secretspec*.toml' -print 2>/dev/null\"]' timed out after 10 seconds",
+      "type": "secretspec_toml"
+    },
+    {
+      "path": "Command '['ssh', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=accept-new', '-o', 'ConnectTimeout=12', 'sentry', 'bash', '-c', \"find /etc/nixos/.age -name 'key*.txt' -print 2>/dev/null\"]' timed out after 10 seconds",
+      "type": "age_key"
+    },
+    {
+      "path": "Command '['ssh', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=accept-new', '-o', 'ConnectTimeout=12', 'sentry', 'bash', '-c', \"find /etc/nixos -name '*.yaml' -path '*secret*' -print 2>/dev/null\"]' timed out after 10 seconds",
+      "type": "sops_yaml"
+    },
+    {
+      "path": "/run/agenix/{}",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/actions-runner",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/backup",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/create_profiles.sh",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Desktop",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Documents",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Downloads",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/exit",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/hermes-serve.log",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/mnt-home",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/models",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/mosaic-identity.db",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Music",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Pictures",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/projects",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Projects",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Public",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/quickemu.log",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/result",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/sentry_check.sh",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Templates",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/Videos",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "/run/agenix/zephyr-backup",
+      "type": "agenix_secret",
+      "runtime": true
+    },
+    {
+      "path": "Command '['ssh', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=accept-new', '-o', 'ConnectTimeout=12', 'sentry', 'bash', '-c', \"find /home/j_kro/.config -name '*.env' -o -name 'api-keys.fish' -print 2>/dev/null\"]' timed out after 10 seconds",
+      "type": "user_env_creds"
+    }
+  ],
+  "k3s": {
+    "nodes": [],
+    "role": "agent"
+  },
+  "bootloader": {
+    "active": "systemd-boot",
+    "present": [
+      "systemd-boot"
+    ],
+    "efi_partition": "/dev/sdb1",
+    "entries_path": "/boot/loader/entries/",
+    "uefi": true
+  }
+}

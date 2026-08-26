@@ -1,0 +1,90 @@
+data:
+  error: null
+  kexec: false
+  lsblk:
+  - children:
+    - fstype: btrfs
+      label: null
+      mountpoint: /var/storage
+      name: sda1
+      size: 931.5G
+      type: part
+    fstype: null
+    label: null
+    mountpoint: null
+    name: sda
+    size: 931.5G
+    type: disk
+  - children:
+    - fstype: vfat
+      label: null
+      mountpoint: /boot
+      name: sdb1
+      size: 1G
+      type: part
+    - fstype: swap
+      label: null
+      mountpoint: '[SWAP]'
+      name: sdb2
+      size: 8G
+      type: part
+    - fstype: btrfs
+      label: null
+      mountpoint: /home/j_kro/.screenrc
+      name: sdb3
+      size: 229.5G
+      type: part
+    fstype: null
+    label: null
+    mountpoint: null
+    name: sdb
+    size: 238.5G
+    type: disk
+  ok: true
+  os_release: 'ANSI_COLOR="0;38;2;126;186;228"
+
+    BUG_REPORT_URL="https://github.com/NixOS/nixpkgs/issues"
+
+    BUILD_ID="26.11pre-git"
+
+    CPE_NAME="cpe:/o:nixos:nixos:26.11"
+
+    DEFAULT_HOSTNAME=nixos
+
+    DOCUMENTATION_URL="https://nixos.org/learn.html"
+
+    HOME_URL="https://nixos.org/"
+
+    ID=nixos
+
+    ID_LIKE=""
+
+    IMAGE_ID=""
+
+    LOGO="nix-snowflake"
+
+    NAME=NixOS
+
+    PRETTY_NAME="NixOS 26.11 (Zokor)"
+
+    SUPPORT_URL="https://nixos.org/community.html"
+
+    VARIANT=""
+
+    VARIANT_ID=""
+
+    VENDOR_NAME=NixOS
+
+    VENDOR_URL="https://nixos.org/"
+
+    VERSION="26.11 (Zokor)"
+
+    VERSION_CODENAME=zokor
+
+    VERSION_ID="26.11"'
+  remote: true
+  target: sentry
+  uname: 'Linux sentry 7.1.3-cachyos #1-NixOS SMP PREEMPT_DYNAMIC Tue Jan  1 00:00:00
+    UTC 1980 x86_64 GNU/Linux'
+host: sentry
+section: probe

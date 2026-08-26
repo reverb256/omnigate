@@ -1,0 +1,5 @@
+data:
+  nodes: []
+  role: agent
+host: sentry
+section: k3s

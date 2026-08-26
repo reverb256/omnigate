@@ -1,0 +1,41 @@
+data:
+- children:
+  - fstype: btrfs
+    label: null
+    mountpoint: /var/storage
+    name: sda1
+    size: 931.5G
+    type: part
+  fstype: null
+  label: null
+  mountpoint: null
+  name: sda
+  size: 931.5G
+  type: disk
+- children:
+  - fstype: vfat
+    label: null
+    mountpoint: /boot
+    name: sdb1
+    size: 1G
+    type: part
+  - fstype: swap
+    label: null
+    mountpoint: '[SWAP]'
+    name: sdb2
+    size: 8G
+    type: part
+  - fstype: btrfs
+    label: null
+    mountpoint: /home/j_kro/.screenrc
+    name: sdb3
+    size: 229.5G
+    type: part
+  fstype: null
+  label: null
+  mountpoint: null
+  name: sdb
+  size: 238.5G
+  type: disk
+host: sentry
+section: storage
