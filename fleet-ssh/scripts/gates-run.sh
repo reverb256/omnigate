@@ -1,14 +1,16 @@
 #!/bin/bash
 # Fleet SSH acceptance gates (see GATES.md). Usage: ./gates-run.sh <G1..G7|all>
 HOSTS="zephyr nexus forge sentry"
-ALL="$*"; [ -z "$ALL" ] && ALL="G1 G2 G3 G4 G5 G6 G7"
+ALL="$*"
+case " $ALL " in *" all "*) ALL="G1 G2 G3 G4 G5 G6 G7";; esac
+[ -z "$ALL" ] && ALL="G1 G2 G3 G4 G5 G6 G7"
 
 run_on() { if [ "$1" = "zephyr" ]; then bash -c "$2"; else ssh -o BatchMode=yes -o ConnectTimeout=8 "$1" "$2"; fi }
 
 g1() {
   local ref="" ok=1
   for h in $HOSTS; do
-    out="$(run_on "$h" 'sudo -n sshd -T 2>/dev/null' | grep -E '^(passwordauthentication|kbdinteractiveauthentication|permitemptypasswords|permitrootlogin|allowusers) ' | sort | tr '\n' ';')"
+    out="$(run_on "$h" 'sudo -n sshd -T 2>/dev/null' | grep -iE '^(passwordauthentication|kbdinteractiveauthentication|permitemptypasswords|permitrootlogin|allowusers) ' | tr 'A-Z' 'a-z' | sort | tr '\n' ';')"
     case "$out" in *"allowusers j_kro;"*"passwordauthentication no;"*"permitrootlogin no;"*) ;; *) ok=0; echo "  $h: UNEXPECTED: $out";; esac
     if [ -z "$ref" ]; then ref="$out"; elif [ "$out" != "$ref" ]; then ok=0; echo "  $h differs from reference"; fi
   done
@@ -65,9 +67,8 @@ g7() {
 
 PASS=0; FAIL=0
 for g in $ALL; do
-  echo "== $g"; "g${g#G}" || FAIL=$((FAIL+1))
-  [ $? -eq 0 ] && true
+  echo "== $g"
+  if "g${g#G}"; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); fi
 done
-rc=0
-for g in $ALL; do :; done
-exit $rc
+echo "GATES: $PASS/$((PASS+FAIL)) PASS"
+[ "$FAIL" = "0" ]
