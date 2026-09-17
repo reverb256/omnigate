@@ -291,16 +291,27 @@ def serve_background(iso: Path, port: int = 8091, workdir: Path | None = None) -
 
 # --- Phase 3: cmdline ---
 
-def build_cmdline(orchestrator_ip: str, port: int = 8091) -> str:
+def build_cmdline(orchestrator_ip: str, port: int = 8091,
+                  target_ip: str = "", gateway: str = "10.1.1.1",
+                  netmask: str = "255.255.255.0", hostname: str = "omarchy-live",
+                  interface: str = "eth0") -> str:
     """Build archiso_pxe_http kernel cmdline.
 
     This tells the initramfs where to fetch the squashfs during boot.
+
+    Uses STATIC IP instead of DHCP — validated in VM that udhcpc (BusyBox)
+    in Omarchy live env can obtain lease but fails to apply it to the interface,
+    leaving the machine without network and hung in initramfs.
     """
     base = f"http://{orchestrator_ip}:{port}/"
+    if target_ip:
+        ip_cfg = f"ip={target_ip}::{gateway}:{netmask}:{hostname}:{interface}:none"
+    else:
+        ip_cfg = "ip=dhcp"
     return (
         f"archisobasedir=arch "
         f"archiso_http_srv={base} "
-        f"ip=dhcp "
+        f"{ip_cfg} "
         f"initramfs_async=0 "
         f"archiso_copytoram=0 "
         f"console=ttyS0,115200"
@@ -508,22 +519,16 @@ def run_phases(
                 # Serve from the PARENT of arch/ so that archiso_http_srv=.../
                 # + archisobasedir=arch resolves correctly to /arch/x86_64/airootfs.sfs
                 serve_dir = arch_dir.parent
-                http_proc = subprocess.Popen(
-                    [sys.executable, "-m", "http.server", str(port)],
-                    cwd=str(serve_dir),
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                    close_fds=True,
-                )
-                time.sleep(0.5)
-                if http_proc.poll() is not None:
-                    print(f"  HTTP server failed: rc={http_proc.returncode}", file=sys.stderr)
-                    _log_json(log_file, "phase_serve", status="failed",
-                              rc=http_proc.returncode)
-                    return 2
-                print(f"  serving :{port} pid={http_proc.pid}")
-                _log_json(log_file, "phase_serve", status="ok", port=port,
-                          pid=http_proc.pid)
+                # Use ThreadingHTTPServer to handle large file transfers
+                from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+                handler = lambda *a, **kw: SimpleHTTPRequestHandler(directory=str(serve_dir), *a, **kw)
+                httpd = ThreadingHTTPServer(("", port), handler)
+                httpd.daemon_threads = True
+                import threading
+                server_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+                server_thread.start()
+                print(f"  serving :{port} (threaded)")
+                _log_json(log_file, "phase_serve", status="ok", port=port)
 
         # Resolve orchestrator IP
         if orchestrator in (None, "local", "source"):
@@ -538,7 +543,13 @@ def run_phases(
             orchestrator_ip = out.strip().split()[0] if rc == 0 else orchestrator
             orchestrator_label = orchestrator
 
-        cmdline = build_cmdline(orchestrator_ip, port)
+        # For forge, use static IP to avoid udhcpc DHCP application race
+        target_ip = "10.1.1.130" if target == "forge" else ""
+        cmdline = build_cmdline(orchestrator_ip, port,
+                                target_ip=target_ip,
+                                gateway="10.1.1.1",
+                                hostname="forge",
+                                interface="eth0")
 
         # --- load ---
         if "load" in phase_list:
