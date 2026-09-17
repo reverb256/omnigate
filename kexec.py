@@ -253,10 +253,11 @@ def serve(iso: Path, port: int = 8091, workdir: Path | None = None) -> subproces
     arch_dir = Path(info["arch_dir"])
     if not arch_dir.exists():
         raise RuntimeError(f"arch directory not found: {arch_dir}")
-
-    handler = lambda *a, **kw: _QuietHTTPHandler(directory=str(arch_dir), *a, **kw)
+    # Serve from parent so archiso_http_srv + archisobasedir=arch resolves correctly
+    serve_dir = arch_dir.parent
+    handler = lambda *a, **kw: _QuietHTTPHandler(directory=str(serve_dir), *a, **kw)
     httpd = socketserver.TCPServer(("", port), handler)
-    print(f"Serving {arch_dir} on :{port} (Ctrl-C to stop)")
+    print(f"Serving {serve_dir} (arch/ tree) on :{port} (Ctrl-C to stop)")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
@@ -301,6 +302,7 @@ def build_cmdline(orchestrator_ip: str, port: int = 8091) -> str:
         f"archiso_http_srv={base} "
         f"ip=dhcp "
         f"initramfs_async=0 "
+        f"archiso_copytoram=0 "
         f"console=ttyS0,115200"
     )
 
@@ -503,9 +505,12 @@ def run_phases(
                 _log_json(log_file, "phase_serve", status="dry_run")
             else:
                 arch_dir = Path(info.get("arch_dir") or REPO / "kexec" / iso.name / "arch")
+                # Serve from the PARENT of arch/ so that archiso_http_srv=.../
+                # + archisobasedir=arch resolves correctly to /arch/x86_64/airootfs.sfs
+                serve_dir = arch_dir.parent
                 http_proc = subprocess.Popen(
                     [sys.executable, "-m", "http.server", str(port)],
-                    cwd=str(arch_dir),
+                    cwd=str(serve_dir),
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                     close_fds=True,

@@ -51,8 +51,9 @@ def main() -> int:
     arch_root = prep_iso(iso, workdir)
     print(f"Serving {arch_root} on :{port} (ISO: {iso.name})", file=sys.stderr)
 
-    # Use ThreadingHTTPServer so multiple concurrent fetches (kernel, initrd, squashfs) don't block
-    handler = lambda *a, **kw: QuietHandler(directory=str(arch_root), *a, **kw)
+    # Serve from parent so archiso_http_srv + archisobasedir=arch resolves correctly
+    serve_dir = arch_root.parent
+    handler = lambda *a, **kw: QuietHandler(directory=str(serve_dir), *a, **kw)
     with socketserver.ThreadingTCPServer(("", port), handler) as httpd:
         httpd.daemon_threads = True
         httpd.serve_forever()
