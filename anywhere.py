@@ -88,7 +88,7 @@ def probe(target: str | None = None, identity: str | None = None) -> dict:
     info["uname"] = out
     rc2, rel = _run(prefix + ["cat", "/etc/os-release"], timeout=10)
     info["os_release"] = rel if rc2 == 0 else None
-    rc3, which = _run(prefix + ["sh", "-c", "command -v kexec || true"], timeout=8)
+    rc3, which = _run(prefix + ["bash", "-c", "command -v kexec || true"], timeout=8)
     info["kexec"] = bool(which.strip()) if rc3 == 0 else False
     rc4, blk = _run(
         prefix + ["lsblk", "-J", "-o", "NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT,LABEL"],

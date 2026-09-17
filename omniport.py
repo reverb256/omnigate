@@ -126,6 +126,28 @@ def cmd_plan(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_kexec(args: argparse.Namespace) -> int:
+    """Kexec transport: boot target into Omarchy installer."""
+    from kexec import run_phases
+
+    plan_path = PLANS / args.host / "plan.json"
+    plan = {}
+    if plan_path.exists():
+        plan = json.loads(plan_path.read_text())
+
+    return run_phases(
+        iso=Path(args.iso),
+        target=args.target,
+        orchestrator=args.orchestrator,
+        port=args.port,
+        phases=args.phases,
+        identity=args.identity,
+        workdir=Path(args.workdir) if args.workdir else None,
+        timeout=args.timeout,
+        dry_run=not args.yes,
+    )
+
+
 def cmd_install(args: argparse.Namespace) -> int:
     """Stage 2/3: Generate install script + commit for review."""
     from install import build_ghost_script, build_kexec_script, build_vm_script
@@ -220,6 +242,17 @@ def main(argv: list[str] | None = None) -> int:
     p_inst.add_argument("--method", choices=["ghost", "kexec", "vm"], default="ghost")
     p_inst.add_argument("--execute", action="store_true", help="Run the install (DANGEROUS)")
 
+    p_kexec = sub.add_parser("kexec", help="Boot target into Omarchy installer via kexec")
+    p_kexec.add_argument("--host", required=True, help="Target hostname or user@host")
+    p_kexec.add_argument("--iso", required=True, type=str, help="Path to Omarchy ISO")
+    p_kexec.add_argument("--orchestrator", default="local", help="Orchestrator host serving ISO")
+    p_kexec.add_argument("--port", type=int, default=8091, help="HTTP port")
+    p_kexec.add_argument("--workdir", type=str, help="kexec prep workdir")
+    p_kexec.add_argument("--phases", type=str, default=None, help="Comma-separated phases")
+    p_kexec.add_argument("--timeout", type=int, default=300, help="Monitor timeout seconds")
+    p_kexec.add_argument("--identity", type=str, help="SSH identity file")
+    p_kexec.add_argument("--yes", action="store_true", help="Execute, not dry-run")
+
     p_rest = sub.add_parser("restore", help="Generate + optionally run restore script")
     p_rest.add_argument("--host", required=True)
     p_rest.add_argument("--from", required=True, dest="backup_source", help="Backup source (e.g. backup:sentry:/path)")
@@ -234,6 +267,7 @@ def main(argv: list[str] | None = None) -> int:
     if opts.cmd == "audit": return cmd_audit(opts)
     elif opts.cmd == "plan": return cmd_plan(opts)
     elif opts.cmd == "install": return cmd_install(opts)
+    elif opts.cmd == "kexec": return cmd_kexec(opts)
     elif opts.cmd == "restore": return cmd_restore(opts)
     elif opts.cmd == "tag": return cmd_tag(opts)
     return 0

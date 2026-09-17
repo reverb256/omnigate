@@ -20,6 +20,7 @@ out/
 plan.json
 plan.md
 cleanup.json
+kexec/
 
 # Editor / OS
 .DS_Store

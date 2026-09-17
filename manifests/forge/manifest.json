@@ -1,0 +1,167 @@
+{
+  "schema": "omnigate/audit/v1",
+  "timestamp": "2026-09-16T19:04:56.993835",
+  "target": "forge",
+  "source_os": "nixos",
+  "probe": {
+    "ok": true,
+    "target": "forge",
+    "remote": true,
+    "uname": "Linux forge 7.1.3-cachyos #1-NixOS SMP PREEMPT_DYNAMIC Tue Jan 1 00:00:00 UTC 1970 x86_64 GNU/Linux",
+    "os_release": "NixOS 26.11 (Zokor)",
+    "kexec": true,
+    "error": null,
+    "lsblk": [
+      {
+        "name": "sda",
+        "size": "223.6G",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "children": [
+          {
+            "name": "sda1",
+            "size": "8G",
+            "type": "part",
+            "fstype": "swap",
+            "mountpoint": null
+          },
+          {
+            "name": "sda2",
+            "size": "215.6G",
+            "type": "part",
+            "fstype": "btrfs",
+            "mountpoint": "/home,/var"
+          }
+        ]
+      },
+      {
+        "name": "sdb",
+        "size": "238.5G",
+        "type": "disk",
+        "fstype": null,
+        "mountpoint": null,
+        "children": [
+          {
+            "name": "sdb1",
+            "size": "1G",
+            "type": "part",
+            "fstype": "vfat",
+            "mountpoint": "/boot"
+          },
+          {
+            "name": "sdb2",
+            "size": "8G",
+            "type": "part",
+            "fstype": "swap",
+            "mountpoint": null
+          },
+          {
+            "name": "sdb3",
+            "size": "229.5G",
+            "type": "part",
+            "fstype": "btrfs",
+            "mountpoint": "/"
+          }
+        ]
+      },
+      {
+        "name": "zram0",
+        "size": "3.9G",
+        "type": "disk",
+        "fstype": "swap",
+        "mountpoint": "[SWAP]"
+      }
+    ]
+  },
+  "storage": "sda=223G btrfs (home+var, PRESERVE) | sdb=238G (sdb1=EFI, sdb2=swap, sdb3=btrfs root, WIPE)",
+  "kexec": true,
+  "kexec_version": "kexec-tools 2.0.32",
+  "kernel": "7.1.3-cachyos",
+  "uefi": true,
+  "bootloader": "systemd-boot 261.1 (NixOS entries on sdb ESP)",
+  "services": [
+    {
+      "name": "peakminer-forge-4060-0",
+      "type": "systemd_service",
+      "target": "native systemd unit"
+    },
+    {
+      "name": "peakminer-forge-4060-1",
+      "type": "systemd_service",
+      "target": "native systemd unit"
+    },
+    {
+      "name": "bonsai-1bit-forge-vk0",
+      "type": "systemd_service",
+      "target": "native systemd unit"
+    },
+    {
+      "name": "openrgb",
+      "type": "systemd_service",
+      "target": "pacman openrgb"
+    },
+    {
+      "name": "thermal-watchdog",
+      "type": "systemd_service",
+      "target": "native systemd + script"
+    },
+    {
+      "name": "unbound",
+      "type": "systemd_service",
+      "target": "pacman unbound"
+    },
+    {
+      "name": "usbguard",
+      "type": "systemd_service",
+      "target": "pacman usbguard"
+    },
+    {
+      "name": "fail2ban",
+      "type": "systemd_service",
+      "target": "pacman fail2ban"
+    },
+    {
+      "name": "earlyoom",
+      "type": "systemd_service",
+      "target": "pacman earlyoom or systemd-oomd"
+    },
+    {
+      "name": "tailscaled",
+      "type": "systemd_service",
+      "target": "pacman tailscale"
+    },
+    {
+      "name": "k3s",
+      "type": "systemd_service",
+      "target": "k3s agent binary + systemd unit"
+    },
+    {
+      "name": "alloy",
+      "type": "systemd_service",
+      "target": "grafana alloy (pacman)"
+    },
+    {
+      "name": "prometheus-node-exporter",
+      "type": "systemd_service",
+      "target": "pacman prometheus-node-exporter"
+    },
+    {
+      "name": "display-manager",
+      "type": "systemd_service",
+      "target": "Omarchy base (sddm/hyprland)"
+    }
+  ],
+  "secrets_summary": {
+    "age_key_file": "/etc/nixos/.age/key.txt",
+    "ssh_host_keys": "/persistent/etc/ssh/",
+    "k3s_token": "managed by secretspec-creds on NixOS; will port to /run/secrets on Omarchy",
+    "note": "audit.py find_secrets recursed into .hermes (3.5M files) \u2014 compacted"
+  },
+  "packages_count": 0,
+  "k3s": {
+    "role": "agent",
+    "server": "nexus"
+  },
+  "notes": "kexec detection fixed in audit.py (was false due to sh -c PATH issue; bash -c confirms kexec present)"
+}
