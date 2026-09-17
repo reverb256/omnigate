@@ -142,12 +142,22 @@ def plan_secrets(secrets: list, mapping: dict) -> list[dict]:
     return results
 
 
-def plan_partitions(storage: list, source_os: str = "nixos") -> dict:
+def plan_partitions(storage, source_os: str = "nixos") -> dict:
     """Generate partition resize plan for ghost-drive transform."""
+    # Handle string format: "sda=223G btrfs (home+var, PRESERVE) | sdb=238G ..."
+    if isinstance(storage, str):
+        return {
+            "strategy": "ghost-drive",
+            "source": "audit-string",
+            "raw": storage,
+            "note": "Storage info is a human-readable summary",
+        }
+    
     # Find the main disk + btrfs partition
     main_disk = None
     btrfs_parts = []
     for dev in storage:
+        size_gb = 0
         if dev.get("type") == "disk" and dev.get("size"):
             if size_gb_str := re.match(r"[\d.]+", dev.get("size") or ""):
                 size_gb = float(size_gb_str.group())
@@ -159,7 +169,6 @@ def plan_partitions(storage: list, source_os: str = "nixos") -> dict:
             if child.get("fstype") == "btrfs":
                 btrfs_parts.append(child)
 
-    # Recommendation: carve 50GB from btrfs for Arch root
     plan = {
         "strategy": "ghost-drive",
         "current_disk": main_disk.get("name") if main_disk else "unknown",
@@ -229,8 +238,9 @@ def plan_packages(packages: list, audit: dict, mapping: dict) -> dict:
 def generate_plan(audit: dict, mapping: dict) -> dict:
     """Build the full transformation plan."""
     source = audit.get("probe", {})
-    os_ver = source.get("os_release", "").split('\n')
-    nix_ver = [x for x in os_ver if x.startswith("VERSION_ID")][0] if os_ver else "unknown"
+    os_raw = source.get("os_release", "")
+    # Audit.py returns the pretty NAME line, not os-release key=value lines
+    nix_ver = os_raw or "unknown"
 
     services = classify_services(audit.get("services", []), mapping)
     secrets = plan_secrets(audit.get("secrets", []), mapping)
@@ -336,7 +346,7 @@ def render_plan_md(plan: dict) -> str:
     lines.append(f"Strategy: {p['strategy']}")
     lines.append(f"Disk: {p.get('current_disk', '?')} | ghost partition: {p.get('ghost_partition', 'none')}")
     lines.append("Actions:")
-    for a in p["actions"]:
+    for a in p.get("actions", [p.get("note", "no actions")]):
         lines.append(f"  {a}")
     if p.get("warnings"):
         lines.append("Warnings:")
