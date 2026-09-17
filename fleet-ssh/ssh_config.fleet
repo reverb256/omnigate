@@ -1,0 +1,49 @@
+# Fleet SSH client config — deploy IDENTICALLY to every host's ~/.ssh/config.
+# Replace @TAILNET_IP_* with each host's tailscale address (tailscale status).
+Host zephyr
+  HostName @TAILNET_IP_ZEPHYR@
+  User j_kro
+  IdentityFile ~/.ssh/id_ed25519_fleet
+  IdentitiesOnly yes
+
+Host nexus
+  HostName @TAILNET_IP_NEXUS@
+  User j_kro
+  IdentityFile ~/.ssh/id_ed25519_fleet
+  IdentitiesOnly yes
+
+Host forge
+  HostName @TAILNET_IP_FORGE@
+  User j_kro
+  IdentityFile ~/.ssh/id_ed25519_fleet
+  IdentitiesOnly yes
+
+Host sentry
+  HostName @TAILNET_IP_SENTRY@
+  User j_kro
+  IdentityFile ~/.ssh/id_ed25519_fleet
+  IdentitiesOnly yes
+
+# Windows mining rigs (LAN only). NOTE: krash2 = user krash, krash3 = user j_kro.
+Host krash2
+  HostName @LAN_IP_KRASH2@
+  User krash
+  IdentityFile ~/.ssh/id_ed25519_fleet
+  IdentitiesOnly yes
+  StrictHostKeyChecking no
+
+Host krash3
+  HostName @LAN_IP_KRASH3@
+  User j_kro
+  IdentityFile ~/.ssh/id_ed25519_fleet
+  IdentitiesOnly yes
+  StrictHostKeyChecking no
+
+Host *
+  ServerAliveInterval 15
+  ServerAliveCountMax 4
+  ConnectTimeout 8
+  StrictHostKeyChecking accept-new
+  AddKeysToAgent yes
+  # Force OpenSSH pubkey auth; keeps automation off any Tailscale SSH broker.
+  PreferredAuthentications publickey
